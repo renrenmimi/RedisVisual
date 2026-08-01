@@ -1,0 +1,1232 @@
+/* ================================================================
+   第 2 站「我们为什么用 Redis」· 专属动画样式
+   所有类名带前缀 sc2- 以隔离其它站。颜色一律走主题变量。
+   核心表现：节点 (sc2-node) + 车道 (sc2-lane) + 流动的数据包 (sc2-pkt)。
+   舞台每步会被 React 用 key 重新挂载，所以入场 / 流动动画每步都会重播一次。
+   ================================================================ */
+
+/* ---------- 顶部系统背景条 ---------- */
+
+.sc2-lede {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px 18px 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* 通用：淡出未参与的节点 / 组件 */
+.sc2-off {
+  opacity: 0.36;
+  transition: opacity 0.35s ease;
+}
+
+.sc2-lede::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent-2), var(--teal));
+}
+
+.sc2-lede-kicker {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent-text);
+  text-transform: uppercase;
+}
+
+.sc2-lede h2 {
+  margin: 4px 0 5px;
+  font-size: 15.5px;
+  font-weight: 650;
+}
+
+.sc2-lede p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+
+/* ---------- 场景切换 tab ---------- */
+
+.sc2-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.sc2-tab {
+  flex: 1;
+  min-width: 180px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  padding: 12px 15px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text-2);
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.sc2-tab:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.sc2-tab.on {
+  border-color: transparent;
+  background: var(--accent-bg);
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 8px 22px var(--accent-glow);
+}
+
+.sc2-tab-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sc2-tab-kicker {
+  display: block;
+}
+
+.sc2-tab-letter {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+}
+
+.sc2-tab-name {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.sc2-tab.on .sc2-tab-name {
+  color: var(--accent-text);
+}
+
+.sc2-tab-kicker {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+
+/* ---------- 舞台通用积木 ---------- */
+
+.sc2-board {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 水平流水线：节点 + 车道交替 */
+.sc2-rail {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 节点盒子 */
+.sc2-node {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 92px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition:
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease,
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.sc2-ico {
+  font-size: 21px;
+  line-height: 1;
+}
+
+.sc2-nm {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.sc2-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.3;
+}
+
+/* 节点状态修饰 */
+.sc2-node.sc2-on {
+  border-color: var(--accent-glow);
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 8px 24px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.sc2-node.sc2-dim {
+  opacity: 0.34;
+}
+
+.sc2-node.sc2-hit {
+  border-color: var(--teal-border);
+  background: var(--teal-bg);
+  box-shadow: 0 0 0 1px var(--teal-border), 0 8px 24px var(--teal-bg);
+}
+
+.sc2-node.sc2-miss {
+  border-color: var(--err);
+  background: var(--err-bg);
+}
+
+.sc2-node.sc2-redis .sc2-ico {
+  color: var(--accent);
+}
+
+.sc2-node.sc2-warn {
+  border-color: var(--amber);
+  background: var(--amber-bg);
+}
+
+/* 节点角标（MISS / HIT / OK / nil …） */
+.sc2-badge {
+  position: absolute;
+  top: -9px;
+  right: -8px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  animation: sc2Pop 0.4s 0.5s both cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sc2-badge.ok {
+  background: var(--teal);
+  color: #fff;
+}
+
+.sc2-badge.bad {
+  background: var(--err);
+  color: #fff;
+}
+
+/* ---------- 车道 + 数据包 ---------- */
+
+.sc2-lane {
+  position: relative;
+  flex: 1;
+  min-width: 46px;
+  height: 44px;
+  align-self: center;
+}
+
+.sc2-lane::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--border-strong) 0 5px,
+    transparent 5px 11px
+  );
+}
+
+.sc2-pkt {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  animation-duration: 1.15s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+.sc2-pkt.sc2-req {
+  background: var(--accent);
+  color: #fff;
+  animation-name: sc2Fwd;
+}
+
+.sc2-pkt.sc2-res {
+  background: var(--teal);
+  color: #fff;
+  animation-name: sc2Back;
+}
+
+@keyframes sc2Fwd {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  84% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes sc2Back {
+  0% {
+    left: 100%;
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  84% {
+    opacity: 1;
+  }
+  100% {
+    left: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes sc2Pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---------- 场景 A：carrier 回源扇出 ---------- */
+
+.sc2-fan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.sc2-fan-note {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+.sc2-carriers {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sc2-carrier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 84px;
+  padding: 9px 11px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  transition: opacity 0.35s ease, border-color 0.35s ease;
+}
+
+.sc2-carrier.sc2-dim {
+  opacity: 0.3;
+}
+
+.sc2-carrier-nm {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sc2-lat {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+
+.sc2-lat.slow {
+  background: var(--err-bg);
+  color: var(--err);
+}
+
+.sc2-lat.fast {
+  background: var(--teal-bg);
+  color: var(--teal-text);
+}
+
+/* carrier 被调用时：脉冲 + 顶部转圈点，交错启动 */
+.sc2-carrier.sc2-calling {
+  border-color: var(--accent-glow);
+  animation: sc2Calling 1.1s ease-in-out infinite;
+}
+
+.sc2-carrier.sc2-calling::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-glow);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes sc2Calling {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 16px 0 var(--accent-glow);
+  }
+}
+
+.sc2-agg {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  animation: sc2Pop 0.4s 1.4s both;
+}
+
+/* ---------- 场景 A：写回 key + TTL ---------- */
+
+.sc2-keybox {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.sc2-key {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  color: var(--code-text);
+  border: 1px solid var(--border);
+  word-break: break-all;
+  text-align: center;
+  animation: sc2Pop 0.4s 0.3s both;
+}
+
+.sc2-key .sc2-key-tk {
+  color: #f5cf7a;
+}
+
+.sc2-key .sc2-key-hi {
+  color: #fff;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 0 5px;
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.sc2-ttl {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.sc2-ttl-bar {
+  width: 150px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.sc2-ttl-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  animation: sc2Ttl 4s linear 0.5s both;
+}
+
+@keyframes sc2Ttl {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 8%;
+  }
+}
+
+/* ---------- 场景 A：延迟对比 ---------- */
+
+.sc2-latcompare {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.sc2-latcompare .sc2-lat {
+  font-size: 12px;
+  padding: 4px 12px;
+}
+
+.sc2-latcompare .struck {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* ---------- 场景 A：key 泄露 ---------- */
+
+.sc2-leak {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.sc2-leak-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.sc2-cust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 110px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+}
+
+.sc2-cust b {
+  font-size: 13px;
+}
+
+.sc2-price {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--teal-bg);
+  color: var(--teal-text);
+}
+
+.sc2-price.leaked {
+  background: var(--err-bg);
+  color: var(--err);
+  animation: sc2Flash 1.2s ease-in-out 3;
+}
+
+@keyframes sc2Flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--err-bg);
+  }
+}
+
+.sc2-leak-arrow {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sc2-leak-arrow.bad {
+  color: var(--err);
+}
+
+/* ---------- 场景 A：两层缓存 ---------- */
+
+.sc2-layers {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sc2-zone {
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  padding: 12px 14px 14px;
+  position: relative;
+}
+
+.sc2-zone-tag {
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.sc2-zone.browser .sc2-zone-tag {
+  color: var(--blue-text);
+  border-color: var(--blue-border);
+}
+
+.sc2-zone.server .sc2-zone-tag {
+  color: var(--accent-text);
+  border-color: var(--accent-glow);
+}
+
+.sc2-zone-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sc2-zone-note {
+  margin-top: 7px;
+  font-size: 11.5px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.sc2-degrade {
+  font-size: 11.5px;
+  color: var(--amber-text);
+  background: var(--amber-bg);
+  border-radius: 10px;
+  padding: 7px 12px;
+  text-align: center;
+}
+
+/* ---------- 场景 B：双击 / NX / 结局 / 兜底 ---------- */
+
+.sc2-clicks {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sc2-buybtn {
+  position: relative;
+  font-size: 13px;
+  font-weight: 650;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  box-shadow: 0 6px 18px var(--accent-glow);
+}
+
+.sc2-buybtn::before,
+.sc2-buybtn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 2px solid var(--accent-2);
+  opacity: 0;
+  animation: sc2Ripple 1.6s ease-out infinite;
+}
+
+.sc2-buybtn::after {
+  animation-delay: 0.35s;
+}
+
+@keyframes sc2Ripple {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+.sc2-tap {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+/* 通用两请求纵向排布 */
+.sc2-reqs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.sc2-reqline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sc2-reqtag {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.sc2-reqtag.win {
+  border-color: var(--teal-border);
+  color: var(--teal-text);
+  background: var(--teal-bg);
+}
+
+.sc2-reqtag.lose {
+  border-color: var(--err);
+  color: var(--err);
+  background: var(--err-bg);
+}
+
+.sc2-outcome {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  font-size: 12.5px;
+}
+
+.sc2-outcome.win {
+  border-color: var(--teal-border);
+  background: var(--teal-bg);
+  color: var(--teal-text);
+}
+
+.sc2-outcome.lose {
+  border-color: var(--border);
+  color: var(--text-3);
+}
+
+.sc2-step-chip {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 7px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  animation: sc2Pop 0.35s both;
+}
+
+.sc2-step-chip.done {
+  color: var(--teal-text);
+  border-color: var(--teal-border);
+}
+
+.sc2-step-chip.skip {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* 场景 B 兜底：双闸门 */
+.sc2-gates {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 620px;
+}
+
+.sc2-gate {
+  flex: 1;
+  min-width: 160px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  text-align: center;
+}
+
+.sc2-gate b {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.sc2-gate small {
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.4;
+  display: block;
+}
+
+.sc2-gate.fast {
+  border-color: var(--accent-glow);
+}
+
+.sc2-gate.fast b {
+  color: var(--accent-text);
+}
+
+.sc2-gate.final {
+  border-color: var(--teal-border);
+  background: var(--teal-bg);
+}
+
+.sc2-gate.final b {
+  color: var(--teal-text);
+}
+
+.sc2-gate-warn {
+  margin-top: 6px;
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--amber-text);
+  background: var(--amber-bg);
+  border-radius: 7px;
+  padding: 2px 6px;
+}
+
+/* ---------- 场景 C：账本 + 余额投影 ---------- */
+
+.sc2-cwrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 640px;
+}
+
+.sc2-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 150px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+}
+
+.sc2-ledger.truth {
+  border-color: var(--teal-border);
+  box-shadow: 0 0 0 1px var(--teal-border);
+}
+
+.sc2-ledger-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--text-2);
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sc2-ledger-head .sc2-tag-mini {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--teal-bg);
+  color: var(--teal-text);
+}
+
+.sc2-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--text-2);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.sc2-row .amt.pos {
+  color: var(--teal-text);
+}
+
+.sc2-row .amt.neg {
+  color: var(--err);
+}
+
+.sc2-row.sc2-sum {
+  animation: sc2SumHi 2.4s ease both;
+}
+
+@keyframes sc2SumHi {
+  0%,
+  100% {
+    background: var(--panel);
+  }
+  50% {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+  }
+}
+
+.sc2-row.sc2-new {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  animation: sc2Pop 0.45s both cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 余额投影节点 */
+.sc2-bal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 130px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1px dashed var(--border-strong);
+  background: var(--panel-2);
+  text-align: center;
+  transition: all 0.35s ease;
+}
+
+.sc2-bal-label {
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+
+.sc2-bal-val {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.sc2-bal.hit {
+  border-style: solid;
+  border-color: var(--teal-border);
+  background: var(--teal-bg);
+}
+
+.sc2-bal.miss .sc2-bal-val {
+  color: var(--text-3);
+}
+
+.sc2-bal.deleted {
+  border-color: var(--err);
+  background: var(--err-bg);
+  animation: sc2Shake 0.5s ease 0.6s both;
+}
+
+.sc2-bal.deleted .sc2-bal-val {
+  color: var(--err);
+  text-decoration: line-through;
+}
+
+@keyframes sc2Shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+.sc2-bal.rebuilt .sc2-bal-val {
+  animation: sc2Pop 0.5s 1.4s both;
+}
+
+/* 场景 C：Redis 挂了的闪电 */
+.sc2-bolt {
+  font-size: 22px;
+  animation: sc2Bolt 1.2s ease-in-out infinite;
+}
+
+@keyframes sc2Bolt {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* 用户小人 */
+.sc2-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.sc2-user .sc2-ico {
+  font-size: 24px;
+}
+
+/* 竖向小连接（下钻到账本 / carrier） */
+.sc2-vlink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-3);
+  font-size: 14px;
+}
+
+.sc2-vlink small {
+  font-size: 9.5px;
+  font-family: var(--mono);
+}
+
+/* ---------- 面试口径卡 ---------- */
+
+.sc2-iv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+@media (max-width: 720px) {
+  .sc2-iv {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sc2-iv-col {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.sc2-iv-col.good {
+  border-color: var(--teal-border);
+}
+
+.sc2-iv-col.honest {
+  border-color: var(--amber);
+}
+
+.sc2-iv-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+
+.sc2-iv-col.good .sc2-iv-title {
+  color: var(--teal-text);
+}
+
+.sc2-iv-col.honest .sc2-iv-title {
+  color: var(--amber-text);
+}
+
+.sc2-iv-title .sc2-iv-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sc2-iv-col.good .sc2-iv-dot {
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal-border);
+}
+
+.sc2-iv-col.honest .sc2-iv-dot {
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber-bg);
+}
+
+.sc2-iv-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.sc2-iv-list li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.sc2-iv-list li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 12px;
+}
+
+.sc2-iv-col.good .sc2-iv-list li::before {
+  content: "✓";
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.sc2-iv-col.honest .sc2-iv-list li::before {
+  content: "!";
+  color: var(--amber);
+  font-weight: 700;
+}
+
+/* ---------- 下一站 ---------- */
+
+.sc2-next {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* ---------- 响应式收窄 ---------- */
+
+@media (max-width: 560px) {
+  .sc2-node {
+    min-width: 76px;
+    padding: 9px 8px;
+  }
+
+  .sc2-nm {
+    font-size: 11px;
+  }
+
+  .sc2-lane {
+    min-width: 30px;
+    height: 40px;
+  }
+
+  .sc2-ico {
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc2-pkt,
+  .sc2-carrier.sc2-calling,
+  .sc2-carrier.sc2-calling::after,
+  .sc2-ttl-bar i,
+  .sc2-buybtn::before,
+  .sc2-buybtn::after,
+  .sc2-bolt,
+  .sc2-row.sc2-sum,
+  .sc2-price.leaked {
+    animation: none !important;
+  }
+
+  .sc2-pkt {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,520 @@
+/* ================================================================
+   第 4 站 · 面试速通（interview）专属样式
+   —— 所有类名前缀 iv4-；颜色一律用 globals.css 里的 CSS 变量。
+   accordion 用 grid-template-rows 0fr→1fr 平滑展开，无需 JS 测高度。
+   ================================================================ */
+
+.iv4-root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 分类 tab + 全部展开/收起 ---------- */
+
+.iv4-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0 4px;
+}
+
+.iv4-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+.iv4-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.iv4-tab:hover {
+  color: var(--text);
+}
+
+.iv4-tab.on {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  color: #fff;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+.iv4-tab-n {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--text-3);
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+.iv4-tab.on .iv4-tab-n {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+.iv4-toggle-all {
+  margin-left: auto;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 550;
+  padding: 7px 15px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text-2);
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.12s ease;
+}
+
+.iv4-toggle-all:hover {
+  background: var(--panel-2);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.iv4-toggle-all:active {
+  transform: scale(0.96);
+}
+
+.iv4-blurb {
+  margin: 6px 2px 16px;
+  font-size: 13px;
+  color: var(--text-3);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.iv4-count {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+/* ---------- accordion 列表 ---------- */
+
+.iv4-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.iv4-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+  /* 切换 tab 时整列重挂载，逐张错峰入场；both 让入场前保持隐藏，避免闪一下 */
+  animation: rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.iv4-card:hover {
+  border-color: var(--border-strong);
+}
+
+.iv4-card.open {
+  border-color: var(--accent-glow);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 16px 40px var(--accent-glow);
+}
+
+/* 诚实红线：琥珀色高亮 */
+.iv4-card.alert {
+  border-color: var(--amber-bg);
+}
+
+.iv4-card.alert.open {
+  border-color: var(--amber);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 16px 40px var(--amber-bg);
+}
+
+/* 问题（可点击表头） */
+.iv4-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.iv4-q:hover {
+  background: var(--panel-2);
+}
+
+.iv4-q-ix {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.iv4-card.alert .iv4-q-ix {
+  color: var(--amber-text);
+  background: var(--amber-bg);
+}
+
+.iv4-q-text {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.5;
+}
+
+.iv4-q-tag {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--amber-text);
+  background: var(--amber-bg);
+  border: 1px solid var(--amber);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.iv4-caret {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-3);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iv4-card.open .iv4-caret {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+
+.iv4-card.alert.open .iv4-caret {
+  color: var(--amber);
+}
+
+/* 答案区：0fr→1fr 平滑展开 */
+.iv4-ans {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iv4-card.open .iv4-ans {
+  grid-template-rows: 1fr;
+}
+
+.iv4-ans-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.iv4-ans-body {
+  padding: 4px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.3s ease 0.05s,
+    transform 0.3s ease 0.05s;
+}
+
+.iv4-card.open .iv4-ans-body {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.iv4-block {
+  border-radius: 11px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+}
+
+.iv4-answer {
+  background: var(--teal-bg);
+  border-color: var(--teal-border);
+}
+
+.iv4-explain {
+  background: var(--panel-2);
+}
+
+.iv4-card.alert .iv4-explain {
+  background: var(--amber-bg);
+  border-color: var(--amber);
+}
+
+.iv4-block-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 7px;
+}
+
+.iv4-block-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: var(--text);
+}
+
+.iv4-answer .iv4-block-text {
+  font-size: 14px;
+}
+
+.iv4-note-text {
+  color: var(--text-2);
+}
+
+/* ---------- 总结卡 ---------- */
+
+.iv4-summary {
+  position: relative;
+  margin-top: 22px;
+  padding: 22px 24px 24px;
+  border: 1px solid var(--accent-glow);
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      120% 140% at 100% 0%,
+      var(--accent-bg),
+      transparent 55%
+    ),
+    var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.iv4-summary::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent-2), var(--teal));
+}
+
+.iv4-sum-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.iv4-sum-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 680;
+}
+
+.iv4-takeaways {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .iv4-takeaways {
+    grid-template-columns: 1fr;
+  }
+}
+
+.iv4-take {
+  display: flex;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-2);
+  font-size: 13.5px;
+  line-height: 1.66;
+  color: var(--text);
+}
+
+.iv4-take-n {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  box-shadow: 0 3px 10px var(--accent-glow);
+}
+
+.iv4-take-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* cache-aside 四拍流程 */
+.iv4-flow-wrap {
+  border-top: 1px dashed var(--border);
+  padding-top: 16px;
+}
+
+.iv4-flow-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: 12px;
+}
+
+.iv4-flow {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.iv4-flow-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.iv4-flow-node {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 13px;
+  border: 1px solid var(--teal-border);
+  border-radius: 11px;
+  background: var(--teal-bg);
+}
+
+.iv4-flow-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.iv4-flow-sub {
+  color: var(--teal-text);
+  font-size: 11px;
+}
+
+.iv4-flow-arrow {
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .iv4-flow-item {
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .iv4-flow-node {
+    width: 100%;
+  }
+  .iv4-flow-arrow {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+}
+
+/* ---------- 收尾 + 回第 1 站 ---------- */
+
+.iv4-footer {
+  margin-top: 24px;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.iv4-footer-line {
+  flex: 1;
+  min-width: 240px;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+.iv4-footer .btn {
+  flex-shrink: 0;
+}

@@ -1,0 +1,264 @@
+/* ================================================================
+   第 3 站「跟着写一遍」专属样式 —— 全部类名前缀 cl3-。
+   颜色一律走 globals.css 的 CSS 变量；代码窗/终端复用全局的
+   .code-window / .code / .cl / .run-term / .run-line 等类。
+   ================================================================ */
+
+/* ---------- 双栏：左命令 / 右舞台 ---------- */
+
+.cl3-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.cl3-left {
+  align-self: start;
+}
+
+.cl3-stage {
+  min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: 88px;
+}
+
+@media (max-width: 880px) {
+  .cl3-grid {
+    grid-template-columns: 1fr;
+  }
+  .cl3-stage {
+    position: static;
+  }
+}
+
+/* ---------- 左侧：命令卡 ---------- */
+
+.cl3-cmds {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cl3-cmd {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.cl3-cmd-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cl3-dollar {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.cl3-cmd-text {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--code-text);
+  white-space: pre;
+  overflow-x: auto;
+  padding-bottom: 1px;
+}
+
+.cl3-cmd-text::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cl3-cmd-text::-webkit-scrollbar-thumb {
+  background: rgba(220, 220, 234, 0.14);
+  border-radius: 6px;
+}
+
+.cl3-copy {
+  flex-shrink: 0;
+  margin-left: auto;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(220, 224, 238, 0.7);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.cl3-copy:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.cl3-copy.done {
+  color: #8fe3b0;
+  border-color: transparent;
+  background: rgba(83, 198, 165, 0.16);
+}
+
+.cl3-note {
+  padding: 9px 12px 11px;
+  font-size: 12.5px;
+  line-height: 1.62;
+  color: var(--text-2);
+}
+
+.cl3-flags {
+  list-style: none;
+  margin: 0;
+  padding: 0 12px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cl3-flag {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.cl3-flag code {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 1px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* ---------- 左侧：代码要点（写代码步骤） ---------- */
+
+.cl3-points {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.cl3-point {
+  position: relative;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.cl3-point::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, var(--accent-2), var(--teal));
+  transform: rotate(45deg);
+}
+
+/* ---------- 左侧：提醒条 ---------- */
+
+.cl3-caution {
+  margin-top: 14px;
+  padding: 10px 13px;
+  border-radius: 11px;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-bg);
+  color: var(--amber-text);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.cl3-caution b {
+  font-weight: 700;
+  color: var(--amber-text);
+}
+
+/* ---------- 右侧：代码窗（长文件内滚动 + 逐行点亮） ---------- */
+
+.cl3-code-tall {
+  position: relative;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+/* ---------- 右侧：终端回放 ---------- */
+
+.cl3-term {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.cl3-line {
+  display: block;
+}
+
+.cl3-arrow {
+  color: var(--teal-text);
+}
+
+.cl3-t-ok {
+  color: #8fe3b0;
+}
+
+.cl3-t-dim {
+  color: var(--code-ln);
+}
+
+.cl3-t-accent {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.cl3-replay {
+  margin-left: auto;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(220, 224, 238, 0.7);
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.cl3-replay:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.cl3-replay:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
