@@ -1,7 +1,7 @@
 "use client";
 
 // Left navigation rail of the "Research OS" workbench (ported from AgentLab).
-// RedisLab is a single linear learning path, so the rail is a flat list of stops
+// RedisVisual is a single linear learning path, so the rail is a flat list of stops
 // rather than a chapter tree. The STOP list + active-stop rule are exported so
 // the toolbar and command palette share the same source.
 
@@ -46,7 +46,7 @@ export default function Sidebar() {
         className={`sidebar${sidebarOpen ? " open" : ""}`}
         aria-label={t(ui.brand.name, lang)}
       >
-        <Link href="/" className="brand" onClick={close} aria-label="RedisLab">
+        <Link href="/" className="brand" onClick={close} aria-label="RedisVisual">
           <span className="brand-mark" aria-hidden>
             <BrandMark />
           </span>

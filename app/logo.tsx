@@ -1,4 +1,4 @@
-// RedisLab 品牌标记（BrandMark）。
+// RedisVisual 品牌标记（BrandMark）。
 // 「一枚钥匙串起两个内存格子」——寓意 Redis 的本质：key → value 的内存字典。
 // 上方两个方块是内存里的键值格子，下方连线+圆点像一把钥匙，呼应
 // 「看得见的 Redis / See Inside Redis」。

@@ -7,7 +7,7 @@ import Toolbar from "./toolbar";
 import CommandPalette from "./command-palette";
 
 export const metadata: Metadata = {
-  title: "RedisLab — 看得见的 Redis · See Inside Redis",
+  title: "RedisVisual — 看得见的 Redis · See Inside Redis",
   description:
     "把 Redis 讲成看得见的慢动作：是什么、为什么快、我们的系统为什么用它 · A visual, slow-motion explainer for Redis — what it is, why it's fast, and why a real system reaches for it",
 };

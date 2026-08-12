@@ -20,8 +20,8 @@ import {
 
 export type Theme = "dark" | "light";
 
-const THEME_KEY = "redislab-theme";
-const SIDEBAR_KEY = "redislab-sidebar";
+const THEME_KEY = "redisvisual-theme";
+const SIDEBAR_KEY = "redisvisual-sidebar";
 
 // Runs in <head> before paint: read the saved theme + sidebar state and set them
 // on <html> so the first frame already matches (no flash of wrong theme, and no

@@ -1,10 +1,10 @@
-# CLAUDE.md — RedisLab
+# CLAUDE.md — RedisVisual
 
 Redis 教学应用的项目背景。新会话请先读完这份文件再动手。
 
 ## 这是什么
 
-**RedisLab（看得见的 Redis）**：面向零基础学习者的可视化教学网站，把 Redis
+**RedisVisual（看得见的 Redis）**：面向零基础学习者的可视化教学网站，把 Redis
 讲成看得见的慢动作。目标是让完全不懂 Redis 的人，40 分钟后能知道 Redis 是什么、
 为什么快、为什么用，并且能在面试里跟人聊。项目主人有一段 WeShipItNow 的全栈实习经历，
 简历里写了用 Redis，这个应用既是学习工具，也是为面试防守那段经历做准备。

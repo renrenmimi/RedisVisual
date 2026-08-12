@@ -1,5 +1,5 @@
 /* ================================================================
-   RedisLab · globals.css
+   RedisVisual · globals.css
    —— 主题 token + 通用内容组件 + Research OS 外壳。
    各站专属的动画样式放在各自的 CSS 文件里（app/<route>/<name>.css），
    由该站页面顶部 import；类名统一带前缀，避免互相打架。

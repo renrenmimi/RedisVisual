@@ -26,7 +26,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, set] = useState<Lang>("zh");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("redislab-lang");
+    const saved = window.localStorage.getItem("redisvisual-lang");
     if (saved === "en" || saved === "zh") {
       set(saved);
       document.documentElement.lang = saved === "zh" ? "zh-CN" : "en";
@@ -35,7 +35,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   const setLang = (l: Lang) => {
     set(l);
-    window.localStorage.setItem("redislab-lang", l);
+    window.localStorage.setItem("redisvisual-lang", l);
     document.documentElement.lang = l === "zh" ? "zh-CN" : "en";
   };
 
@@ -59,7 +59,7 @@ export const ui = {
   },
 
   brand: {
-    name: { zh: "RedisLab", en: "RedisLab" },
+    name: { zh: "RedisVisual", en: "RedisVisual" },
     tagline: {
       zh: "看得见的 Redis · See Inside Redis",
       en: "See Inside Redis · 看得见的 Redis",
