@@ -26,7 +26,12 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, set] = useState<Lang>("zh");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("redisvisual-lang");
+    let saved: string | null = null;
+    try {
+      saved = window.localStorage.getItem("redisvisual-lang");
+    } catch {
+      /* 隐私模式 / 禁用存储时忽略 */
+    }
     if (saved === "en" || saved === "zh") {
       set(saved);
       document.documentElement.lang = saved === "zh" ? "zh-CN" : "en";
@@ -35,8 +40,12 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   const setLang = (l: Lang) => {
     set(l);
-    window.localStorage.setItem("redisvisual-lang", l);
     document.documentElement.lang = l === "zh" ? "zh-CN" : "en";
+    try {
+      window.localStorage.setItem("redisvisual-lang", l);
+    } catch {
+      /* 写入失败（隐私模式等）不应影响切换本身 */
+    }
   };
 
   return (

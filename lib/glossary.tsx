@@ -12,7 +12,7 @@ export const glossary: Record<string, { word: L; def: L }> = {
   redis: {
     word: { zh: "Redis", en: "Redis" },
     def: {
-      zh: "一个主要把数据放在内存里的“键值数据仓库”。名字来自 REmote DIctionary Server——可以想成一个能被网络上很多程序同时读写的超大字典。常用来做缓存、计数、去重、排行榜等“又快又临时”的活。",
+      zh: "一个主要把数据放在内存里的键值数据存储（data store）。名字来自 REmote DIctionary Server——可以想成一个能被网络上很多程序同时读写的超大字典。常用来做缓存、计数、去重、排行榜等“又快又临时”的活。",
       en: "A data store that keeps data mostly in memory (RAM). The name means REmote DIctionary Server — think of one giant dictionary many programs can read/write over the network. Common jobs: caching, counters, dedup, leaderboards — anything fast and short-lived.",
     },
   },

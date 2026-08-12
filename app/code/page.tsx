@@ -201,6 +201,15 @@ function CmdCard({ c, lang }: { c: Cmd; lang: Lang }) {
 
 function CopyBtn({ text, lang }: { text: string; lang: Lang }) {
   const [done, setDone] = useState(false);
+  const timer = useRef<number | null>(null);
+
+  // 卸载（换步骤时命令卡会重挂载）前清掉挂起的定时器
+  useEffect(() => {
+    return () => {
+      if (timer.current !== null) window.clearTimeout(timer.current);
+    };
+  }, []);
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(text);
@@ -208,7 +217,8 @@ function CopyBtn({ text, lang }: { text: string; lang: Lang }) {
       // 剪贴板不可用时静默降级：按钮仍给出“已复制”反馈
     }
     setDone(true);
-    window.setTimeout(() => setDone(false), 1300);
+    if (timer.current !== null) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setDone(false), 1300);
   };
   return (
     <button

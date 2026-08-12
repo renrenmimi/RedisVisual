@@ -115,7 +115,7 @@ export const questions: QA[] = [
     note: {
       zh:
         "先给一句话定义（in-memory key-value store），再补名字来历和三四个典型用途就够了，别背完整功能列表。" +
-        "采分点：说清它是“数据仓库”，并且开口就带出“内存”这个关键词——它是后面所有问题的地基。",
+        "采分点：说清它是“数据存储（data store）”，并且开口就带出“内存”这个关键词——它是后面所有问题的基础。",
       en:
         "Give the one-line definition (in-memory key-value store), then the name origin and three or four typical use cases — " +
         "don’t recite the whole feature list. Scoring point: make clear it’s a data store and lead with the word “in-memory”, " +
