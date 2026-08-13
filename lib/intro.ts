@@ -19,10 +19,10 @@ export const scenes: Scene[] = [
     text: {
       zh:
         "查过字典、用过手机通讯录、写过一次 { 名字: 内容 } 吗？给一个名字，拿到对应的内容——这就是 [[keyvalue:键值 (key → value)]]。" +
-        "[[redis:Redis]] 说白了就是一个超大的、放在[[memory:内存]]里、能被很多程序同时通过网络读写的字典。" +
-        "今天不需要任何 Redis 基础；正文里带虚线下划线的词，点一下就有“说人话”的解释。",
+        "[[redis:Redis]] 本质上就是一个超大的、放在[[memory:内存]]里、能被很多程序同时通过网络读写的字典。" +
+        "今天不需要任何 Redis 基础；正文里带虚线下划线的词，点击可以看到该术语的通俗解释。",
       en:
-        "Have you ever used a dictionary, a phone's contacts, or written { name: value } once? Give a name, get its content back — " +
+        "Have you ever looked a word up in a dictionary, used the contacts app on your phone, or written `{ name: value }` in code? Give a name, get its content back — " +
         "that is [[keyvalue:key → value]]. [[redis:Redis]] is, put plainly, one giant dictionary that lives in [[memory:memory]] and " +
         "that many programs can read and write over the network at the same time. No Redis background needed today; any dotted word is clickable.",
     },
@@ -86,7 +86,7 @@ export const scenes: Scene[] = [
       zh:
         "查一条 SQL 即使命中缓存，也要走 解析 → 优化器 → 索引 → 事务/锁 → 返回 一长串关卡；" +
         "Redis 执行 GET 只有 解析 → 查哈希表 → 返回 两三步。再加上它处理命令是[[singlethread:单线程]]的：同一刻只做一件事，" +
-        "天生不用加锁——和 Node.js 的事件循环是同一种思路。代价是一条很慢的命令会卡住后面所有人，所以我们只缓存“小而聚合好”的数据。",
+        "天生不用加锁——和 Node.js 的事件循环是同一种思路。代价是一条耗时很长的命令会阻塞其后的所有命令，所以我们只缓存“小而聚合好”的数据。",
       en:
         "Even a cache-hit SQL query still runs parse → optimizer → index walk → transaction/locks → return — a long line of gates. " +
         "Redis running GET is just parse → hash-table lookup → return, two or three steps. On top of that it handles commands [[singlethread:single-threaded]]: one thing at a time, " +
@@ -103,7 +103,7 @@ export const scenes: Scene[] = [
       zh:
         "value 可以是好几种结构。String 存单值；Hash 像一个对象，存一组字段；List 是有序列表，可当队列；" +
         "Set 是去重集合；Sorted Set 带分数自动排序，天生适合排行榜和滑动窗口限流。" +
-        "每种结构底层都有专门优化——这也是“为什么快”的又一层：不是笼统的快，是每种活都有趁手的工具。",
+        "每种结构底层都有专门优化——这也是“为什么快”的又一层：不是笼统的快，是每类操作都有专门优化的结构。",
       en:
         "A value can be several structures. String holds a single value; Hash is like an object holding a set of fields; List is an ordered list you can use as a queue; " +
         "Set is a dedup collection; Sorted Set carries a score and stays sorted, perfect for leaderboards and sliding-window rate limits. " +
@@ -120,7 +120,7 @@ export const scenes: Scene[] = [
       zh:
         "关键心智模型：Redis 通常不该是唯一的数据来源，它是 App 和慢速系统之间的“快车道”。" +
         "数据在内存里、断电会丢？它有可选的持久化（RDB 快照 / AOF 日志）；但对“丢了能重算”的[[cache:缓存]]数据，甚至可以不开。" +
-        "什么时候掏出 Redis：缓存、计数、session、排行榜、限流、[[idempotency:幂等]]——又快又临时的活。",
+        "什么时候使用 Redis：缓存、计数、session、排行榜、限流、[[idempotency:幂等]]——又快又临时的活。",
       en:
         "The key mental model: Redis usually shouldn't be the only source of data — it's the fast lane between your app and a slower system. " +
         "Data in memory, lost on power off? It has optional persistence (RDB snapshots / AOF logs); but for [[cache:cache]] data that can be recomputed, you can even skip it. " +
@@ -189,7 +189,7 @@ export const stage = {
   ladHdd: { zh: "机械硬盘", en: "Spinning disk" },
   ladHddV: { zh: "~10 毫秒 · 慢约 10 万倍", en: "~10 ms · ~100,000× slower" },
   s3cap: {
-    zh: "越靠上越快。Redis 待在最快的那一层。",
+    zh: "越靠上越快。Redis 位于最快的一层。",
     en: "Higher is faster. Redis lives on the fastest tier.",
   },
 
@@ -236,7 +236,7 @@ export const stage = {
   dbNode: { zh: "数据库 · 真相来源", en: "Database · source of truth" },
   dbNodeSub: { zh: "长期、可靠、可查", en: "durable, reliable, queryable" },
   s6cap: {
-    zh: "Redis 挂了，App 还能回落到数据库——它是加速层，不是唯一来源。",
+    zh: "Redis 不可用，App 还能回落到数据库——它是加速层，不是唯一来源。",
     en: "If Redis dies, the app falls back to the database — it's a speed layer, not the only source.",
   },
 

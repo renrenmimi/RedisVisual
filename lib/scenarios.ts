@@ -88,7 +88,7 @@ export const scenarios: Scenario[] = [
           zh:
             "一次报价要同时问 4 家 [[carrier:承运商]] 的 [[api:API]]：USPS 约 300ms、FedEx 约 800ms、UPS 偶尔超 1 秒、Amazon 也不快。" +
             "[[bff:BFF]] 得等最慢的那个回来才能比价，所以一次报价天然就是「秒级」。" +
-            "更要命的是同一个包裹会被反复查——用户刷新、点返回、同事查同一条线路，短时间内报价根本不变。" +
+            "更关键的是同一个包裹会被反复查——用户刷新、点返回、同事查同一条线路，短时间内报价根本不变。" +
             "「算一次很贵、又反复要」，这正是 [[cache:缓存]] 的教科书场景。",
           en:
             "One quote asks four [[carrier:carrier]] [[api:APIs]] at once: USPS ~300ms, FedEx ~800ms, UPS sometimes over a second, Amazon no faster. " +
@@ -158,7 +158,7 @@ export const scenarios: Scenario[] = [
             "Customer B queries the same lane and hits A's discounted price — B sees a price they never should, and you undercharge. " +
             "The granularity of a cache key IS the boundary of data isolation.",
         },
-        caption: { zh: "key 少一段，价格就串门。", en: "One missing key segment, and prices leak between tenants." },
+        caption: { zh: "缓存键少一个维度，价格就会跨账户泄露。", en: "One missing key segment, and prices leak between tenants." },
       },
       {
         action: { zh: "区分两层缓存 + 降级", en: "Two cache layers + graceful degradation" },
@@ -168,7 +168,7 @@ export const scenarios: Scenario[] = [
           zh:
             "面试常被追问。[[cacheaside:Apollo Client]] 缓存在浏览器端，只服务当前这个用户、少发重复的 GraphQL 请求；" +
             "Redis 在服务端，被所有用户、所有实例共享，少调重复的 carrier API。别说成「两者都降低了 carrier API 延迟」——只有服务端的 Redis 拦得住 carrier 调用。" +
-            "还有降级：Redis 挂了要能绕过它直连 carrier（慢一点但仍可用），Redis 不能是单点；而且真正买标签时要重新校验价格，不能盲信旧报价。",
+            "还有降级：Redis 不可用要能绕过它直连 carrier（慢一点但仍可用），Redis 不能是单点；而且真正买标签时要重新校验价格，不能盲信旧报价。",
           en:
             "A common follow-up. The [[cacheaside:Apollo Client]] cache lives in the browser, serves only the current user, and cuts repeated GraphQL requests; " +
             "Redis lives on the server, shared across all users and instances, and cuts repeated carrier API calls. Don't say “both reduce carrier API latency” — only server-side Redis intercepts carrier calls. " +
@@ -184,7 +184,7 @@ export const scenarios: Scenario[] = [
           en: "Lead with this one: cache-aside on carrier quotes, turning second-scale external calls into millisecond memory reads.",
         },
         {
-          zh: "主动讲 key 设计带 accountId、短 TTL、Redis 挂了能降级直连 carrier——这些细节最加分。",
+          zh: "主动讲 key 设计带 accountId、短 TTL、Redis 不可用能降级直连 carrier——这些细节最加分。",
           en: "Volunteer the details: accountId in the key, short TTL, and a Redis-down fallback that calls carriers directly. Those score points.",
         },
       ],
@@ -210,10 +210,10 @@ export const scenarios: Scenario[] = [
     steps: [
       {
         phase: "double",
-        title: { zh: "问题：用户手一抖，标签买了两张", en: "The problem: one twitch, two labels" },
+        title: { zh: "问题：重复提交导致重复下单", en: "The problem: one accidental double-click, two labels" },
         text: {
           zh:
-            "「购买标签」这个按钮，用户可能狂点两下；或者前端网络超时后自动重试。" +
+            "「购买标签」这个按钮，用户可能连续点击两次；或者前端网络超时后自动重试。" +
             "两个几乎同时到达的请求，如果都照常执行，就会重复建标签、重复扣款、甚至重复给用户发通知。" +
             "只要是「花钱」「产生副作用」的写操作，就必须防重复。",
           en:
@@ -226,7 +226,7 @@ export const scenarios: Scenario[] = [
       {
         action: { zh: "用 SET NX 抢占处理权", en: "Claim the slot with SET NX" },
         phase: "nx",
-        title: { zh: "SET NX：只有第一个抢得到", en: "SET NX: only the first one wins" },
+        title: { zh: "SET NX：只有第一个请求写入成功", en: "SET NX: only the first one wins" },
         text: {
           zh:
             "用请求里唯一的 requestId 当 key：SET idempotency:purchase-label:{requestId} processing NX EX 60。" +
@@ -235,14 +235,14 @@ export const scenarios: Scenario[] = [
           en:
             "Use the request's unique requestId as the key: SET idempotency:purchase-label:{requestId} processing NX EX 60. " +
             "[[setnx:NX]] means “only write if the key does not already exist”. " +
-            "Because Redis executes commands atomically, only the first of two concurrent requests succeeds; the second sees the key already there and fails to write. EX 60 gives this “lock” an expiry so it can't wedge forever.",
+            "Because Redis executes commands atomically, only the first of two concurrent requests succeeds; the second sees the key already there and fails to write. EX 60 gives this “lock” an expiry so the lock cannot block later attempts indefinitely.",
         },
-        caption: { zh: "原子的 NX：并发里只有一个赢家。", en: "Atomic NX: exactly one winner under concurrency." },
+        caption: { zh: "原子的 NX：并发下只有一个请求获得处理权。", en: "Atomic NX: exactly one request proceeds under concurrency." },
       },
       {
         action: { zh: "看两个请求各自的结局", en: "See how each request ends" },
         phase: "resolve",
-        title: { zh: "赢家真扣款，输家拿旧结果", en: "The winner charges; the loser reuses the result" },
+        title: { zh: "首个请求执行扣款，后续请求复用结果", en: "The first request charges; later ones reuse the result" },
         text: {
           zh:
             "抢到 key 的请求继续往下：建标签、扣一次款、把结果写好。没抢到的那个请求不再重复执行，" +
@@ -265,7 +265,7 @@ export const scenarios: Scenario[] = [
             "Honestly: a Redis key can expire, and can be lost on a Redis restart. Money-grade idempotency also needs a database unique constraint " +
             "(the same requestId / order can only insert one row) plus an order-status check as a backstop. Redis blocks the vast majority of duplicates fast; the database holds the final line in the extreme case.",
         },
-        caption: { zh: "Redis 拦快的，数据库守最后一道线。", en: "Redis catches the fast ones; the DB guards the last line." },
+        caption: { zh: "Redis 拦快的，数据库守最后一道线。", en: "Redis blocks duplicates quickly; the database provides the final guarantee." },
       },
     ],
     interview: {
@@ -276,7 +276,7 @@ export const scenarios: Scenario[] = [
         },
         {
           zh: "说明 key 用唯一 requestId、加 EX 过期，避免锁死。",
-          en: "Note the key is a unique requestId with an EX expiry, so the lock can't wedge.",
+          en: "Note the key is a unique requestId with an EX expiry, so the lock cannot block later attempts.",
         },
       ],
       honest: [
@@ -349,7 +349,7 @@ export const scenarios: Scenario[] = [
         text: {
           zh:
             "关键红线：Redis 里的余额只是加速用的读模型，绝不是最终账本。" +
-            "Redis 挂了或数据丢了，必须能从 append-only 的[[ledger:账本]]完整重算恢复，一分钱都不能错。" +
+            "Redis 不可用或数据丢了，必须能从 append-only 的[[ledger:账本]]完整重算恢复，一分钱都不能错。" +
             "投影错了顶多慢一下重算；账本错了才是真出事。这也是为什么这份数据可以放内存、但真相必须留在数据库。",
           en:
             "The red line: the balance in Redis is only a read model for speed — never the final ledger. " +

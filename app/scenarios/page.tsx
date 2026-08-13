@@ -508,7 +508,7 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
       </div>
       <div className="sc2-degrade">
         {zh
-          ? "降级：Redis 挂了就绕过它、直连 carrier（慢但可用）——Redis 不能是单点"
+          ? "降级：Redis 不可用就绕过它、直连 carrier（慢但可用）——Redis 不能是单点"
           : "Degrade: if Redis is down, bypass it and call carriers directly (slower but working) — Redis must not be a single point of failure"}
       </div>
     </div>
@@ -780,7 +780,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
           <span className="sc2-bolt" aria-hidden>
             ⚡️
           </span>
-          <small>{zh ? "Redis 挂了" : "Redis down"}</small>
+          <small>{zh ? "Redis 不可用" : "Redis down"}</small>
         </div>
         <div className="sc2-bal miss">
           <span className="sc2-bal-label">{zh ? "读模型 (可丢弃)" : "read model (disposable)"}</span>

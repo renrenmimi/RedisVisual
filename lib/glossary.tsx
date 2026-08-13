@@ -1,7 +1,7 @@
 "use client";
 
 // 小白术语词典：正文里写 [[key:显示文字]]，RichText 会把它渲染成
-// 带虚线下划线的可点击术语，点开是一段“说人话”的解释。
+// 带虚线下划线的可点击术语，点开是一段“通俗解释”的解释。
 // 各站数据文件里都可以直接用这些 key；找不到 key 时只渲染显示文字，绝不报错。
 
 import { useState, useRef, useEffect, type ReactNode } from "react";
@@ -82,7 +82,7 @@ export const glossary: Record<string, { word: L; def: L }> = {
   idempotency: {
     word: { zh: "幂等 (idempotency)", en: "idempotency" },
     def: {
-      zh: "同一个操作做一次和做很多次，结果一样。买标签时用它保证：网络重试或用户狂点两下，也只会真正扣一次款、只生成一张标签。",
+      zh: "同一个操作做一次和做很多次，结果一样。买标签时用它保证：网络重试或用户连续点击两下，也只会真正扣一次款、只生成一张标签。",
       en: "Doing the same operation once or many times gives the same result. On label purchase it guarantees that network retries or a double-click still charge only once and create only one label.",
     },
   },

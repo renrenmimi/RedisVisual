@@ -83,7 +83,7 @@ export const iv = {
 
   footer: {
     zh:
-      "面试的终极原则：简历上每个技术词，都要能扛住 5–10 分钟的追问。没做过的别说做过，" +
+      "面试的核心原则：简历上每个技术词，都要能扛住 5–10 分钟的追问。没做过的别说做过，" +
       "没测过的数字别编——诚实本身，就是一种能力信号。",
     en:
       "The one rule that matters: every technical word on your resume should survive five to ten minutes of follow-up. " +
@@ -170,7 +170,7 @@ export const questions: QA[] = [
     note: {
       zh:
         "标准答案是“都可以，看你怎么用”。关键是要表态：在你们系统里它是缓存/读模型，不是真相来源。" +
-        "这句表态为后面“Redis 挂了怎么办”提前埋好伏笔。",
+        "这句表态为后面“Redis 不可用怎么办”提前埋好伏笔。",
       en:
         "The model answer is “both, depending on how you use it”. The key is to take a stance: in your system it’s a cache / " +
         "read model, not the source of truth. That sets up the later “what if Redis goes down” question.",
@@ -250,7 +250,7 @@ export const questions: QA[] = [
     },
     note: {
       zh:
-        "列出五个核心结构，每个配一个场景（hash=对象、sorted set=排行榜/限流最出彩）。顺带提一句 streams/HyperLogLog " +
+        "列出五个核心结构，每个配一个场景（hash=对象、sorted set 对应排行榜与限流是最具说服力的例子）。顺带提一句 streams/HyperLogLog " +
         "说明你知道还有更多，但别展开背。采分点在“结构 → 场景”的对应，而不是罗列名字。",
       en:
         "List the five core structures, each with a use case (hash = object, sorted set = leaderboard / rate limiting is the " +
@@ -314,7 +314,7 @@ export const questions: QA[] = [
     },
     note: {
       zh:
-        "一句话讲清“为什么”：协商折扣价因客户而异；不含 accountId 会串号，把 A 的价返给 B——既是 bug 又是定价数据泄露。" +
+        "一句话讲清“为什么”：协商折扣价因客户而异；不含 accountId 会导致不同账户的数据互相污染，把 A 的价返给 B——既是 bug 又是定价数据泄露。" +
         "这道缓存 key 设计题，面试官想看你有没有多租户 / 数据隔离意识。",
       en:
         "State the “why” in one line: negotiated discounts differ per customer; without the accountId you’d cross-serve A’s " +
@@ -355,7 +355,7 @@ export const questions: QA[] = [
     id: "redis-down",
     category: "system",
     q: {
-      zh: "What happens when Redis goes down?（Redis 挂了会怎样？）",
+      zh: "What happens when Redis goes down?（Redis 不可用会怎样？）",
       en: "What happens when Redis goes down?",
     },
     answer: {
@@ -498,8 +498,8 @@ export const questions: QA[] = [
     note: {
       zh:
         "这条最重要：诚实。说清口径——对比同包裹 / 同路线、开缓存前后、可缓存的重复请求；提升只适用于能命中缓存的重复请求，" +
-        "不是所有首次请求。如果你没有真实测量数据，面试千万别现编 p50/p95，宁可把简历里的 40% 删掉。面试官追问“怎么测的”" +
-        "时，编数字是当场翻车的高发点；诚实反而是加分项。简历上写的每个数字，都要能扛住这一问。",
+        "不是所有首次请求。如果你没有真实测量数据，面试中不要临场编造 p50/p95 数据，宁可把简历里的 40% 删掉。面试官追问“怎么测的”" +
+        "时，编造的数字在追问下极易当场暴露；诚实反而是加分项。简历上写的每个数字，都要能扛住这一问。",
       en:
         "The most important one: be honest. Scope it — same package/route, before vs after caching, on cacheable repeat " +
         "requests; the gain only applies to requests that can hit the cache, not every first request. If you don’t have " +

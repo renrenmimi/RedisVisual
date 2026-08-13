@@ -257,7 +257,7 @@ export const steps: Step[] = [
         en: "Open VS Code first. It ships with a built-in terminal: menu Terminal → New Terminal, or press ⌃` (Control + backtick). Every command from here on goes into that terminal.",
       },
       {
-        zh: "先给项目安个家：新建一个空文件夹 redis-shipping-demo 并进去。pwd 会打印“你现在在哪”，确认一下就好。",
+        zh: "先创建项目目录：新建一个空文件夹 redis-shipping-demo 并进去。pwd 会打印“你现在在哪”，确认一下就好。",
         en: "Give the project a home: create an empty folder redis-shipping-demo and step into it. pwd prints “where am I now” so you can confirm.",
       },
     ],
@@ -549,8 +549,8 @@ export const steps: Step[] = [
         en: 'purchaseLabel implements [[idempotency:idempotency]] with a single SET redisKey "processing" NX EX:60. Since Redis commands are atomic, only the first request among many succeeds — it wins the right to process.',
       },
       {
-        zh: "acquired === null 意味着这把“锁”已被别人抢走——说明是重复请求（网络重试、用户狂点两下），直接返回已有状态，绝不重复扣款、重复出标签。抢到的那一个才真正去买，然后把结果写回同一个键。",
-        en: "acquired === null means the “lock” was already taken — a duplicate request (a network retry or a double-click). Return the existing status; never charge twice or mint two labels. Only the winner actually buys, then writes the result back under the same key.",
+        zh: "acquired === null 意味着这把“锁”已被别人抢走——说明是重复请求（网络重试、用户连续点击两下），直接返回已有状态，绝不重复扣款、重复出标签。抢到的那一个才真正去买，然后把结果写回同一个键。",
+        en: "acquired === null means the “lock” was already taken — a duplicate request (a network retry or a double-click). Return the existing status; never charge twice or mint two labels. Only the first request actually buys, then writes the result back under the same key.",
       },
     ],
     points: [
@@ -737,11 +737,11 @@ export const steps: Step[] = [
     title: { zh: "收尾：停容器，记住一句话", en: "Wrap up: stop the container, remember one thing" },
     body: [
       {
-        zh: "玩完了就停掉容器：docker stop redis-lab。容器里的数据默认在内存里，停了就清空。下次想接着用同一个容器，docker start redis-lab 即可，不必再 run。",
+        zh: "练习结束后停止容器：docker stop redis-lab。容器里的数据默认在内存里，停了就清空。下次想接着用同一个容器，docker start redis-lab 即可，不必再 run。",
         en: "Done? Stop the container: docker stop redis-lab. Its data lives in memory by default, so it clears when stopped. Next time, docker start redis-lab reuses the same container — no need to run again.",
       },
       {
-        zh: "带走一句话：[[redis:Redis]] 是加速层，不是[[sourceoftruth:真相来源]]。它挂了、被清空了，你的系统必须能降级——回到数据库、回到账本重算。缓存能丢，账不能错。",
+        zh: "带走一句话：[[redis:Redis]] 是加速层，不是[[sourceoftruth:真相来源]]。它不可用、被清空了，你的系统必须能降级——回到数据库、回到账本重算。缓存能丢，账不能错。",
         en: "One takeaway: [[redis:Redis]] is a speed layer, not the [[sourceoftruth:source of truth]]. If it dies or gets flushed, your system must degrade gracefully — fall back to the database, recompute from the ledger. Losing a cache is fine; getting the books wrong is not.",
       },
     ],
