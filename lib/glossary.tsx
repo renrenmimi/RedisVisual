@@ -163,6 +163,27 @@ export const glossary: Record<string, { word: L; def: L }> = {
       en: "Packages a program together with its environment into a “container” you can start with one command, then throw away — without polluting your system. We use it to spin up Redis in one line.",
     },
   },
+  atomic: {
+    word: { zh: "原子操作 (atomic)", en: "atomic" },
+    def: {
+      zh: "一个操作要么整体完成、要么完全不发生，中间不会被别的请求插进来。因为 Redis 单线程一条条执行命令，像 INCR、SET NX 这种天生就是原子的——并发下不会互相踩到。",
+      en: "An operation happens all-or-nothing, with no other request slipping in midway. Because Redis runs commands one at a time on a single thread, commands like INCR or SET NX are inherently atomic — safe under concurrency.",
+    },
+  },
+  encoding: {
+    word: { zh: "底层编码 (encoding)", en: "encoding" },
+    def: {
+      zh: "同一种数据类型，Redis 在内存里可以用不同的内部结构来存。元素少时用紧凑省内存的（如 listpack/intset），变大后自动换成查得快的（如 hashtable/skiplist）。这就是“为什么快”的又一层。",
+      en: "For one data type, Redis can store it with different internal layouts in memory. When small it uses a compact, memory-thrifty one (listpack/intset); as it grows it auto-switches to a fast-at-scale one (hashtable/skiplist). Another layer of “why fast”.",
+    },
+  },
+  stream: {
+    word: { zh: "Stream 流", en: "Stream" },
+    def: {
+      zh: "Redis 5.0 起的一种数据类型：只追加的日志 + 消费者组 + 消息确认(ack)。比用 List 拼的队列可靠得多——消费者崩了消息不会丢，能重投。真要做可靠消息队列就用它。",
+      en: "A data type since Redis 5.0: an append-only log + consumer groups + acknowledgements. Far more reliable than a List-based queue — messages survive a consumer crash and can be redelivered. Use it when you need a reliable message queue.",
+    },
+  },
 };
 
 const RE = /\[\[(\w+):([^\]]+)\]\]/g;

@@ -12,19 +12,32 @@ Redis 教学应用的项目背景。新会话请先读完这份文件再动手�
 风格与工程形态整体移植自姊妹项目 AgentLab（`../AgentLab`）：代码简单可读优先于
 工程完备，解释要多，别过度抽象。
 
-## 四站学习闭环
+## 七站学习闭环
 
-1. **`/` 什么是 Redis** ✅ — 八幕 CSS 动画（字典 → SET/GET → 仓库vs工作台 →
+目标从"40 分钟入门"升级为"能给 junior 彻底讲透 + 扛住面试深挖，学习时长不设限"。
+每站 = 数据文件 + 页面文件 + 专属 CSS。
+
+1. **`/` 什么是 Redis** — 八幕 CSS 动画（字典 → SET/GET → 仓库vs工作台 →
    内存延迟阶梯 → 命令路径+单线程 → 五种数据结构 → 加速层 → 公式）。
-   数据 `lib/intro.ts`，页面 `app/page.tsx`，样式 `app/home.css`。
-2. **`/scenarios` 我们为什么用它** — WeShipItNow 三场景动画：rate cache（cache-aside）、
-   idempotency（SET NX）、balance projection。数据 `lib/scenarios.ts`，页面
-   `app/scenarios/page.tsx`，样式 `app/scenarios/scenarios.css`。
-3. **`/code` 跟着写一遍** — VS Code 手把手：Docker 起 Redis → npm 初始化 → 写
+   `lib/intro.ts` / `app/page.tsx` / `app/home.css`。
+2. **`/data` 数据结构详解** — 五种核心结构 + 专用类型（Bitmap/HLL/Geo/Stream/Pub-Sub）
+   + 底层编码（listpack/intset/skiplist+hashtable），每种配动画/命令/用途/面试深挖。
+   `lib/datalab.ts` / `app/data/page.tsx` / `app/data/data.css`。
+3. **`/scenarios` 我们为什么用它** — WeShipItNow 三场景动画：rate cache（cache-aside）、
+   idempotency（SET NX）、balance projection。`lib/scenarios.ts` / `app/scenarios/`。
+4. **`/pitfalls` 缓存的坑与一致性** — 穿透/击穿/雪崩 + 数据库-缓存双写一致（延迟双删）
+   + 热点/大 key。`lib/pitfalls.ts` / `app/pitfalls/`。
+5. **`/internals` 生产机制** — 持久化（RDB/AOF）/ 过期与内存淘汰（惰性+定期、LRU/LFU）/
+   高可用（主从·哨兵·集群 16384 槽）/ 事务（MULTI·WATCH·Lua·pipeline·分布式锁·Redlock）。
+   `lib/internals.ts` / `app/internals/`。
+6. **`/code` 跟着写一遍** — VS Code 手把手：Docker 起 Redis → npm 初始化 → 写
    `src/index.ts`（三段 demo）→ 运行 → redis-cli 观察。逐行点亮 + 终端回放。
-   数据 `lib/codelab.ts`，页面 `app/code/page.tsx`，样式 `app/code/code.css`。
-4. **`/interview` 面试速通** — 分类可展开的高频面试题 + 总结卡。数据
-   `lib/interview.ts`，页面 `app/interview/page.tsx`，样式 `app/interview/interview.css`。
+   `lib/codelab.ts` / `app/code/`。
+7. **`/interview` 面试速通** — 26 道分类可展开面试题（含持久化/淘汰/高可用/事务/缓存三坑/
+   一致性的深挖追问）+ 总结卡。`lib/interview.ts` / `app/interview/`。
+
+站点顺序、序号、"下一站"链、进度都从 `app/sidebar.tsx` 的 `STOPS` + 各站数据文件里的
+title/next 文案派生；新增/调整站点要同步改这几处。
 
 ## 关键设计决策
 

@@ -41,7 +41,7 @@ export type Step = {
 // ---------- 本站界面文案 ----------
 
 export const clui = {
-  title: { zh: "第 3 站 · 跟着写一遍", en: "Stop 3 · Code It Yourself" },
+  title: { zh: "第 6 站 · 跟着写一遍", en: "Stop 6 · Code It Yourself" },
   subtitle: {
     zh: "打开 VS Code，从零把一个 Redis Demo 跑起来",
     en: "Open VS Code and take a Redis demo from zero to running",

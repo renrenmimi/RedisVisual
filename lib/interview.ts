@@ -21,7 +21,7 @@ export type QA = {
 // ---------- 页面外壳文案 ----------
 
 export const iv = {
-  title: { zh: "第 4 站 · 面试速通", en: "Stop 4 · Interview Prep" },
+  title: { zh: "第 7 站 · 面试速通", en: "Stop 7 · Interview Prep" },
   subtitle: {
     zh: "把前三站学到的，变成面试官面前能用英语讲出来的话。",
     en: "Turn the first three stops into words you can say to an interviewer — in English.",
@@ -55,8 +55,8 @@ export const iv = {
   // tab 下方每类的一句副标题
   blurb: {
     all: {
-      zh: "14 道高频题，按“基础 → 系统 → 进阶”排好，从头过一遍。",
-      en: "14 common questions, ordered fundamentals → system → advanced. Read them top to bottom.",
+      zh: "26 道高频题，按“基础 → 系统 → 进阶”排好，从头过一遍。",
+      en: "26 common questions, ordered fundamentals → system → advanced. Read them top to bottom.",
     },
     fundamentals: {
       zh: "先能一句话讲清 Redis 是什么、为什么快——最容易被追问的地方。",
@@ -505,6 +505,388 @@ export const questions: QA[] = [
         "requests; the gain only applies to requests that can hit the cache, not every first request. If you don’t have " +
         "real measurements, do not invent p50/p95 on the spot — drop the 40% from your resume instead. “How did you measure " +
         "it?” is where made-up numbers collapse; honesty scores points. Every number on your resume has to survive this question.",
+    },
+  },
+  {
+    id: "rdb-vs-aof",
+    category: "advanced",
+    q: {
+      zh: "RDB vs AOF — how does Redis persist data?（RDB 和 AOF 有什么区别？）",
+      en: "RDB vs AOF — how does Redis persist data?",
+    },
+    answer: {
+      zh:
+        "Redis has two persistence options. RDB takes point-in-time snapshots of the whole dataset — the file is compact " +
+        "and restores fast, but if the process crashes between snapshots you lose everything since the last one. AOF " +
+        "instead logs every write command; with appendfsync everysec, the default, you lose at most about a second of " +
+        "writes, but the file is larger and replay on restart is slower. In production people often run AOF everysec, or a " +
+        "hybrid of RDB plus AOF, to balance durability and restart speed. Either way, Redis still isn’t the " +
+        "[[sourceoftruth:source of truth]] — the database is.",
+      en:
+        "Redis has two persistence options. RDB takes point-in-time snapshots of the whole dataset — the file is compact " +
+        "and restores fast, but if the process crashes between snapshots you lose everything since the last one. AOF " +
+        "instead logs every write command; with appendfsync everysec, the default, you lose at most about a second of " +
+        "writes, but the file is larger and replay on restart is slower. In production people often run AOF everysec, or a " +
+        "hybrid of RDB plus AOF, to balance durability and restart speed. Either way, Redis still isn’t the " +
+        "[[sourceoftruth:source of truth]] — the database is.",
+    },
+    note: {
+      zh:
+        "先分清两种机制：RDB=内存快照（紧凑、恢复快，但两次快照间宕机会丢数据）；AOF=记录每条写命令（appendfsync " +
+        "everysec 是默认、最多丢约 1 秒，但文件大、恢复慢）。采分点：说出 everysec 是默认、生产常用 AOF everysec 或 " +
+        "RDB+AOF 混合持久化。别背成“AOF 一定比 RDB 好”——是权衡。收口仍要表态：Redis 不是真相来源。",
+      en:
+        "Distinguish the two: RDB = memory snapshot (compact, fast restore, but loses data between snapshots); AOF = logs " +
+        "every write (appendfsync everysec loses ~1s, but bigger file and slower replay). Scoring points: name everysec as " +
+        "the default and mention AOF everysec or a hybrid RDB+AOF in production. Don’t claim AOF is simply better — it’s a " +
+        "trade-off. Close by restating Redis isn’t the source of truth.",
+    },
+  },
+  {
+    id: "expire-deletion",
+    category: "advanced",
+    q: {
+      zh: "How does Redis delete expired keys?（过期的 key 是怎么删的？）",
+      en: "How does Redis delete expired keys?",
+    },
+    answer: {
+      zh:
+        "Redis combines two strategies. Lazy deletion: when you access a key, it checks the [[ttl:TTL]] and deletes it " +
+        "right then if it has expired. Lazy alone would leak memory for keys nobody ever touches, so there’s also active " +
+        "expiration: a background job periodically samples a batch of keys that have a TTL and removes the expired ones. " +
+        "Redis deliberately does not attach a timer to every single key, because millions of timers would be far too " +
+        "expensive — sampling is good enough.",
+      en:
+        "Redis combines two strategies. Lazy deletion: when you access a key, it checks the [[ttl:TTL]] and deletes it " +
+        "right then if it has expired. Lazy alone would leak memory for keys nobody ever touches, so there’s also active " +
+        "expiration: a background job periodically samples a batch of keys that have a TTL and removes the expired ones. " +
+        "Redis deliberately does not attach a timer to every single key, because millions of timers would be far too " +
+        "expensive — sampling is good enough.",
+    },
+    note: {
+      zh:
+        "两种机制结合：惰性删除（访问到才检查 TTL 并删）+ 定期删除（后台随机抽一批带 TTL 的 key 删过期的）。采分点是解释" +
+        "“为什么不给每个 key 挂定时器”——开销太大。别说 Redis 到点就精确瞬删，实际是采样近似，过期 key 可能短时间仍占内存。",
+      en:
+        "Two mechanisms combined: lazy deletion (checked on access) + active sampling (a background job samples keys with a " +
+        "TTL and drops the expired ones). Scoring point: explain why there’s no per-key timer — the overhead would be huge. " +
+        "Don’t claim keys vanish the exact instant they expire; it’s approximate, and an expired key can briefly still hold memory.",
+    },
+  },
+  {
+    id: "eviction-policy",
+    category: "advanced",
+    q: {
+      zh: "What happens when memory is full?（内存满了淘汰谁？）",
+      en: "What happens when Redis runs out of memory?",
+    },
+    answer: {
+      zh:
+        "When Redis reaches the maxmemory limit, it evicts keys according to maxmemory-policy. The default is noeviction, " +
+        "which just returns errors on further writes. The main alternatives are allkeys-lru or allkeys-lfu, which can evict " +
+        "any key, and the volatile-* variants, which only evict keys that carry a [[ttl:TTL]]. LRU evicts what hasn’t been " +
+        "used recently; LFU evicts what’s used least often, which resists a one-off scan polluting the cache. Note Redis " +
+        "uses approximate LRU by sampling, not a perfect ordering. For a pure cache I’d usually pick allkeys-lru or " +
+        "allkeys-lfu.",
+      en:
+        "When Redis reaches the maxmemory limit, it evicts keys according to maxmemory-policy. The default is noeviction, " +
+        "which just returns errors on further writes. The main alternatives are allkeys-lru or allkeys-lfu, which can evict " +
+        "any key, and the volatile-* variants, which only evict keys that carry a [[ttl:TTL]]. LRU evicts what hasn’t been " +
+        "used recently; LFU evicts what’s used least often, which resists a one-off scan polluting the cache. Note Redis " +
+        "uses approximate LRU by sampling, not a perfect ordering. For a pure cache I’d usually pick allkeys-lru or " +
+        "allkeys-lfu.",
+    },
+    note: {
+      zh:
+        "先说触发点（到 maxmemory 按 maxmemory-policy 淘汰）。采分点：noeviction 是默认（写报错）、allkeys-* vs volatile-*" +
+        "（后者只淘汰设了 TTL 的）、LRU（最近用没用）vs LFU（用得频不频、更抗偶发大扫描）。补一句“Redis 是近似 LRU（采样）”" +
+        "显得懂细节。纯缓存常选 allkeys-lru/lfu。",
+      en:
+        "Start with the trigger (at maxmemory, evict per maxmemory-policy). Scoring points: noeviction is the default (writes " +
+        "error), allkeys-* vs volatile-* (the latter only evicts keys with a TTL), LRU (recency) vs LFU (frequency, resists a " +
+        "one-off scan). Adding “approximate LRU via sampling” shows depth. For a pure cache, allkeys-lru/lfu is the common pick.",
+    },
+  },
+  {
+    id: "replication-sentinel-cluster",
+    category: "advanced",
+    q: {
+      zh: "Replication vs Sentinel vs Cluster?（主从、哨兵、集群的区别？）",
+      en: "What’s the difference between replication, Sentinel, and Cluster?",
+    },
+    answer: {
+      zh:
+        "These solve different problems. Replication gives you read scaling: replicas copy the master, but replication is " +
+        "asynchronous, so a replica can serve slightly stale data. Sentinel adds high availability — it monitors the master " +
+        "and, if it dies, automatically promotes a replica and fails over. Cluster is about horizontal scale: it shards data " +
+        "across 16384 hash slots spread over multiple masters. The clean distinction is: Sentinel is HA without sharding, " +
+        "Cluster is sharding plus HA.",
+      en:
+        "These solve different problems. Replication gives you read scaling: replicas copy the master, but replication is " +
+        "asynchronous, so a replica can serve slightly stale data. Sentinel adds high availability — it monitors the master " +
+        "and, if it dies, automatically promotes a replica and fails over. Cluster is about horizontal scale: it shards data " +
+        "across 16384 hash slots spread over multiple masters. The clean distinction is: Sentinel is HA without sharding, " +
+        "Cluster is sharding plus HA.",
+    },
+    note: {
+      zh:
+        "三者别混：主从=读扩展（异步复制→从库可能读到旧数据）；哨兵=监控+主挂了自动故障转移（高可用，不分片）；集群=16384 " +
+        "个哈希槽分片（横向扩容+高可用）。采分点就是这句对比：哨兵=HA 不分片，集群=分片+HA。能提一句“异步复制导致主从延迟”加分。",
+      en:
+        "Keep them distinct: replication = read scaling (async → replicas can be stale); Sentinel = monitoring + automatic " +
+        "failover (HA, no sharding); Cluster = 16384 hash slots for sharding (horizontal scale + HA). The scoring line is the " +
+        "contrast: Sentinel is HA without sharding, Cluster is sharding plus HA. Mentioning replication lag from async " +
+        "replication is a bonus.",
+    },
+  },
+  {
+    id: "transactions",
+    category: "advanced",
+    q: {
+      zh: "Does Redis have transactions?（Redis 有事务吗？）",
+      en: "Does Redis have transactions?",
+    },
+    answer: {
+      zh:
+        "It does, but not in the SQL sense. MULTI queues commands and EXEC runs them in order, as a unit, without another " +
+        "client’s commands interleaving. The big caveat is there’s no rollback: if one command fails at runtime, the others " +
+        "still execute. WATCH gives you optimistic locking — EXEC aborts if a watched key changed in the meantime. And when " +
+        "you need real atomic multi-step logic, you use a Lua script, which runs [[atomic:atomically]] on the single thread.",
+      en:
+        "It does, but not in the SQL sense. MULTI queues commands and EXEC runs them in order, as a unit, without another " +
+        "client’s commands interleaving. The big caveat is there’s no rollback: if one command fails at runtime, the others " +
+        "still execute. WATCH gives you optimistic locking — EXEC aborts if a watched key changed in the meantime. And when " +
+        "you need real atomic multi-step logic, you use a Lua script, which runs [[atomic:atomically]] on the single thread.",
+    },
+    note: {
+      zh:
+        "先肯定“有事务”，但立刻点出和 SQL 不同：MULTI/EXEC 只保证排队按序、不被打断，没有回滚（某条运行时出错其余照跑）。" +
+        "采分点：WATCH=乐观锁、复杂原子逻辑用 Lua 脚本。别说“Redis 事务能回滚”——这是高频翻车点。",
+      en:
+        "Confirm “yes, transactions exist” but immediately flag the difference from SQL: MULTI/EXEC only guarantee ordered, " +
+        "uninterrupted execution, with no rollback (a runtime error doesn’t undo the rest). Scoring points: WATCH = optimistic " +
+        "lock, and Lua for real atomic logic. Never say Redis transactions roll back — that’s a common trip-up.",
+    },
+  },
+  {
+    id: "pipeline-vs-transaction",
+    category: "advanced",
+    q: {
+      zh: "Pipeline vs transaction?（Pipeline 和事务有什么区别？）",
+      en: "What’s the difference between a pipeline and a transaction?",
+    },
+    answer: {
+      zh:
+        "They’re often confused but do different things. A pipeline is purely a network optimization: you send many commands " +
+        "in one batch and read the replies together, cutting round-trip time (RTT). It does not make them [[atomic:atomic]] — " +
+        "another client’s commands can still interleave with yours. A transaction, MULTI/EXEC, guarantees the batch runs in " +
+        "order without interruption. So pipelining is about throughput and RTT; a transaction is about atomicity. You can " +
+        "even pipeline a MULTI/EXEC block to get both.",
+      en:
+        "They’re often confused but do different things. A pipeline is purely a network optimization: you send many commands " +
+        "in one batch and read the replies together, cutting round-trip time (RTT). It does not make them [[atomic:atomic]] — " +
+        "another client’s commands can still interleave with yours. A transaction, MULTI/EXEC, guarantees the batch runs in " +
+        "order without interruption. So pipelining is about throughput and RTT; a transaction is about atomicity. You can " +
+        "even pipeline a MULTI/EXEC block to get both.",
+    },
+    note: {
+      zh:
+        "核心区别：pipeline=一次发多条一次收、省网络往返(RTT)，不保证原子、中间可被别的客户端命令穿插；事务(MULTI/EXEC)=" +
+        "保证有序不被打断。采分点是别把两者混为一谈——一个解决吞吐/延迟，一个解决原子性。能说“可以把 MULTI/EXEC 也放进 " +
+        "pipeline”算加分。",
+      en:
+        "Core difference: a pipeline batches sends/receives to save RTT but is not atomic (other clients can interleave); a " +
+        "transaction (MULTI/EXEC) guarantees ordered, uninterrupted execution. Scoring point: don’t conflate them — one is " +
+        "throughput/latency, the other is atomicity. Noting you can pipeline a MULTI/EXEC block is a bonus.",
+    },
+  },
+  {
+    id: "distributed-lock",
+    category: "advanced",
+    q: {
+      zh: "How would you build a distributed lock with Redis?（用 Redis 怎么做分布式锁？）",
+      en: "How would you build a distributed lock with Redis?",
+    },
+    answer: {
+      zh:
+        "The basic pattern is [[setnx:SET key <unique-value> NX EX <ttl>]] — NX means only one client can acquire it. Two " +
+        "things matter. First, when you release, don’t just DEL: run a small Lua script that checks the value is yours before " +
+        "deleting, so you never release someone else’s lock. Second, the TTL prevents a dead client from holding the lock " +
+        "forever, but if your work outlives the TTL you need a watchdog to renew it. For multi-master setups there’s the " +
+        "Redlock algorithm, though it’s debated — Kleppmann argued it isn’t safe under clock drift and GC pauses. Being able " +
+        "to say “I know Redlock and the controversy” is a plus.",
+      en:
+        "The basic pattern is [[setnx:SET key <unique-value> NX EX <ttl>]] — NX means only one client can acquire it. Two " +
+        "things matter. First, when you release, don’t just DEL: run a small Lua script that checks the value is yours before " +
+        "deleting, so you never release someone else’s lock. Second, the TTL prevents a dead client from holding the lock " +
+        "forever, but if your work outlives the TTL you need a watchdog to renew it. For multi-master setups there’s the " +
+        "Redlock algorithm, though it’s debated — Kleppmann argued it isn’t safe under clock drift and GC pauses. Being able " +
+        "to say “I know Redlock and the controversy” is a plus.",
+    },
+    note: {
+      zh:
+        "采分点分三层：加锁用 SET key 唯一值 NX EX ttl；释放要用 Lua 先校验 value 是自己的再删（避免误删别人的锁）；ttl 防死锁" +
+        "但业务超时要看门狗续期。能说出 Redlock 及 Kleppmann 的质疑（时钟漂移/GC 停顿）是加分。别把分布式锁说得绝对安全——它有边界。",
+      en:
+        "Three scoring layers: acquire with SET key <unique> NX EX ttl; release via a Lua check-value-then-delete (never delete " +
+        "someone else’s lock); TTL avoids deadlock but a job that outlives it needs a watchdog to renew. Bonus: mention Redlock " +
+        "and Kleppmann’s critique (clock drift / GC pauses). Don’t present the lock as absolutely safe — it has limits.",
+    },
+  },
+  {
+    id: "cache-penetration",
+    category: "advanced",
+    q: {
+      zh: "What is cache penetration?（缓存穿透是什么？）",
+      en: "What is cache penetration?",
+    },
+    answer: {
+      zh:
+        "Cache penetration is when requests keep asking for data that doesn’t exist anywhere — every lookup misses the cache " +
+        "and falls through to the database, and an attacker can weaponize it by hammering random non-existent keys. The " +
+        "fixes: cache the empty result with a short [[ttl:TTL]] so repeats stop at the cache, put a Bloom filter in front to " +
+        "reject keys that definitely don’t exist, and validate inputs so obviously bogus requests never reach the DB.",
+      en:
+        "Cache penetration is when requests keep asking for data that doesn’t exist anywhere — every lookup misses the cache " +
+        "and falls through to the database, and an attacker can weaponize it by hammering random non-existent keys. The " +
+        "fixes: cache the empty result with a short [[ttl:TTL]] so repeats stop at the cache, put a Bloom filter in front to " +
+        "reject keys that definitely don’t exist, and validate inputs so obviously bogus requests never reach the DB.",
+    },
+    note: {
+      zh:
+        "先讲现象：查根本不存在的数据，缓存永远 miss、每次穿透到 DB，可被恶意刷。采分点三个解法：缓存空值（短 TTL）+ 布隆" +
+        "过滤器挡掉一定不存在的 key + 参数校验。注意和“击穿”“雪崩”区分——穿透查的是不存在的数据。",
+      en:
+        "Describe it: querying data that doesn’t exist, so the cache always misses and every request falls through to the DB — " +
+        "abusable by attackers. Three fixes: cache the null (short TTL) + a Bloom filter to reject definitely-missing keys + " +
+        "input validation. Distinguish it from breakdown and avalanche — penetration is about non-existent data.",
+    },
+  },
+  {
+    id: "cache-breakdown",
+    category: "advanced",
+    q: {
+      zh: "What is hot-key breakdown?（缓存击穿是什么？）",
+      en: "What is hot-key cache breakdown?",
+    },
+    answer: {
+      zh:
+        "Cache breakdown is the single-hot-key version of a [[stampede:stampede]]: one very popular key expires and, in that " +
+        "instant, a flood of concurrent requests all miss and hit the database together. The fixes: a mutex or single-flight " +
+        "so only one request rebuilds the entry while the rest wait, logical expiration where you serve slightly stale data " +
+        "and rebuild asynchronously, or simply never expiring the hottest keys.",
+      en:
+        "Cache breakdown is the single-hot-key version of a [[stampede:stampede]]: one very popular key expires and, in that " +
+        "instant, a flood of concurrent requests all miss and hit the database together. The fixes: a mutex or single-flight " +
+        "so only one request rebuilds the entry while the rest wait, logical expiration where you serve slightly stale data " +
+        "and rebuild asynchronously, or simply never expiring the hottest keys.",
+    },
+    note: {
+      zh:
+        "和穿透区分：击穿查的是存在的热点 key，只是恰好过期的瞬间大量并发一起打 DB。采分点三个解法：互斥锁/单飞（只放一个去" +
+        "重建）、逻辑过期（异步重建）、热点 key 不过期。能点出“单个热 key 的 stampede”这层关系加分。",
+      en:
+        "Distinguish from penetration: breakdown is a hot key that exists but just expired, so a burst of concurrency hits the " +
+        "DB at once. Three fixes: mutex/single-flight (one rebuilder), logical expiration (async rebuild), or never expiring the " +
+        "hottest keys. Framing it as a single-hot-key stampede is a plus.",
+    },
+  },
+  {
+    id: "cache-avalanche",
+    category: "advanced",
+    q: {
+      zh: "What is a cache avalanche?（缓存雪崩是什么？）",
+      en: "What is a cache avalanche?",
+    },
+    answer: {
+      zh:
+        "A cache avalanche is the large-scale version: a huge number of keys expire at the same moment, or Redis itself goes " +
+        "down, and the resulting flood of requests overwhelms the database. The fixes: add random jitter to TTLs so keys " +
+        "don’t all expire together, use multi-level caching, apply rate limiting and circuit breakers to shed load, and run " +
+        "Redis in a highly available setup so it isn’t a single point of failure.",
+      en:
+        "A cache avalanche is the large-scale version: a huge number of keys expire at the same moment, or Redis itself goes " +
+        "down, and the resulting flood of requests overwhelms the database. The fixes: add random jitter to TTLs so keys " +
+        "don’t all expire together, use multi-level caching, apply rate limiting and circuit breakers to shed load, and run " +
+        "Redis in a highly available setup so it isn’t a single point of failure.",
+    },
+    note: {
+      zh:
+        "和击穿的区别是规模：雪崩是大量 key 同时过期、或 Redis 整个宕机，请求洪流压垮 DB。采分点：TTL 加随机抖动（避免同时" +
+        "过期）、多级缓存、限流熔断降级、Redis 高可用别单点。三大缓存问题（穿透/击穿/雪崩）能一次讲清是很强的信号。",
+      en:
+        "Difference from breakdown is scale: avalanche is many keys expiring together, or Redis itself down, flooding the DB. " +
+        "Fixes: TTL jitter (avoid synchronized expiry), multi-level cache, rate limiting / circuit breaking, and HA Redis so it " +
+        "isn’t a single point of failure. Explaining the trio (penetration / breakdown / avalanche) cleanly is a strong signal.",
+    },
+  },
+  {
+    id: "cache-consistency",
+    category: "advanced",
+    q: {
+      zh: "How do you keep the database and cache consistent?（数据库和缓存怎么保证一致？）",
+      en: "How do you keep the database and the cache consistent?",
+    },
+    answer: {
+      zh:
+        "There’s no perfect strong consistency once you add a cache — you aim for eventual consistency. Under " +
+        "[[cacheaside:cache-aside]] the common rule is: update the database first, then delete the cache key, not update it — " +
+        "deleting avoids two concurrent writers leaving a wrong value behind. Even then a rare interleaving can briefly serve " +
+        "stale data, so some teams do a delayed double-delete: delete after the write, then delete again a moment later. For " +
+        "something stronger you can subscribe to the [[mysql:database]] binlog with a tool like Canal and invalidate " +
+        "asynchronously, plus a short backstop [[ttl:TTL]] on the cache. The honest stance: don’t chase strong consistency — " +
+        "if you truly need it, don’t put a cache in front.",
+      en:
+        "There’s no perfect strong consistency once you add a cache — you aim for eventual consistency. Under " +
+        "[[cacheaside:cache-aside]] the common rule is: update the database first, then delete the cache key, not update it — " +
+        "deleting avoids two concurrent writers leaving a wrong value behind. Even then a rare interleaving can briefly serve " +
+        "stale data, so some teams do a delayed double-delete: delete after the write, then delete again a moment later. For " +
+        "something stronger you can subscribe to the [[mysql:database]] binlog with a tool like Canal and invalidate " +
+        "asynchronously, plus a short backstop [[ttl:TTL]] on the cache. The honest stance: don’t chase strong consistency — " +
+        "if you truly need it, don’t put a cache in front.",
+    },
+    note: {
+      zh:
+        "采分点：Cache-Aside 下“先更新数据库、再删缓存”（删而不是更新，避免并发覆盖留脏值）；极端时序仍可能短暂不一致→" +
+        "延迟双删；更强可订阅 binlog(canal) 异步删缓存 + 短 TTL 兜底。最重要的表态：别追求强一致——要强一致就别加缓存。" +
+        "这条最能体现你懂权衡、不过度包装。",
+      en:
+        "Scoring points: under cache-aside, “update DB first, then delete the cache” (delete, not update, to avoid concurrent " +
+        "writers leaving a stale value); rare interleavings still allow brief staleness → delayed double-delete; stronger " +
+        "still, subscribe to the binlog (Canal) and invalidate async, with a short backstop TTL. The key stance: don’t chase " +
+        "strong consistency — if you truly need it, don’t add a cache. This shows you understand the trade-off.",
+    },
+  },
+  {
+    id: "singlethread-multithread",
+    category: "advanced",
+    q: {
+      zh: "Redis is single-threaded — so why is 6.0 multithreaded?（单线程为什么还快？6.0 的多线程是什么？）",
+      en: "If Redis is single-threaded, why is it fast — and what did 6.0’s multithreading change?",
+    },
+    answer: {
+      zh:
+        "Command execution is [[singlethread:single-threaded]], and that’s a feature, not a limitation: with one thread " +
+        "there are no locks and no context switching, and since everything is in memory it’s still extremely fast — much " +
+        "like Node’s event loop. Redis 6.0 added multithreading, but only for network I/O — reading and writing sockets and " +
+        "parsing the protocol. The actual command execution stays single-threaded, which is why data operations still need " +
+        "no locking.",
+      en:
+        "Command execution is [[singlethread:single-threaded]], and that’s a feature, not a limitation: with one thread " +
+        "there are no locks and no context switching, and since everything is in memory it’s still extremely fast — much " +
+        "like Node’s event loop. Redis 6.0 added multithreading, but only for network I/O — reading and writing sockets and " +
+        "parsing the protocol. The actual command execution stays single-threaded, which is why data operations still need " +
+        "no locking.",
+    },
+    note: {
+      zh:
+        "采分点：核心命令执行仍是单线程（免加锁、免上下文切换、内存够快）。关键澄清：6.0+ 的多线程只是网络 I/O（读写 socket、" +
+        "协议解析）多线程，命令执行仍单线程，所以数据操作依然无需加锁。别误说“Redis 6.0 变成多线程执行命令了”——这是高频误区。",
+      en:
+        "Scoring points: core command execution is still single-threaded (no locks, no context switches, fast in memory). Key " +
+        "clarification: 6.0+ multithreading is only for network I/O (socket read/write, protocol parsing); command execution " +
+        "stays single-threaded, so data ops still need no locking. Don’t say “Redis 6.0 executes commands multithreaded” — a " +
+        "common misconception.",
     },
   },
 ];

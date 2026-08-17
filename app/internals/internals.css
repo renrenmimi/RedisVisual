@@ -1,0 +1,1362 @@
+/* ================================================================
+   第 5 站「生产机制」· 专属样式
+   所有类名带前缀 in7- 以隔离其它站。颜色一律走主题变量。
+   结构：tab 切换 + 详情卡 + 对比表 + 面试深挖手风琴 + 每 tab 一段循环动画。
+   动画容器由页面用 key=tab.id 重挂载，切 tab 会重新入场并重播。
+   ================================================================ */
+
+.in7-root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- tab 切换 ---------- */
+
+.in7-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 4px 0 18px;
+}
+
+.in7-tab {
+  flex: 1;
+  min-width: 170px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  padding: 11px 15px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text-2);
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.in7-tab:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.in7-tab.on {
+  border-color: transparent;
+  background: var(--accent-bg);
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 8px 22px var(--accent-glow);
+}
+
+.in7-tab-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.in7-tab-ix {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+}
+
+.in7-tab-name {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.in7-tab.on .in7-tab-name {
+  color: var(--accent-text);
+}
+
+.in7-tab-kicker {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+
+/* ---------- 该 tab 正文容器 ---------- */
+
+.in7-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.in7-lede {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-2);
+  padding: 13px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+  border-radius: 0 12px 12px 0;
+}
+
+/* ---------- 动画舞台 ---------- */
+
+.in7-stage {
+  min-height: 300px;
+  width: 100%;
+}
+
+/* ---------- 分段小标题 ---------- */
+
+.in7-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.in7-sec-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-2);
+  text-transform: uppercase;
+  font-family: var(--mono);
+}
+
+/* ---------- 详情：机制卡 ---------- */
+
+.in7-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.in7-point {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px 17px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  border-left: 3px solid var(--border-strong);
+}
+
+.in7-point.tone-accent {
+  border-left-color: var(--accent);
+}
+.in7-point.tone-teal {
+  border-left-color: var(--teal);
+}
+.in7-point.tone-amber {
+  border-left-color: var(--amber);
+}
+
+.in7-point-head {
+  margin: 0 0 7px;
+  font-size: 14.5px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.in7-point-body {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.68;
+  color: var(--text-2);
+}
+
+.in7-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.in7-cmd {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--accent-text);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+/* ---------- 对比表 ---------- */
+
+.in7-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  background: var(--panel);
+}
+
+.in7-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 460px;
+}
+
+.in7-table th,
+.in7-table td {
+  padding: 10px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+.in7-table thead th {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  border-bottom: 1px solid var(--accent-glow);
+  white-space: nowrap;
+}
+
+.in7-table thead th.in7-th-dim {
+  color: var(--text-3);
+  background: var(--panel-2);
+}
+
+.in7-table tbody tr:last-child th,
+.in7-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.in7-table tbody tr:hover td,
+.in7-table tbody tr:hover .in7-td-label {
+  background: var(--panel-2);
+}
+
+.in7-td-label {
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel-2);
+  white-space: nowrap;
+}
+
+.in7-td-label.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+.in7-table td {
+  color: var(--text-2);
+}
+
+/* ---------- 面试深挖手风琴 ---------- */
+
+.in7-probes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.in7-probe {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.in7-probe.open {
+  border-color: var(--amber);
+}
+
+.in7-probe-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 16px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text);
+}
+
+.in7-probe-ix {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--amber-text);
+  background: var(--amber-bg);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.in7-probe-qtext {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.in7-caret {
+  flex-shrink: 0;
+  color: var(--text-3);
+  transition: transform 0.25s ease;
+}
+
+.in7-probe.open .in7-caret {
+  transform: rotate(90deg);
+  color: var(--amber);
+}
+
+/* grid-rows 0fr→1fr 平滑展开，无需测高度 */
+.in7-probe-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.in7-probe.open .in7-probe-a {
+  grid-template-rows: 1fr;
+}
+
+.in7-probe-clip {
+  overflow: hidden;
+}
+
+.in7-probe-body {
+  padding: 0 16px 15px;
+  border-top: 1px dashed var(--border);
+}
+
+.in7-probe-atag {
+  display: inline-block;
+  margin: 12px 0 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-text);
+}
+
+.in7-probe-atext {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: var(--text-2);
+}
+
+/* ---------- 底部导航 ---------- */
+
+.in7-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+/* ================================================================
+   动画通用积木
+   ================================================================ */
+
+.in7-col {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 14px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel-2);
+}
+
+.in7-col-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+
+.in7-col-tag.accent {
+  color: var(--accent-text);
+  background: var(--accent-bg);
+}
+
+.in7-col-tag.teal {
+  color: var(--teal-text);
+  background: var(--teal-bg);
+}
+
+.in7-col-note {
+  margin-top: auto;
+  font-size: 11.5px;
+  color: var(--text-3);
+  text-align: center;
+  font-family: var(--mono);
+}
+
+.in7-varrow {
+  color: var(--text-3);
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ---------- Tab 1：持久化 ---------- */
+
+.in7-persist {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* RDB 内存块 + 快照闪光 */
+.in7-mem {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  padding: 9px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.in7-mem-cell {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent-bg), var(--panel-2));
+  border: 1px solid var(--accent-glow);
+}
+
+.in7-snap {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  animation: in7Snap 3.6s ease-out infinite;
+}
+
+@keyframes in7Snap {
+  0%,
+  4% {
+    opacity: 0;
+  }
+  7% {
+    opacity: 0.82;
+  }
+  16% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.in7-shutter {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 16px;
+  animation: in7Shutter 3.6s ease-out infinite;
+}
+
+@keyframes in7Shutter {
+  0%,
+  4% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  8% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  20%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+.in7-file {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--accent-glow);
+  background: var(--panel);
+  animation: in7FilePulse 3.6s ease-out infinite;
+}
+
+@keyframes in7FilePulse {
+  0%,
+  10% {
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+  16% {
+    box-shadow: 0 0 18px 0 var(--accent-glow);
+    transform: scale(1.06);
+  }
+  40%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+}
+
+/* AOF 日志卷 */
+.in7-log {
+  width: 100%;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  min-height: 132px;
+}
+
+.in7-log-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--code-text);
+  opacity: 0;
+  animation: in7Append 3s ease-out infinite;
+}
+
+.in7-log-caret {
+  color: var(--teal-text);
+  font-style: normal;
+}
+
+@keyframes in7Append {
+  0% {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  14% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Tab 2：过期淘汰 ---------- */
+
+.in7-evict {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+}
+
+.in7-membar {
+  position: relative;
+  width: 100%;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.in7-membar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  border-radius: 8px 0 0 8px;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent-2));
+  animation: in7Fill 4.5s ease-in-out infinite;
+}
+
+@keyframes in7Fill {
+  0% {
+    width: 50%;
+  }
+  45% {
+    width: 95%;
+  }
+  60% {
+    width: 95%;
+  }
+  70% {
+    width: 66%;
+  }
+  100% {
+    width: 50%;
+  }
+}
+
+.in7-membar-cap {
+  position: absolute;
+  right: 4%;
+  top: -3px;
+  bottom: -3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.in7-membar-cap i {
+  width: 2px;
+  flex: 1;
+  background: var(--amber);
+}
+
+.in7-membar-cap span {
+  position: absolute;
+  top: -16px;
+  right: -6px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--amber-text);
+  white-space: nowrap;
+}
+
+.in7-keys {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.in7-key {
+  position: relative;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text-2);
+}
+
+.in7-key.cold {
+  border-color: var(--err);
+  color: var(--err);
+  background: var(--err-bg);
+  animation: in7Evict 4.5s ease-in-out infinite;
+}
+
+@keyframes in7Evict {
+  0%,
+  55% {
+    opacity: 1;
+    transform: none;
+  }
+  64% {
+    opacity: 0;
+    transform: translateX(-22px) scale(0.75);
+  }
+  73% {
+    opacity: 0;
+    transform: translateX(-22px) scale(0.75);
+  }
+  74% {
+    opacity: 0;
+    transform: none;
+  }
+  84%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.in7-key-badge {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--err);
+  background: var(--err-bg);
+  border: 1px solid var(--err);
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+.in7-evict-note {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+  font-family: var(--mono);
+}
+
+/* ---------- Tab 3：高可用 ---------- */
+
+.in7-ha {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* 复制 + 故障转移 */
+.in7-repl {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 12px 30px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+}
+
+.in7-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 96px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.in7-node-ico {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.in7-node-nm {
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.in7-master {
+  border-color: var(--accent-glow);
+  background: var(--accent-bg);
+  animation: in7MasterDown 6s ease-in-out infinite;
+}
+
+@keyframes in7MasterDown {
+  0%,
+  50% {
+    border-color: var(--accent-glow);
+    background: var(--accent-bg);
+    opacity: 1;
+  }
+  56% {
+    background: var(--err-bg);
+    transform: translateX(-3px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+  64%,
+  100% {
+    border-color: var(--err);
+    background: var(--err-bg);
+    opacity: 0.55;
+    transform: none;
+  }
+}
+
+.in7-master .in7-node-ico {
+  animation: in7MasterIco 6s ease-in-out infinite;
+}
+
+@keyframes in7MasterIco {
+  0%,
+  55% {
+    color: var(--accent);
+  }
+  64%,
+  100% {
+    color: var(--err);
+  }
+}
+
+.in7-down-badge {
+  position: absolute;
+  top: -9px;
+  right: -8px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--err);
+  border-radius: 999px;
+  padding: 1px 7px;
+  opacity: 0;
+  animation: in7ShowLate 6s ease-out infinite;
+}
+
+@keyframes in7ShowLate {
+  0%,
+  52% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.in7-repl-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 54px;
+}
+
+.in7-repl-line {
+  height: 3px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent) 0 6px,
+    transparent 6px 12px
+  );
+  background-size: 24px 3px;
+  animation:
+    in7Dash 0.7s linear infinite,
+    in7ReplFade 6s ease-in-out infinite;
+}
+
+.in7-repl-line.d1 {
+  animation-delay: 0s, 0s;
+  opacity: 0.85;
+}
+
+@keyframes in7Dash {
+  to {
+    background-position: 24px 0;
+  }
+}
+
+@keyframes in7ReplFade {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  60%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+.in7-replicas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.in7-replica.promote {
+  animation: in7Promote 6s ease-in-out infinite;
+}
+
+@keyframes in7Promote {
+  0%,
+  70% {
+    border-color: var(--border);
+    background: var(--panel);
+  }
+  78% {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    transform: scale(1.06);
+  }
+  84%,
+  100% {
+    border-color: var(--accent-glow);
+    background: var(--accent-bg);
+    transform: scale(1);
+  }
+}
+
+.in7-new-badge {
+  position: absolute;
+  top: -9px;
+  right: -8px;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 1px 7px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: in7ShowVeryLate 6s ease-out infinite;
+}
+
+@keyframes in7ShowVeryLate {
+  0%,
+  74% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  82% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.in7-sentinel {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+  animation: in7Sentinel 6s ease-in-out infinite;
+}
+
+@keyframes in7Sentinel {
+  0%,
+  55% {
+    color: var(--text-3);
+    text-shadow: none;
+  }
+  62%,
+  74% {
+    color: var(--amber-text);
+    text-shadow: 0 0 10px var(--amber-bg);
+  }
+  100% {
+    color: var(--text-3);
+  }
+}
+
+/* 集群分槽 */
+.in7-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.in7-cluster-key {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.in7-cluster-pkt {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 2px 8px;
+  animation: in7Travel 3.5s ease-in-out infinite;
+}
+
+@keyframes in7Travel {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateX(70px);
+    opacity: 1;
+  }
+  70%,
+  100% {
+    transform: translateX(70px);
+    opacity: 0;
+  }
+}
+
+.in7-cluster-nodes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.in7-cnode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 108px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.in7-cnode.land {
+  animation: in7Land 3.5s ease-in-out infinite;
+}
+
+@keyframes in7Land {
+  0%,
+  50% {
+    border-color: var(--border);
+    background: var(--panel);
+    transform: none;
+  }
+  58% {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    transform: translateY(-3px);
+  }
+  74%,
+  100% {
+    border-color: var(--border);
+    background: var(--panel);
+    transform: none;
+  }
+}
+
+.in7-cnode-nm {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.in7-cnode-slots {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+/* ---------- Tab 4：事务 ---------- */
+
+.in7-txn {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* MULTI 队列 */
+.in7-queue {
+  position: relative;
+  width: 100%;
+  max-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  min-height: 168px;
+}
+
+.in7-queue-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-text);
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.in7-q-cmd {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  opacity: 0;
+  animation: in7Drop 4s ease-out infinite;
+}
+
+.in7-q-flag {
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--teal-text);
+  background: var(--teal-bg);
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+@keyframes in7Drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.92);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.in7-exec {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  padding: 6px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  animation: in7Exec 4s ease-out infinite;
+}
+
+@keyframes in7Exec {
+  0%,
+  60% {
+    opacity: 0.4;
+    box-shadow: 0 0 0 0 transparent;
+  }
+  68% {
+    opacity: 1;
+    box-shadow: 0 0 20px 0 var(--accent-glow);
+    transform: scale(1.04);
+  }
+  80%,
+  100% {
+    opacity: 0.75;
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+}
+
+/* Pipeline 批量收发 */
+.in7-pipe {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.in7-pipe-end {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--text-2);
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  text-align: center;
+  min-width: 58px;
+}
+
+.in7-pipe-wire {
+  position: relative;
+  flex: 1;
+  height: 52px;
+}
+
+.in7-pipe-wire::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--border-strong) 0 5px,
+    transparent 5px 10px
+  );
+}
+
+.in7-pipe-batch {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  letter-spacing: -1px;
+  font-size: 12px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.in7-pipe-batch.send {
+  color: var(--accent);
+  animation: in7PipeSend 2.6s ease-in-out infinite;
+}
+
+.in7-pipe-batch.recv {
+  top: 70%;
+  color: var(--teal);
+  animation: in7PipeRecv 2.6s ease-in-out infinite;
+}
+
+@keyframes in7PipeSend {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  44% {
+    left: 100%;
+    opacity: 1;
+  }
+  50%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes in7PipeRecv {
+  0%,
+  50% {
+    left: 100%;
+    opacity: 0;
+  }
+  58% {
+    opacity: 1;
+  }
+  92% {
+    left: 0;
+    opacity: 1;
+  }
+  100% {
+    left: 0;
+    opacity: 0;
+  }
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 620px) {
+  .in7-persist,
+  .in7-txn {
+    flex-direction: column;
+  }
+
+  .in7-col {
+    min-width: 0;
+  }
+
+  .in7-nav {
+    flex-direction: column-reverse;
+  }
+
+  .in7-nav .btn {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* ---------- 降低动效偏好：关掉所有循环动画，露出终态 ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .in7-snap {
+    display: none;
+  }
+
+  .in7-log-line,
+  .in7-q-cmd,
+  .in7-down-badge,
+  .in7-new-badge,
+  .in7-cluster-pkt,
+  .in7-pipe-batch.send {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .in7-pipe-batch.recv {
+    display: none;
+  }
+
+  .in7-shutter,
+  .in7-file,
+  .in7-membar-fill,
+  .in7-key.cold,
+  .in7-master,
+  .in7-master .in7-node-ico,
+  .in7-repl-line,
+  .in7-replica.promote,
+  .in7-sentinel,
+  .in7-cnode.land,
+  .in7-exec {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .in7-membar-fill {
+    width: 82%;
+  }
+
+  .in7-master {
+    opacity: 1;
+  }
+}

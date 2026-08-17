@@ -218,7 +218,7 @@ export default function ScenariosPage() {
 
       {/* 下一站 */}
       <div className="sc2-next">
-        <Link className="btn btn-primary" href="/code">
+        <Link className="btn btn-primary" href="/pitfalls">
           {t(meta.next, lang)}
         </Link>
       </div>

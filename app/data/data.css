@@ -1,0 +1,1382 @@
+/* ================================================================
+   第 2 站 · 数据结构详解（data）专属样式
+   —— 所有类名前缀 ds5-；颜色一律用 globals.css 里的 CSS 变量。
+   标签栏 = 高亮 pill；手风琴 = grid-rows 0fr→1fr；动画全是 CSS keyframes。
+   ================================================================ */
+
+/* 计数器用的整数自定义属性：让 INCR 的数字可以纯 CSS 一直 +1 跳动 */
+@property --ds5-count {
+  syntax: "<integer>";
+  initial-value: 1200;
+  inherits: false;
+}
+
+.ds5-root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 正文里的行内 `code`（反引号段 / 编码名） */
+.ds5-ic {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+/* ---------- 标签栏 ---------- */
+
+.ds5-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 5px;
+  margin: 4px 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.ds5-tab {
+  flex: 1 1 auto;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.ds5-tab:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+/* 专用类型 / 底层编码：静息态偏“分类”感（虚线描边） */
+.ds5-tab-alt {
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.ds5-tab.on {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  color: #fff;
+  box-shadow: 0 6px 18px var(--accent-glow);
+}
+
+/* ---------- 内容区容器 ---------- */
+
+.ds5-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds5-detail {
+  align-items: start;
+}
+
+.ds5-left,
+.ds5-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ds5-left .stage-panel {
+  padding: 18px;
+}
+
+.ds5-left .stage {
+  min-height: 300px;
+  gap: 20px;
+}
+
+/* 心智模型卡 */
+.ds5-model-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.74;
+  color: var(--text-2);
+}
+
+/* 命令列表 */
+.ds5-cmds,
+.ds5-uses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ds5-cmd {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ds5-cmd-code {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--code-text);
+  background: var(--code-bg);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-left: 2px solid var(--accent);
+  padding: 4px 11px;
+  border-radius: 8px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ds5-cmd-note {
+  font-size: 12.5px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* 用途要点 */
+.ds5-uses li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
+.ds5-uses li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 7px var(--teal-border);
+}
+
+/* WeShipItNow 小卡 */
+.ds5-ship {
+  border-radius: 14px;
+  padding: 13px 16px;
+}
+
+.ds5-ship-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--accent-text);
+  margin-bottom: 7px;
+}
+
+.ds5-ship-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  padding: 2px 8px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.ds5-ship-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+/* 编码正文 */
+.ds5-enc-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.72;
+  color: var(--text-2);
+}
+
+/* ---------- 深挖手风琴 ---------- */
+
+.ds5-probes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ds5-probe {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-2);
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ds5-probe.open {
+  border-color: var(--accent-glow);
+  box-shadow: 0 10px 26px var(--accent-glow);
+}
+
+.ds5-probe-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.ds5-probe-q:hover {
+  background: var(--panel-accent);
+}
+
+.ds5-probe-tag {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 3px 8px;
+  border-radius: 7px;
+}
+
+.ds5-probe-qt {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.5;
+}
+
+.ds5-probe-caret {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-3);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+}
+
+.ds5-probe.open .ds5-probe-caret {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+
+.ds5-probe-ans {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ds5-probe.open .ds5-probe-ans {
+  grid-template-rows: 1fr;
+}
+
+.ds5-probe-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ds5-probe-body {
+  padding: 2px 13px 14px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+}
+
+.ds5-probe.open .ds5-probe-body {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ds5-probe-atag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-text);
+  background: var(--teal-bg);
+  border: 1px solid var(--teal-border);
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.ds5-probe-at {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.72;
+  color: var(--text-2);
+}
+
+/* ---------- 专用类型卡片网格 ---------- */
+
+.ds5-sec-head {
+  margin-bottom: 16px;
+}
+
+.ds5-sec-head h2 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 680;
+}
+
+.ds5-sec-head p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+.ds5-sec-head-sm {
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.ds5-sec-head-sm h2 {
+  font-size: 15.5px;
+}
+
+.ds5-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.ds5-card {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 15px 16px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.ds5-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-glow);
+}
+
+.ds5-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ds5-card-name {
+  font-size: 14.5px;
+  font-weight: 680;
+}
+
+.ds5-card-based {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--teal-text);
+  background: var(--teal-bg);
+  border: 1px solid var(--teal-border);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.ds5-card-what {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.68;
+  color: var(--text-2);
+  flex: 1;
+}
+
+.ds5-card-cmds {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--code-text);
+  background: var(--code-bg);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 6px 11px;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.ds5-card-use {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.55;
+}
+
+.ds5-card-use-dot {
+  color: var(--accent);
+  font-size: 10px;
+}
+
+/* ---------- 编码对照表 ---------- */
+
+.ds5-enctable {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.ds5-encrow {
+  display: grid;
+  grid-template-columns: 130px 1fr 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-top: 1px solid var(--border);
+  animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ds5-enchead {
+  border-top: none;
+  background: var(--panel-2);
+  animation: none;
+}
+
+.ds5-enchead span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.ds5-encstar-row {
+  background: var(--accent-bg);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.ds5-enc-type {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ds5-star {
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.ds5-enc-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ds5-enc-cell .chip {
+  font-size: 11px;
+}
+
+@media (max-width: 620px) {
+  .ds5-encrow {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+  .ds5-enchead {
+    display: none;
+  }
+}
+
+/* ---------- skiplist + hashtable 双结构示意 ---------- */
+
+.ds5-zdiagram {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 760px) {
+  .ds5-zdiagram {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ds5-zbox {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 15px 16px 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ds5-zbox-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ds5-zbox-head b {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.ds5-zbadge {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.ds5-zbox-cap {
+  font-size: 11.5px;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+/* 哈希表：成员 → 分数 */
+.ds5-zhash-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ds5-zhash-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 11px;
+  border-radius: 9px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+}
+
+.ds5-zhash-row.hot {
+  border-color: var(--accent-glow);
+  background: var(--accent-bg);
+  animation: ds5-hitpulse 2.4s ease-in-out infinite;
+}
+
+.ds5-zhm {
+  color: var(--text);
+  min-width: 52px;
+}
+
+.ds5-zharrow {
+  color: var(--text-3);
+}
+
+.ds5-zhs {
+  margin-left: auto;
+  color: var(--teal-text);
+  font-weight: 600;
+}
+
+.ds5-zhash-row.hot .ds5-zhs {
+  color: var(--accent-text);
+}
+
+@keyframes ds5-hitpulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+}
+
+/* 跳表：两层节点，express 层跳着走 */
+.ds5-sk {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 6px 2px;
+}
+
+.ds5-sk-level {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: center;
+  gap: 4px;
+}
+
+.ds5-sk-level::before {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+
+.ds5-sk-express::before {
+  background: var(--accent-glow);
+}
+
+.ds5-sk-node {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  min-width: 34px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 7px;
+  border-radius: 7px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.ds5-sk-node.head,
+.ds5-sk-node.nil {
+  color: var(--text-3);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+}
+
+.ds5-sk-node.hot {
+  color: var(--accent-text);
+  border-color: var(--accent-glow);
+  background: var(--accent-bg);
+}
+
+/* express 层节点依次点亮，模拟“按分数跳查”的遍历 */
+.ds5-sk-seek {
+  animation: ds5-seek 2.4s ease-in-out infinite;
+}
+
+@keyframes ds5-seek {
+  0%,
+  60%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--border);
+  }
+  20% {
+    box-shadow: 0 0 14px var(--accent-glow);
+    border-color: var(--accent);
+  }
+}
+
+.ds5-zsame {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+/* ---------- 重点 callout ---------- */
+
+.ds5-star-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 15px 18px;
+  border-radius: 15px;
+  margin-bottom: 22px;
+}
+
+.ds5-star-ico {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--accent);
+  line-height: 1.4;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+
+.ds5-star-callout p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.74;
+  color: var(--text);
+}
+
+/* ---------- 上一站 / 下一站 ---------- */
+
+.ds5-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ================================================================
+   结构专属动画（纯 CSS）
+   reduced-motion 由 globals.css 的全局规则统一关闭。
+   ================================================================ */
+
+.ds5-anim {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ---------- string：SET 写入 + INCR 计数 ---------- */
+
+.ds5-str {
+  gap: 22px;
+}
+
+.ds5-str-set {
+  width: min(340px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.ds5-str-cmd {
+  font-size: 13.5px;
+  color: var(--code-text);
+  background: var(--code-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 14px;
+  border-radius: 10px;
+}
+
+.ds5-str-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  animation: ds5-str-write 3.2s ease-in-out infinite;
+}
+
+@keyframes ds5-str-write {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--border);
+  }
+  50% {
+    box-shadow: 0 0 22px var(--accent-glow);
+    border-color: var(--accent);
+  }
+}
+
+.ds5-str-key {
+  color: var(--accent-text);
+}
+
+.ds5-str-arrow {
+  color: var(--text-3);
+}
+
+.ds5-str-val {
+  color: var(--teal-text);
+}
+
+.ds5-str-incr {
+  width: min(340px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--accent-glow);
+  background: var(--accent-bg);
+}
+
+.ds5-str-incr-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ds5-str-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  padding: 3px 11px;
+  border-radius: 999px;
+  animation: ds5-str-pop 1.5s ease-in-out infinite;
+}
+
+@keyframes ds5-str-pop {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px var(--accent-glow);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+}
+
+.ds5-str-klabel {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.ds5-str-num {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent-text);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  counter-reset: c var(--ds5-count);
+  animation: ds5-tick 6s linear infinite;
+}
+
+.ds5-str-num::after {
+  content: counter(c);
+}
+
+@keyframes ds5-tick {
+  from {
+    --ds5-count: 1200;
+  }
+  to {
+    --ds5-count: 1268;
+  }
+}
+
+.ds5-str-atomic {
+  font-size: 12px;
+  color: var(--accent-text);
+  text-align: center;
+}
+
+/* ---------- list：无缝传送带 ---------- */
+
+.ds5-list {
+  width: min(360px, 100%);
+}
+
+.ds5-list-ends {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ds5-list-op {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-radius: 999px;
+}
+
+.ds5-list-lpush {
+  color: var(--accent-text);
+  background: var(--accent-bg);
+}
+
+.ds5-list-rpop {
+  color: var(--teal-text);
+  background: var(--teal-bg);
+}
+
+.ds5-list-lane {
+  width: 100%;
+  overflow: hidden;
+  padding: 6px 0;
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    #000 14%,
+    #000 86%,
+    transparent
+  );
+  mask: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+.ds5-list-track {
+  display: flex;
+  gap: 12px;
+  /* 尾部补一个 gap，让整条轨道正好是「两份相同序列」，-50% 位移无缝对齐 */
+  padding-right: 12px;
+  width: max-content;
+  animation: ds5-marquee 9s linear infinite;
+}
+
+@keyframes ds5-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.ds5-list-cell {
+  flex-shrink: 0;
+  width: 66px;
+  text-align: center;
+  font-size: 13px;
+  padding: 12px 0;
+  border-radius: 11px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.ds5-list-cap,
+.ds5-hash-cap,
+.ds5-set-cap,
+.ds5-zset-cap {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* ---------- hash：只改 city 字段 ---------- */
+
+.ds5-hash-card {
+  width: min(320px, 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel-2);
+  box-shadow: var(--shadow);
+  padding: 8px;
+}
+
+.ds5-hash-title {
+  font-size: 11.5px;
+  color: var(--text-3);
+  padding: 6px 10px 8px;
+  letter-spacing: 0.03em;
+}
+
+.ds5-hash-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+}
+
+.ds5-hf {
+  color: var(--accent-text);
+  min-width: 44px;
+}
+
+.ds5-hv {
+  color: var(--teal-text);
+}
+
+.ds5-hash-live {
+  position: relative;
+  animation: ds5-hashglow 4s ease-in-out infinite;
+}
+
+@keyframes ds5-hashglow {
+  0%,
+  30%,
+  70%,
+  100% {
+    background: transparent;
+    box-shadow: inset 0 0 0 0 transparent;
+  }
+  50% {
+    background: var(--accent-bg);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+}
+
+.ds5-hv-swap {
+  position: relative;
+  display: inline-block;
+  min-width: 40px;
+  height: 1.4em;
+  color: var(--teal-text);
+}
+
+.ds5-hv-a,
+.ds5-hv-b {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 600;
+}
+
+.ds5-hv-a {
+  animation: ds5-swapa 4s ease-in-out infinite;
+}
+
+.ds5-hv-b {
+  animation: ds5-swapb 4s ease-in-out infinite;
+}
+
+@keyframes ds5-swapa {
+  0%,
+  40% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  60%,
+  90% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ds5-swapb {
+  0%,
+  40% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  60%,
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.ds5-hset-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 2px 8px;
+  border-radius: 999px;
+  opacity: 0;
+  animation: ds5-hset-flash 4s ease-in-out infinite;
+}
+
+@keyframes ds5-hset-flash {
+  0%,
+  35%,
+  75%,
+  100% {
+    opacity: 0;
+  }
+  45%,
+  65% {
+    opacity: 1;
+  }
+}
+
+/* ---------- set：去重（重复元素被弹开） ---------- */
+
+.ds5-set-stage {
+  position: relative;
+  width: min(300px, 100%);
+  height: 210px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ds5-set-bag {
+  width: 100%;
+  min-height: 128px;
+  border: 2px dashed var(--border-strong);
+  border-top-color: transparent;
+  border-radius: 6px 6px 20px 20px;
+  background: var(--panel-2);
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ds5-set-bag-tag {
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+
+.ds5-set-bag-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+}
+
+.ds5-set-chip {
+  font-size: 12.5px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--teal-bg);
+  color: var(--teal-text);
+  border: 1px solid var(--teal-border);
+  animation: ds5-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.ds5-sc1 {
+  animation-delay: 0.15s;
+}
+.ds5-sc2 {
+  animation-delay: 0.4s;
+}
+.ds5-sc3 {
+  animation-delay: 0.65s;
+}
+
+@keyframes ds5-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-72px) scale(0.85);
+  }
+}
+
+/* 重复元素：反复往袋口落、被弹回并淡出 */
+.ds5-set-dup {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -34px;
+  z-index: 3;
+  font-size: 12.5px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--err-bg);
+  color: var(--err);
+  border: 1px solid var(--err);
+  white-space: nowrap;
+  animation: ds5-reject 2.8s ease-in-out infinite;
+}
+
+.ds5-set-dup i {
+  font-style: normal;
+  font-weight: 700;
+}
+
+@keyframes ds5-reject {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) rotate(0deg);
+  }
+  22% {
+    opacity: 1;
+    transform: translateY(58px) rotate(-4deg);
+  }
+  38% {
+    transform: translateY(6px) rotate(6deg);
+  }
+  52% {
+    opacity: 1;
+    transform: translateY(-14px) rotate(-3deg);
+  }
+  80% {
+    opacity: 0;
+    transform: translateY(-30px) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) rotate(0deg);
+  }
+}
+
+/* ---------- zset：新成员滑入正确排名 ---------- */
+
+.ds5-zset-board {
+  width: min(320px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ds5-zrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 11px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.ds5-zrank {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  background: var(--bg-2);
+}
+
+.ds5-zname {
+  font-weight: 600;
+}
+
+.ds5-zscore {
+  margin-left: auto;
+  color: var(--teal-text);
+  font-weight: 600;
+}
+
+/* 新成员：淡入 + 从左滑入 + 高亮，随后淡出循环 */
+.ds5-znew {
+  position: relative;
+  border-color: var(--accent-glow);
+  background: var(--accent-bg);
+  animation: ds5-zenter 5.2s ease-in-out infinite;
+}
+
+.ds5-znew .ds5-zrank {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+}
+
+.ds5-znew .ds5-zscore {
+  color: var(--accent-text);
+}
+
+.ds5-znew-tag {
+  position: absolute;
+  right: 12px;
+  top: -8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  padding: 2px 7px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+@keyframes ds5-zenter {
+  0%,
+  6% {
+    opacity: 0;
+    transform: translateX(-46px) scaleY(0.6);
+    box-shadow: 0 0 0 0 transparent;
+  }
+  22% {
+    opacity: 1;
+    transform: translateX(0) scaleY(1);
+    box-shadow: 0 0 24px var(--accent-glow);
+  }
+  30%,
+  82% {
+    opacity: 1;
+    transform: translateX(0) scaleY(1);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  94%,
+  100% {
+    opacity: 0;
+    transform: translateX(-46px) scaleY(0.6);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* 其它成员：新成员进来时下移让位，离开时回升 —— 与上面的循环同步 */
+.ds5-zr2,
+.ds5-zr3,
+.ds5-zr4 {
+  animation: ds5-zpush 5.2s ease-in-out infinite;
+}
+
+.ds5-zr3 {
+  animation-delay: 0.06s;
+}
+
+.ds5-zr4 {
+  animation-delay: 0.12s;
+}
+
+@keyframes ds5-zpush {
+  0%,
+  6% {
+    transform: translateY(-46px);
+  }
+  26%,
+  82% {
+    transform: translateY(0);
+  }
+  94%,
+  100% {
+    transform: translateY(-46px);
+  }
+}
+
+.ds5-zset-cmd {
+  font-size: 12.5px;
+  color: var(--code-text);
+  background: var(--code-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 7px 13px;
+  border-radius: 9px;
+}

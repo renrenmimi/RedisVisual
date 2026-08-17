@@ -113,7 +113,7 @@ export default function IntroPage() {
             {t(nextAction, lang)}
           </button>
         ) : (
-          <Link className="btn btn-primary" href="/scenarios">
+          <Link className="btn btn-primary" href="/data">
             {t(stage.toNext, lang)}
           </Link>
         )}

@@ -33,14 +33,14 @@ export type Scenario = {
 // ---------- 页头 + 通用小文案（本站专属，不进 i18n.tsx） ----------
 
 export const meta = {
-  title: { zh: "第 2 站 · 我们为什么用 Redis", en: "Stop 2 · Why We Use Redis" },
+  title: { zh: "第 3 站 · 我们为什么用 Redis", en: "Stop 3 · Why We Use Redis" },
   subtitle: {
     zh: "拿一个真实系统 WeShipItNow，把 Redis 的三处用法讲透——顺带教你面试怎么答。",
     en: "One real system, WeShipItNow, and the three places Redis earns its keep — plus how to talk about it in interviews.",
   },
   ivGood: { zh: "面试可以这样说", en: "In interviews, you can say" },
   ivHonest: { zh: "但要诚实 · 别过度包装", en: "But stay honest · don't oversell" },
-  next: { zh: "下一站：跟着写一遍 →", en: "Next stop: Code it yourself →" },
+  next: { zh: "下一站：缓存的坑与一致性 →", en: "Next stop: cache pitfalls & consistency →" },
   kbdStep: { zh: "推进本场景", en: "step this scenario" },
   kbdBack: { zh: "回退", en: "back" },
   autoplay: { zh: "自动播放", en: "Auto-play" },

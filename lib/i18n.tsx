@@ -62,9 +62,12 @@ export const useLang = () => useContext(LangContext);
 export const ui = {
   nav: {
     stop1: { zh: "什么是 Redis", en: "What is Redis" },
-    stop2: { zh: "我们为什么用它", en: "Why We Use It" },
-    stop3: { zh: "跟着写一遍", en: "Code It Yourself" },
-    stop4: { zh: "面试速通", en: "Interview Prep" },
+    stop2: { zh: "数据结构详解", en: "Data Structures" },
+    stop3: { zh: "我们为什么用它", en: "Why We Use It" },
+    stop4: { zh: "缓存的坑与一致性", en: "Cache Pitfalls" },
+    stop5: { zh: "生产机制", en: "Under the Hood" },
+    stop6: { zh: "跟着写一遍", en: "Code It Yourself" },
+    stop7: { zh: "面试速通", en: "Interview Prep" },
   },
 
   brand: {
@@ -76,7 +79,7 @@ export const ui = {
   },
   side: {
     status: { zh: "STATUS", en: "STATUS" },
-    progress: { zh: "四站学习闭环", en: "4-stop learning path" },
+    progress: { zh: "七站学习闭环", en: "7-stop learning path" },
   },
   toolbar: {
     hideNav: { zh: "隐藏导航栏", en: "Hide navigation" },

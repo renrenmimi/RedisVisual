@@ -136,10 +136,10 @@ export const scenes: Scene[] = [
     text: {
       zh:
         "记住这一句，你就能跟人聊 Redis 了：它是一个放在内存里的[[keyvalue:键值]]存储，给高频、临时、可[[ttl:过期]]的数据当加速层，" +
-        "[[sourceoftruth:真相来源]]仍然交给数据库。下一站，我们回到你简历里的 WeShipItNow，看看这套东西具体用在了哪三个地方、为什么用。",
+        "[[sourceoftruth:真相来源]]仍然交给数据库。下一站，先把 value 能装的几种数据结构一种种拆开看透——这也是面试最爱深挖的一块。",
       en:
         "Remember this one line and you can talk Redis with anyone: it's a [[keyvalue:key-value]] store in memory, a speed layer for frequent, temporary, [[ttl:expirable]] data, " +
-        "while the [[sourceoftruth:source of truth]] stays in the database. Next stop, we return to WeShipItNow from your résumé and see exactly which three places use it — and why.",
+        "while the [[sourceoftruth:source of truth]] stays in the database. Next stop, we take apart the structures a value can hold, one by one — a favorite spot for interviewers to dig in.",
     },
   },
 ];
@@ -250,5 +250,5 @@ export const stage = {
     en: "Memory + key-value + expiry = Redis. The source of truth stays in the database.",
   },
 
-  toNext: { zh: "下一站：我们为什么用它 →", en: "Next stop: why we use it →" },
+  toNext: { zh: "下一站：数据结构详解 →", en: "Next stop: data structures in depth →" },
 };
