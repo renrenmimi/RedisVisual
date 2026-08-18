@@ -7,6 +7,14 @@ in slow motion: what Redis is, why it is fast, why a real system (WeShipItNow) r
 it, and finally how to write it yourself and talk about it in an interview — about 40
 minutes end to end, starting from things you already know.
 
+![Stop one: what Redis is, in eight animated scenes](docs/home.jpg)
+
+*Stop one: what Redis is, in eight animated scenes*
+
+![The data structures, each with its own animation and commands](docs/data.jpg)
+
+*The data structures, each with its own animation and commands*
+
 ## Seven stops
 
 1. **`/` — What Redis is.** Eight short animated scenes: a dictionary → SET/GET →
