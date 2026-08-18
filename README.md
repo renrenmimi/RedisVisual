@@ -52,7 +52,7 @@ Build with type checking: `npm run build`.
 
 ## Structure
 
-Next.js 15 (App Router) + TypeScript + React 19, plain CSS, no Tailwind.
+Next.js 15 (App Router) + TypeScript + React 19, plain CSS.
 
 Each stop is one group of three files — data, page, and its own stylesheet:
 
