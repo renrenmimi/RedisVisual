@@ -15,7 +15,7 @@ minutes end to end, starting from things you already know.
 
 *The data structures, each with its own animation and commands*
 
-## Seven stops
+## Stops
 
 1. **`/` — What Redis is.** Eight short animated scenes: a dictionary → SET/GET →
    warehouse vs. workbench → how fast memory really is → a short command path and a single
