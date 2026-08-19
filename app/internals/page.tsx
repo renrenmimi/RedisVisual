@@ -56,7 +56,11 @@ export default function InternalsPage() {
       </section>
 
       {/* tab 切换 */}
-      <div className="in7-tabs" role="tablist" aria-label="mechanisms">
+      <div
+        className="in7-tabs"
+        role="tablist"
+        aria-label={t({ zh: "生产机制", en: "production mechanisms" }, lang)}
+      >
         {tabs.map((tb, i) => (
           <button
             key={tb.id}
@@ -282,7 +286,7 @@ function PersistenceAnim({ zh }: { zh: boolean }) {
         </div>
         <div className="in7-file">dump.rdb</div>
         <div className="in7-col-note">
-          {zh ? "每隔一段时间，整块拍一张照" : "one whole photo every so often"}
+          {zh ? "每隔一段时间，整份拍一张照" : "one full copy, at intervals"}
         </div>
       </div>
 
@@ -337,8 +341,8 @@ function EvictionAnim({ zh }: { zh: boolean }) {
 
       <div className="in7-evict-note">
         {zh
-          ? "内存到顶 → LRU/LFU 挑最冷的一个踢出去"
-          : "memory full → LRU/LFU picks the coldest to evict"}
+          ? "内存到达 maxmemory → LRU/LFU 选中最冷的一个删掉"
+          : "at maxmemory → LRU/LFU removes the coldest key"}
       </div>
     </div>
   );
@@ -413,8 +417,8 @@ function HaAnim({ zh }: { zh: boolean }) {
         </div>
         <div className="in7-evict-note">
           {zh
-            ? "16384 个哈希槽分给各主节点，key 经 CRC16 落到 slot 7000 → M2"
-            : "16384 hash slots split across masters; the key lands on slot 7000 → M2 via CRC16"}
+            ? "16384 个哈希槽分给各主节点；CRC16 把这个 key 定到 slot 7000 → M2"
+            : "16384 hash slots split across masters; CRC16 puts this key in slot 7000 → M2"}
         </div>
       </div>
     </div>
@@ -446,7 +450,7 @@ function TxnAnim({ zh }: { zh: boolean }) {
           <div className="in7-exec">EXEC ⚡</div>
         </div>
         <div className="in7-col-note">
-          {zh ? "排进队列 → EXEC 一次性按序执行" : "queue up → EXEC runs them all in order"}
+          {zh ? "排进队列 → EXEC 按顺序执行完" : "queued → EXEC runs them in order"}
         </div>
       </div>
 

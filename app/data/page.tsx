@@ -72,7 +72,11 @@ export default function DataPage() {
       </section>
 
       {/* 标签栏：5 结构 + 专用类型 + 底层编码 */}
-      <div className="ds5-tabs" role="tablist" aria-label="data structures">
+      <div
+        className="ds5-tabs"
+        role="tablist"
+        aria-label={t({ zh: "数据结构", en: "Data structures" }, lang)}
+      >
         {tabs.map((tb) => {
           const on = tb.key === tab;
           return (
@@ -401,7 +405,7 @@ function ZDiagram({ lang }: { lang: Lang }) {
             </div>
           ))}
         </div>
-        <div className="ds5-zbox-cap">{t({ zh: "给成员名，直接命中分数，不用比较", en: "give a name, hit the score directly — no comparisons" }, lang)}</div>
+        <div className="ds5-zbox-cap">{t({ zh: "给成员名，直接命中分数，不用比较", en: "give the member name, get the score directly — no comparisons" }, lang)}</div>
       </div>
 
       {/* 跳表：按分数有序，O(log n) 范围 / 排名 */}
@@ -434,11 +438,11 @@ function ZDiagram({ lang }: { lang: Lang }) {
             ))}
           </div>
         </div>
-        <div className="ds5-zbox-cap">{t({ zh: "上层“快速路”跳着走，范围 / 排名都快", en: "the upper express lane skips ahead — fast range / rank" }, lang)}</div>
+        <div className="ds5-zbox-cap">{t({ zh: "上层“快速路”跳着走，一次查找不用逐个节点走完", en: "the upper level skips ahead, so a search does not visit every node" }, lang)}</div>
       </div>
 
       <div className="ds5-zsame">
-        {t({ zh: "↑ 两套结构指向同一批成员：一个随机查、一个有序查，都快", en: "↑ both structures point at the same members: one for random lookup, one for ordered — both fast" }, lang)}
+        {t({ zh: "↑ 两套索引指向同一批成员：一个按成员名查，一个按分数排序", en: "↑ two indexes over the same members: one looks up by member name, one keeps them ordered by score" }, lang)}
       </div>
     </div>
   );
@@ -475,7 +479,7 @@ function StringAnim({ lang }: { lang: Lang }) {
         </div>
         <div className="ds5-str-num mono ds5-count-num" aria-hidden />
         <div className="ds5-str-atomic">
-          {t({ zh: "原子 +1 · 并发也永不丢数", en: "atomic +1 · never lost under concurrency" }, lang)}
+          {t({ zh: "原子 +1 · 并发下不会丢更新", en: "atomic +1 · no lost updates under concurrency" }, lang)}
         </div>
       </div>
     </div>
@@ -501,7 +505,7 @@ function ListAnim({ lang }: { lang: Lang }) {
         </div>
       </div>
       <div className="ds5-list-cap">
-        {t({ zh: "左边进、右边出 · 先进先出队列", en: "in on the left, out on the right · FIFO queue" }, lang)}
+        {t({ zh: "左边进、右边出 · 先进先出队列", en: "in on the left, out on the right · a FIFO queue" }, lang)}
       </div>
     </div>
   );
@@ -531,7 +535,7 @@ function HashAnim({ lang }: { lang: Lang }) {
         </div>
       </div>
       <div className="ds5-hash-cap">
-        {t({ zh: "只改 city 一个字段，其它字段原地不动", en: "change only the city field, others untouched" }, lang)}
+        {t({ zh: "只改 city 一个字段，其它字段原地不动", en: "only the city field is written; the other fields are untouched" }, lang)}
       </div>
     </div>
   );
@@ -555,7 +559,7 @@ function SetAnim({ lang }: { lang: Lang }) {
         </div>
       </div>
       <div className="ds5-set-cap">
-        {t({ zh: "3 个进袋；重复的 react 被弹开，自动去重", en: "3 land in the bag; the duplicate react bounces off — auto-dedup" }, lang)}
+        {t({ zh: "3 个进袋；重复的 react 被弹开，成员不会重复", en: "three go in; the repeated react bounces off — members stay unique" }, lang)}
       </div>
     </div>
   );
@@ -590,7 +594,7 @@ function ZsetAnim({ lang }: { lang: Lang }) {
       </div>
       <div className="ds5-zset-cmd mono">ZADD board 300 carol</div>
       <div className="ds5-zset-cap">
-        {t({ zh: "新成员按分数自动滑到正确排名，其它人顺次下移", en: "the new member slides to its ranked slot by score; the rest shift down" }, lang)}
+        {t({ zh: "新成员按分数自动滑到正确排名，其它人顺次下移", en: "the new member slides into place by score; the rest shift down" }, lang)}
       </div>
     </div>
   );

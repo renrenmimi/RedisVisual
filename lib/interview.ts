@@ -1,4 +1,4 @@
-// 第 4 站「面试速通」的全部双语文案 + 面试题数据。
+// 第 7 站「面试速通」的全部双语文案 + 面试题数据。
 // 形态：分类 tab + 可展开问答卡（accordion）+ 一张总结卡。
 // 约定：面试说英文，所以「问题」和「英文示范回答」两种语言基本都放英文
 //   （zh 问题里可带中文括注）；只有「讲解」note 才真正分语言：
@@ -21,27 +21,28 @@ export type QA = {
 // ---------- 页面外壳文案 ----------
 
 export const iv = {
-  title: { zh: "第 7 站 · 面试速通", en: "Stop 7 · Interview Prep" },
+  title: { zh: "第 7 站 · 面试速通", en: "Stop 7 · Interview prep" },
   subtitle: {
-    zh: "把前三站学到的，变成面试官面前能用英语讲出来的话。",
-    en: "Turn the first three stops into words you can say to an interviewer — in English.",
+    zh: "把前面几站学到的，变成面试官面前能用英语讲出来的话。",
+    en: "Turn what you learned in the earlier stops into English you can say to an interviewer.",
   },
 
   intro: {
     step: { zh: "面试准备", en: "Interview prep" },
     heading: {
-      zh: "英文问题 + 英文示范答案 + 中文讲解",
+      zh: "英文问题 + 英文示范回答 + 中文讲解",
       en: "The question, a model answer, and why it works",
     },
     body: {
       zh:
-        "前三站你已经见过 [[redis:Redis]] 是什么、为什么快、我们的系统为什么用它。这一站把它们打包成面试能用的话：" +
-        "每题给出英文问题、一段可以直接背的英文示范回答，以及一段中文讲解——为什么这么答、别过度包装、采分点在哪。" +
+        "前面几站你已经见过 [[redis:Redis]] 是什么、为什么快、我们的系统为什么用它、缓存会怎么失效。这一站把它们变成面试能说出口的话：" +
+        "每题给出英文问题、一段可以直接背的英文示范回答，以及一段中文讲解——面试官到底在确认什么、哪一两句能拿分、哪句话会翻车。" +
         "点开任意一题展开答案；正文里带虚线的词，点一下就有解释。",
       en:
-        "Across the first three stops you saw what [[redis:Redis]] is, why it is fast, and why a real system reaches for it. " +
-        "This stop packages that into interview-ready words: each question comes with an English model answer you can rehearse, " +
-        "plus notes on why it works and where the points are. Click any question to expand it; dotted words open a quick definition.",
+        "The earlier stops covered what [[redis:Redis]] is, why it is fast, how a real system uses it, and how caches fail. " +
+        "This stop turns that into words you can say out loud: every question comes with an English model answer you can rehearse, " +
+        "plus a short note on what the interviewer is checking and which sentence loses credit. " +
+        "Click any question to open it. Words with a dotted underline open a short definition.",
     },
   },
 
@@ -56,19 +57,19 @@ export const iv = {
   blurb: {
     all: {
       zh: "26 道高频题，按“基础 → 系统 → 进阶”排好，从头过一遍。",
-      en: "26 common questions, ordered fundamentals → system → advanced. Read them top to bottom.",
+      en: "26 common questions, ordered fundamentals → system → advanced. Read them from top to bottom.",
     },
     fundamentals: {
-      zh: "先能一句话讲清 Redis 是什么、为什么快——最容易被追问的地方。",
-      en: "Be able to say what Redis is and why it is fast in one breath — the most-probed area.",
+      zh: "先能用一两句话讲清 Redis 是什么、为什么快——面试官最先试探的就是这里。",
+      en: "Say what Redis is and why it is fast in one or two sentences. This is the area interviewers probe first.",
     },
     system: {
-      zh: "WeShipItNow 里的三处真实用法：能讲出“解决了什么问题”才算数。",
-      en: "The three real usages in WeShipItNow — you must be able to say what problem each solved.",
+      zh: "WeShipItNow 里的三处真实用法：每一处都要能讲出“解决了什么问题”。",
+      en: "The three real usages in WeShipItNow. For each one, be able to say which problem it solved.",
     },
     advanced: {
-      zh: "失效、击穿、选型、以及那个 40% 该怎么诚实地讲。",
-      en: "Invalidation, stampede, tool fit, and how to talk about that 40% honestly.",
+      zh: "失效、穿透 / 击穿 / 雪崩、选型，以及那个 40% 该怎么诚实地讲。",
+      en: "Invalidation, the three cache failures, tool choice, and how to talk about that 40% honestly.",
     },
   },
 
@@ -78,16 +79,16 @@ export const iv = {
 
   expandAll: { zh: "全部展开", en: "Expand all" },
   collapseAll: { zh: "全部收起", en: "Collapse all" },
-  countUnit: { zh: "题", en: "" },
-  questionWord: { zh: "问题", en: "questions" },
+  countUnit: { zh: "题", en: "questions" },
 
   footer: {
     zh:
-      "面试的核心原则：简历上每个技术词，都要能扛住 5–10 分钟的追问。没做过的别说做过，" +
-      "没测过的数字别编——诚实本身，就是一种能力信号。",
+      "面试的核心原则：简历上每个技术词，都要能扛住 5–10 分钟的追问。没做过的别说做过，没测过的数字别编——" +
+      "一句“这个我没测过”，比一个撑不住追问的数字有力得多。",
     en:
-      "The one rule that matters: every technical word on your resume should survive five to ten minutes of follow-up. " +
-      "Don’t claim what you haven’t done, don’t invent numbers you haven’t measured — honesty itself is a signal of competence.",
+      "One rule matters most: every technical word on your resume should survive five to ten minutes of follow-up questions. " +
+      "Do not claim work you did not do, and do not invent numbers you never measured. " +
+      "Saying that you did not measure something is a stronger answer than a number you cannot defend.",
   },
   backToStop1: { zh: "↻ 回到第 1 站", en: "↻ Back to Stop 1" },
 };
@@ -102,24 +103,28 @@ export const questions: QA[] = [
     q: { zh: "What is Redis?（Redis 是什么？）", en: "What is Redis?" },
     answer: {
       zh:
-        "Redis is an in-memory [[keyvalue:key-value]] data store. The name stands for REmote DIctionary Server — " +
-        "picture one giant dictionary that many programs read and write over the network. Because it lives in " +
-        "[[memory:memory]], it’s commonly used for caching, counters, session storage, rate limiting, and leaderboards — " +
-        "anything that needs to be fast and is okay to be short-lived.",
+        "Redis is an in-memory [[keyvalue:key-value]] data store. The name comes from REmote DIctionary Server, so you can " +
+        "picture one large dictionary that many programs read and write over the network. Because the data sits in " +
+        "[[memory:memory]], reads and writes are very fast. Teams use it for caching, counters, session storage, rate " +
+        "limiting, and leaderboards. In our system it sits in front of the database, so it holds data that has to be fast " +
+        "and is allowed to be short-lived.",
       en:
-        "Redis is an in-memory [[keyvalue:key-value]] data store. The name stands for REmote DIctionary Server — " +
-        "picture one giant dictionary that many programs read and write over the network. Because it lives in " +
-        "[[memory:memory]], it’s commonly used for caching, counters, session storage, rate limiting, and leaderboards — " +
-        "anything that needs to be fast and is okay to be short-lived.",
+        "Redis is an in-memory [[keyvalue:key-value]] data store. The name comes from REmote DIctionary Server, so you can " +
+        "picture one large dictionary that many programs read and write over the network. Because the data sits in " +
+        "[[memory:memory]], reads and writes are very fast. Teams use it for caching, counters, session storage, rate " +
+        "limiting, and leaderboards. In our system it sits in front of the database, so it holds data that has to be fast " +
+        "and is allowed to be short-lived.",
     },
     note: {
       zh:
-        "先给一句话定义（in-memory key-value store），再补名字来历和三四个典型用途就够了，别背完整功能列表。" +
-        "采分点：说清它是“数据存储（data store）”，并且开口就带出“内存”这个关键词——它是后面所有问题的基础。",
+        "面试官在这一题只想确认一件事：你能不能用一句话把工具定义清楚，再展开。采分点是两个词——data store（是数据存储，" +
+        "不是某个库或框架）和 in-memory（后面所有问题都建立在它上面，所以要第一句就说出来）。别背整张功能列表，" +
+        "三四个真实用途就够；说完停下来，让面试官挑一个往下追。",
       en:
-        "Give the one-line definition (in-memory key-value store), then the name origin and three or four typical use cases — " +
-        "don’t recite the whole feature list. Scoring point: make clear it’s a data store and lead with the word “in-memory”, " +
-        "which every later question builds on.",
+        "The interviewer is checking whether you can define the tool in one sentence before you talk about it. Credit comes " +
+        "from two words: data store, and in-memory. Every later question builds on the second one, so say it early. The trap " +
+        "is reciting the whole feature list; three or four real use cases are enough, and then you stop and let them choose " +
+        "the follow-up.",
     },
   },
   {
@@ -128,26 +133,28 @@ export const questions: QA[] = [
     q: { zh: "Why is Redis fast?（为什么快？）", en: "Why is Redis fast?" },
     answer: {
       zh:
-        "Three reasons, and I’d avoid saying only “because it’s in memory”. First, data lives in [[memory:memory]], " +
-        "so there’s no disk seek. Second, the command path is extremely short — a GET is basically a hash-table lookup, " +
-        "whereas SQL has to parse, plan, walk a B+ tree, and honor transactions. Third, Redis runs commands on a " +
-        "[[singlethread:single thread]], so there are no locks — a bit like Node’s event loop. That’s why even MySQL " +
-        "with a warm buffer pool is still slower: the work per request is just heavier.",
+        "Three reasons, and memory is only the first one. The data is in [[memory:memory]], so there is no disk read. The " +
+        "command path is also short: a GET is close to a hash-table lookup, while SQL has to parse the query, plan it, walk " +
+        "a B+ tree, and apply transaction rules. And Redis runs commands one at a time on a [[singlethread:single thread]], " +
+        "so it needs no locks between them. That is why MySQL with a warm buffer pool is still slower: it does more work per " +
+        "request.",
       en:
-        "Three reasons, and I’d avoid saying only “because it’s in memory”. First, data lives in [[memory:memory]], " +
-        "so there’s no disk seek. Second, the command path is extremely short — a GET is basically a hash-table lookup, " +
-        "whereas SQL has to parse, plan, walk a B+ tree, and honor transactions. Third, Redis runs commands on a " +
-        "[[singlethread:single thread]], so there are no locks — a bit like Node’s event loop. That’s why even MySQL " +
-        "with a warm buffer pool is still slower: the work per request is just heavier.",
+        "Three reasons, and memory is only the first one. The data is in [[memory:memory]], so there is no disk read. The " +
+        "command path is also short: a GET is close to a hash-table lookup, while SQL has to parse the query, plan it, walk " +
+        "a B+ tree, and apply transaction rules. And Redis runs commands one at a time on a [[singlethread:single thread]], " +
+        "so it needs no locks between them. That is why MySQL with a warm buffer pool is still slower: it does more work per " +
+        "request.",
     },
     note: {
       zh:
-        "这是最容易被追问的一题。面试官会说“MySQL 也有 buffer pool、也在内存啊”——所以一定要答到“命令路径短”" +
-        "这一层，而不是停在“因为在内存”。单线程免加锁是加分项，能类比 Node 事件循环更好。",
+        "这是全场最容易被追问的一题：面试官会立刻回你一句“MySQL 也有 buffer pool，也在内存里”，所以只答“因为在内存”一定被打回来。" +
+        "采分点是第二层——每条命令要做的工作本来就少得多。第三层“单线程所以不用加锁”是加分项，但别顺口说成“Redis 全都是单线程”，" +
+        "Redis 6 已经有网络 I/O 多线程了（见最后一题）。",
       en:
-        "This one gets follow-ups. The interviewer will say “MySQL has a buffer pool too, that’s in memory” — so you must " +
-        "reach the “short command path” point, not stop at “it’s in memory”. Single-threaded / lock-free is a bonus; the " +
-        "Node event-loop analogy lands well.",
+        "This is the most common follow-up in the whole set. The interviewer will answer that MySQL also keeps pages in " +
+        "memory, so memory alone cannot be the reason. Credit comes from the second point: Redis does far less work per " +
+        "command. One thread and no locking is a good third point, but do not let it become a claim that Redis is " +
+        "single-threaded everywhere, because Redis 6 added threads for network I/O.",
     },
   },
   {
@@ -159,21 +166,25 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "It can be both. Redis has optional persistence, so some teams run it as a primary store. But in most systems — " +
-        "including ours — we use it as a cache and a read model in front of a durable database. It is not the " +
-        "[[sourceoftruth:source of truth]]; if we lost it, we could rebuild everything from the database.",
+        "It can be both. Redis supports persistence, so some teams run it as a primary store. In most systems, including " +
+        "ours, it is a cache and a read model in front of a durable database. It is not the " +
+        "[[sourceoftruth:source of truth]]. If we lost the whole Redis instance, we could rebuild every key from the " +
+        "database.",
       en:
-        "It can be both. Redis has optional persistence, so some teams run it as a primary store. But in most systems — " +
-        "including ours — we use it as a cache and a read model in front of a durable database. It is not the " +
-        "[[sourceoftruth:source of truth]]; if we lost it, we could rebuild everything from the database.",
+        "It can be both. Redis supports persistence, so some teams run it as a primary store. In most systems, including " +
+        "ours, it is a cache and a read model in front of a durable database. It is not the " +
+        "[[sourceoftruth:source of truth]]. If we lost the whole Redis instance, we could rebuild every key from the " +
+        "database.",
     },
     note: {
       zh:
-        "标准答案是“都可以，看你怎么用”。关键是要表态：在你们系统里它是缓存/读模型，不是真相来源。" +
-        "这句表态为后面“Redis 不可用怎么办”提前埋好伏笔。",
+        "面试官要的是一个立场，不是一段定义。所以先说“两者都可以，看你怎么用”，再立刻说清在你们系统里它是哪一种、为什么。" +
+        "采分点是把“真相来源在数据库”这句话说出口——它决定了后面“Redis 不可用怎么办”那一题怎么答。" +
+        "别停在抽象层面，那样面试官听不出你到底做过什么。",
       en:
-        "The model answer is “both, depending on how you use it”. The key is to take a stance: in your system it’s a cache / " +
-        "read model, not the source of truth. That sets up the later “what if Redis goes down” question.",
+        "The interviewer wants a position, not a definition. Say that it can be either, then say which one it is in your " +
+        "system and why. Credit comes from naming the source of truth out loud, because that decides how you answer the " +
+        "failure question later. The trap is an abstract answer that never says what you actually built.",
     },
   },
   {
@@ -185,23 +196,26 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "A [[cachehit:cache hit]] means the data you asked for is already in the cache, so you return it immediately — " +
-        "no slow query or external call. A [[cachemiss:cache miss]] means it isn’t there, so you go to the slow original " +
-        "source, then write the result back so the next request hits. Hit rate is the number that tells you whether the " +
-        "cache is actually earning its keep.",
+        "A [[cachehit:cache hit]] means the value is already in the cache, so you return it right away and skip the slow " +
+        "query or the external call. A [[cachemiss:cache miss]] means it is not there, so you read the original source and " +
+        "then write the result back, so the next request hits. A miss is a normal part of the flow, not an error. The number " +
+        "that matters is hit rate, which is hits divided by total lookups. If the hit rate is low, the cache is using memory " +
+        "and returning very little.",
       en:
-        "A [[cachehit:cache hit]] means the data you asked for is already in the cache, so you return it immediately — " +
-        "no slow query or external call. A [[cachemiss:cache miss]] means it isn’t there, so you go to the slow original " +
-        "source, then write the result back so the next request hits. Hit rate is the number that tells you whether the " +
-        "cache is actually earning its keep.",
+        "A [[cachehit:cache hit]] means the value is already in the cache, so you return it right away and skip the slow " +
+        "query or the external call. A [[cachemiss:cache miss]] means it is not there, so you read the original source and " +
+        "then write the result back, so the next request hits. A miss is a normal part of the flow, not an error. The number " +
+        "that matters is hit rate, which is hits divided by total lookups. If the hit rate is low, the cache is using memory " +
+        "and returning very little.",
     },
     note: {
       zh:
-        "两个词一起讲，顺手带出“hit rate（命中率）”这个衡量指标，显得你真运维过缓存，而不是只背概念。" +
-        "别把 miss 说成“出错”——它是正常流程的一部分。",
+        "这是一道热身题，答快一点，然后补一个定义里没有的东西：命中率。主动提命中率，说明你真的看过缓存的线上指标，" +
+        "而不只是背过概念。要避免的说法是把 miss 讲成“出错了”——它是正常路径，缓存本来就靠 miss 来填。",
       en:
-        "Explain both together and slip in “hit rate” as the metric — it signals you’ve actually operated a cache, not just " +
-        "memorized definitions. Don’t describe a miss as an “error”; it’s a normal part of the flow.",
+        "This is a warm-up question, so answer it quickly and add one thing the definition does not contain. Hit rate is that " +
+        "thing, and naming it suggests you have watched a cache in production rather than read about one. The trap is " +
+        "calling a miss an error; a miss is the normal path that fills the cache in the first place.",
     },
   },
   {
@@ -210,23 +224,26 @@ export const questions: QA[] = [
     q: { zh: "What is TTL?（存活时间是什么？）", en: "What is TTL?" },
     answer: {
       zh:
-        "[[ttl:TTL]], time to live, is an expiry timer on a key. When it runs out, Redis deletes the key automatically. " +
-        "Caches rely on it so stale data disappears on its own instead of lingering forever. For our rate cache we use a " +
-        "short TTL — quotes are only valid for a little while anyway, so expiry doubles as a correctness guarantee, not " +
-        "just cleanup.",
+        "[[ttl:TTL]], time to live, is an expiry timer on a key. Once the key expires, Redis will not return it any more. " +
+        "The deletion can happen slightly later, because Redis checks expiry when a key is accessed and a background job " +
+        "samples keys that carry a TTL. Caches depend on this, so stale values do not stay forever. Our rate cache uses a " +
+        "short TTL: a shipping quote is only valid for a short time, so expiry is part of correctness and not only cleanup.",
       en:
-        "[[ttl:TTL]], time to live, is an expiry timer on a key. When it runs out, Redis deletes the key automatically. " +
-        "Caches rely on it so stale data disappears on its own instead of lingering forever. For our rate cache we use a " +
-        "short TTL — quotes are only valid for a little while anyway, so expiry doubles as a correctness guarantee, not " +
-        "just cleanup.",
+        "[[ttl:TTL]], time to live, is an expiry timer on a key. Once the key expires, Redis will not return it any more. " +
+        "The deletion can happen slightly later, because Redis checks expiry when a key is accessed and a background job " +
+        "samples keys that carry a TTL. Caches depend on this, so stale values do not stay forever. Our rate cache uses a " +
+        "short TTL: a shipping quote is only valid for a short time, so expiry is part of correctness and not only cleanup.",
     },
     note: {
       zh:
-        "定义 + 为什么缓存离不开它（旧数据自动消失）。加一句“短 TTL 同时也是一种正确性保证”，能体现你理解业务语义，" +
-        "而不只是把它当垃圾回收。",
+        "先给定义，再把保证说准。Redis 保证的是“过期之后不再返回这个 key”，不是“到点那一刻就把它删掉”——真正的删除靠访问时的" +
+        "惰性检查加后台采样，内存是稍后才回收的。加一句“短 TTL 本身也是一种正确性保证”，说明你在想数据的业务语义，" +
+        "而不是把 TTL 当垃圾回收。要避免的说法：到点瞬间精确删除。",
       en:
-        "Definition plus why caches need it (stale data self-destructs). Adding “a short TTL is also a correctness guarantee” " +
-        "shows you grasp the business semantics, not just garbage collection.",
+        "Give the definition, then be precise about the guarantee. Redis promises that an expired key is not returned; it " +
+        "does not promise the key is removed at that exact moment, and the memory is reclaimed later. Saying that a short " +
+        "TTL is also a correctness rule, not only cleanup, shows you think about the data and not only about the cache. The " +
+        "trap is claiming the key disappears the instant the timer ends.",
     },
   },
   {
@@ -238,24 +255,28 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "The core five are strings, hashes, lists, sets, and sorted sets. A string holds a value or a counter; a hash is " +
-        "great for storing an object as fields; a list works as a queue or stack; a set gives you membership and dedup; " +
-        "and a sorted set, ordered by a score, is the go-to for leaderboards and for sliding-window rate limiting. There " +
-        "are more — streams, bitmaps, HyperLogLog — but those five cover most day-to-day work.",
+        "The five core types are strings, hashes, lists, sets, and sorted sets. A string holds a value or a counter. A hash " +
+        "stores an object as fields, so you can update one field without rewriting the whole object. A list works as a queue " +
+        "or a stack, and a set gives you membership tests and deduplication. A sorted set keeps members ordered by a score, " +
+        "which is what leaderboards and sliding-window rate limiting need. There are more types, such as streams, bitmaps, " +
+        "and HyperLogLog, but those five cover most daily work.",
       en:
-        "The core five are strings, hashes, lists, sets, and sorted sets. A string holds a value or a counter; a hash is " +
-        "great for storing an object as fields; a list works as a queue or stack; a set gives you membership and dedup; " +
-        "and a sorted set, ordered by a score, is the go-to for leaderboards and for sliding-window rate limiting. There " +
-        "are more — streams, bitmaps, HyperLogLog — but those five cover most day-to-day work.",
+        "The five core types are strings, hashes, lists, sets, and sorted sets. A string holds a value or a counter. A hash " +
+        "stores an object as fields, so you can update one field without rewriting the whole object. A list works as a queue " +
+        "or a stack, and a set gives you membership tests and deduplication. A sorted set keeps members ordered by a score, " +
+        "which is what leaderboards and sliding-window rate limiting need. There are more types, such as streams, bitmaps, " +
+        "and HyperLogLog, but those five cover most daily work.",
     },
     note: {
       zh:
-        "列出五个核心结构，每个配一个场景（hash=对象、sorted set 对应排行榜与限流是最具说服力的例子）。顺带提一句 streams/HyperLogLog " +
-        "说明你知道还有更多，但别展开背。采分点在“结构 → 场景”的对应，而不是罗列名字。",
+        "面试官想看的是“结构 → 场景”的对应，不是能背几个名字。所以每个结构配一句用途，其中 sorted set 要举具体例子" +
+        "（排行榜、滑动窗口限流），这是最能体现你真用过的一项。顺带提一句 streams / HyperLogLog 说明你知道还有更多，" +
+        "但别主动展开。要避免的答法：光报一串名字，一个场景都没有。",
       en:
-        "List the five core structures, each with a use case (hash = object, sorted set = leaderboard / rate limiting is the " +
-        "standout). Mentioning streams / HyperLogLog shows you know there’s more, but don’t go deep. The scoring point is the " +
-        "structure-to-use-case mapping, not the names.",
+        "The interviewer is checking whether you can map a structure to a problem, not whether you can list names. Give one " +
+        "short use case per type, and make the sorted set example concrete, because leaderboards and rate limiting are the " +
+        "two that sound like real work. Naming streams or HyperLogLog shows wider reading, but do not start explaining them " +
+        "unless you are asked. The trap is a flat list with no use cases attached.",
     },
   },
 
@@ -269,28 +290,32 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], " +
-        "so repeated lookups for the same package don’t hit the [[carrier:carrier]] APIs every time. Second, an " +
-        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double-click can’t " +
-        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]] — the " +
-        "[[ledger:ledger]] in the database is the source of truth, and Redis holds the pre-computed balance so reads are " +
-        "instant. So: one read cache, one concurrency guard, one read model.",
+        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
+        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. Second, an " +
+        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double click cannot " +
+        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]]: the " +
+        "[[ledger:ledger]] in the database stays the source of truth, and Redis holds the pre-computed balance so reads are " +
+        "fast. So one read cache, one concurrency guard, and one read model.",
       en:
-        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], " +
-        "so repeated lookups for the same package don’t hit the [[carrier:carrier]] APIs every time. Second, an " +
-        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double-click can’t " +
-        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]] — the " +
-        "[[ledger:ledger]] in the database is the source of truth, and Redis holds the pre-computed balance so reads are " +
-        "instant. So: one read cache, one concurrency guard, one read model.",
+        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
+        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. Second, an " +
+        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double click cannot " +
+        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]]: the " +
+        "[[ledger:ledger]] in the database stays the source of truth, and Redis holds the pre-computed balance so reads are " +
+        "fast. So one read cache, one concurrency guard, and one read model.",
     },
     note: {
       zh:
-        "这是整站最该背熟的一段。用“三处”的结构讲，每处一句：什么模式 + 解决什么问题。结尾用“一个读缓存、" +
-        "一个并发保护、一个读模型”收口，面试官一听就知道你分得清三种用法的本质不同。别混成一句“我用 Redis 做缓存”。",
+        "这是最该背熟的一段，因为后面大半追问都是从这里分叉出去的。用“三处”的结构讲，每处一句：什么模式 + 解决了什么问题，" +
+        "最后用“一个读缓存、一个并发保护、一个读模型”收口，面试官一听就知道你分得清三者的本质区别，而不是笼统一句“我用 Redis 做缓存”。" +
+        "诚实提醒：只讲你真正写过的那部分。如果某一处只是方案设计、没有落地，就直说“这块是设计，最后没上线”——" +
+        "面试官几乎一定会挑其中一处往下追三四层。",
       en:
-        "This is the paragraph to memorize cold. Use the “three places” structure, one line each: which pattern + what " +
-        "problem it solves. Close with “one read cache, one concurrency guard, one read model” so the interviewer sees you " +
-        "distinguish them. Don’t collapse it into “I used Redis for caching”.",
+        "This is the answer to rehearse first, because most follow-up questions branch off it. Give the pattern and the " +
+        "problem it solved for each place, then close with the one-line summary, so the interviewer hears three different " +
+        "jobs instead of one vague cache. Be honest about scope: describe only the parts you built, and if one of the three " +
+        "was a design you proposed rather than shipped, say so in the same sentence. The interviewer will pick one and go " +
+        "three levels deeper, so only list the ones you can defend.",
     },
   },
   {
@@ -302,24 +327,26 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "Because different customers get different negotiated discount rates from the carriers. If the key were just the " +
-        "package and route, without the accountId, I could hand customer A’s discounted price to customer B — that’s both " +
-        "wrong and a pricing-data leak. Putting the accountId in the key scopes each cached quote to the account it was " +
+        "Because each customer has different negotiated rates with the carriers. If the key contained only the package and " +
+        "the route, I could return customer A's discounted price to customer B. That is a wrong quote and a leak of pricing " +
+        "data at the same time. Putting the accountId in the key keeps every cached quote scoped to the account it was " +
         "computed for.",
       en:
-        "Because different customers get different negotiated discount rates from the carriers. If the key were just the " +
-        "package and route, without the accountId, I could hand customer A’s discounted price to customer B — that’s both " +
-        "wrong and a pricing-data leak. Putting the accountId in the key scopes each cached quote to the account it was " +
+        "Because each customer has different negotiated rates with the carriers. If the key contained only the package and " +
+        "the route, I could return customer A's discounted price to customer B. That is a wrong quote and a leak of pricing " +
+        "data at the same time. Putting the accountId in the key keeps every cached quote scoped to the account it was " +
         "computed for.",
     },
     note: {
       zh:
-        "一句话讲清“为什么”：协商折扣价因客户而异；不含 accountId 会导致不同账户的数据互相污染，把 A 的价返给 B——既是 bug 又是定价数据泄露。" +
-        "这道缓存 key 设计题，面试官想看你有没有多租户 / 数据隔离意识。",
+        "表面是 key 命名题，实际考的是多租户 / 数据隔离意识。采分点不是“key 要唯一”这条规则，而是说清后果：" +
+        "少了 accountId，A 客户的协商折扣价会被返给 B 客户。再补一句“这不只是脏数据，是定价数据泄露”，这题就答满了。" +
+        "只答“为了区分不同数据”是拿不到分的。",
       en:
-        "State the “why” in one line: negotiated discounts differ per customer; without the accountId you’d cross-serve A’s " +
-        "price to B — a bug and a pricing-data leak. This cache-key question is really testing your multi-tenant / " +
-        "data-isolation awareness.",
+        "This looks like a naming question, but the interviewer is testing whether you think about tenant isolation. Credit " +
+        "comes from naming the consequence rather than the rule: without the accountId, one customer can be shown another " +
+        "customer's negotiated price. Adding that this is a data leak, not only a stale value, raises the answer. The trap " +
+        "is answering only that cache keys have to be unique.",
     },
   },
   {
@@ -327,60 +354,65 @@ export const questions: QA[] = [
     category: "system",
     q: {
       zh: "Apollo Client cache vs Redis?（前端缓存和 Redis 有什么区别？）",
-      en: "What’s the difference between the Apollo Client cache and Redis?",
+      en: "What is the difference between the Apollo Client cache and Redis?",
     },
     answer: {
       zh:
-        "They cache at different layers. The Apollo Client cache lives in the browser, serves a single user, and its job " +
-        "is to avoid refetching the same GraphQL data on the frontend. Redis lives on the server, is shared across all " +
-        "users and all server instances, and its job is to avoid repeating expensive backend work like [[carrier:carrier]] " +
-        "API calls. So one is per-user and client-side; the other is shared and server-side. They don’t replace each other.",
+        "They cache at different layers. The Apollo Client cache lives in the browser, serves one user, and avoids " +
+        "refetching the same GraphQL data in the frontend. Redis lives on the server, is shared by every user and every " +
+        "server instance, and avoids repeating expensive backend work such as [[carrier:carrier]] API calls. So one is per " +
+        "user and client-side, and the other is shared and server-side. They do not replace each other, and one request can " +
+        "benefit from both.",
       en:
-        "They cache at different layers. The Apollo Client cache lives in the browser, serves a single user, and its job " +
-        "is to avoid refetching the same GraphQL data on the frontend. Redis lives on the server, is shared across all " +
-        "users and all server instances, and its job is to avoid repeating expensive backend work like [[carrier:carrier]] " +
-        "API calls. So one is per-user and client-side; the other is shared and server-side. They don’t replace each other.",
+        "They cache at different layers. The Apollo Client cache lives in the browser, serves one user, and avoids " +
+        "refetching the same GraphQL data in the frontend. Redis lives on the server, is shared by every user and every " +
+        "server instance, and avoids repeating expensive backend work such as [[carrier:carrier]] API calls. So one is per " +
+        "user and client-side, and the other is shared and server-side. They do not replace each other, and one request can " +
+        "benefit from both.",
     },
     note: {
       zh:
-        "抓住三个对比维度：在哪一层（浏览器 vs 服务端）、服务谁（单用户 vs 跨用户跨实例）、省什么（前端重复请求 vs " +
-        "后端重复调用）。面试官想确认你没把两种缓存混为一谈。用“不同层、不互相替代”收口。",
+        "沿三个对比轴回答：在哪一层（浏览器 vs 服务端）、服务谁（单用户 vs 跨用户跨实例）、省掉什么（前端重复请求 vs 后端重复调用）。" +
+        "采分点在“共享”这一条：服务端缓存能让所有用户、所有实例受益，浏览器缓存做不到。" +
+        "要避免的答法：把两者当成二选一——它们在不同层，通常同时存在。",
       en:
-        "Hit three contrast axes: which layer (browser vs server), who it serves (single user vs shared across users and " +
-        "instances), and what it saves (frontend refetches vs backend calls). The interviewer wants to confirm you don’t " +
-        "conflate the two. Close with “different layers, not replacements”.",
+        "Answer along three axes: which layer, who it serves, and what work it saves. Credit comes from the shared part, " +
+        "because a server cache helps every user and every instance while a browser cache cannot. The trap is treating them " +
+        "as two options to choose between; they sit at different layers and are normally used together.",
     },
   },
   {
     id: "redis-down",
     category: "system",
     q: {
-      zh: "What happens when Redis goes down?（Redis 不可用会怎样？）",
-      en: "What happens when Redis goes down?",
+      zh: "What happens if Redis is unavailable?（Redis 不可用会怎样？）",
+      en: "What happens if Redis is unavailable?",
     },
     answer: {
       zh:
-        "It depends on which usage — I designed each to degrade differently. For the rate cache, we bypass it and call " +
-        "the [[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance, we recompute " +
-        "from the [[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one: a lost key could let " +
-        "a duplicate charge through, so we don’t rely on a volatile Redis key alone — we back it with a unique constraint " +
-        "in the database and the order’s own status, so correctness never hinges on the cache surviving.",
+        "It depends on the usage, because each one degrades differently. For the rate cache we skip Redis and call the " +
+        "[[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance we recompute from the " +
+        "[[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a lost key could let a " +
+        "duplicate charge through. So it is backed by a unique constraint in the database and by the order status, and " +
+        "correctness never depends on a volatile key surviving.",
       en:
-        "It depends on which usage — I designed each to degrade differently. For the rate cache, we bypass it and call " +
-        "the [[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance, we recompute " +
-        "from the [[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one: a lost key could let " +
-        "a duplicate charge through, so we don’t rely on a volatile Redis key alone — we back it with a unique constraint " +
-        "in the database and the order’s own status, so correctness never hinges on the cache surviving.",
+        "It depends on the usage, because each one degrades differently. For the rate cache we skip Redis and call the " +
+        "[[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance we recompute from the " +
+        "[[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a lost key could let a " +
+        "duplicate charge through. So it is backed by a unique constraint in the database and by the order status, and " +
+        "correctness never depends on a volatile key surviving.",
     },
     note: {
       zh:
-        "这题考“降级设计”。按三处分别答：rate=绕过直调（慢但可用）、balance=从账本重算、idempotency=最危险，必须有" +
-        "数据库唯一约束 / 订单状态兜底。核心表态：Redis 是易失的加速层，正确性不能只押在它身上。这条能把前面所有铺垫收束起来。",
+        "这题考降级设计，好答案不是一个答案，而是三个。按用法逐条讲：缓存降级成慢路径、投影从账本重算、幂等 key 必须有持久化兜底，" +
+        "因为丢了它要花真钱。采分点就在第三条——它说明你分得清哪种失效只是变慢、哪种会造成损失。" +
+        "要避免的答法：一句“回退到数据库就行”，那正好盖住了不能简单回退的那一处。",
       en:
-        "This tests graceful degradation. Answer per usage: rate = bypass and call directly (slow but available), balance = " +
-        "recompute from the ledger, idempotency = the dangerous one, must be backed by a DB unique constraint / order status. " +
-        "Core stance: Redis is a volatile speed layer, and correctness can’t rest on it alone. This ties together everything " +
-        "you set up earlier.",
+        "This question is about graceful degradation, and the good answer is not one answer but three. Go usage by usage: " +
+        "the cache degrades to a slow path, the projection is recomputed from the ledger, and the idempotency key needs a " +
+        "durable backstop because losing it can cost real money. Credit comes from that third one, since it shows you know " +
+        "which failure is expensive. The trap is a single sentence such as fall back to the database, which hides the case " +
+        "where falling back is not safe.",
     },
   },
 
@@ -394,25 +426,27 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "[[invalidation:Cache invalidation]] is keeping the cache from serving stale data after the underlying data " +
-        "changes — you delete or update the matching entry. The simplest form is: on a write, delete the key (DEL) so the " +
-        "next read misses and repopulates from the source. In our system a lot of it is handled by short TTLs, so entries " +
-        "expire before they drift too far. It’s famously hard because the bugs are silent — you just quietly serve " +
-        "something out of date.",
+        "[[invalidation:Cache invalidation]] means stopping the cache from serving a value after the underlying data has " +
+        "changed. The simplest form is: on a write, update the database and then delete the key, so the next read misses " +
+        "and reloads from the source. In our system short TTLs do most of this work, so an entry cannot drift for long. It " +
+        "is a hard problem because the failure is silent: nothing crashes, you simply return data that is out of date.",
       en:
-        "[[invalidation:Cache invalidation]] is keeping the cache from serving stale data after the underlying data " +
-        "changes — you delete or update the matching entry. The simplest form is: on a write, delete the key (DEL) so the " +
-        "next read misses and repopulates from the source. In our system a lot of it is handled by short TTLs, so entries " +
-        "expire before they drift too far. It’s famously hard because the bugs are silent — you just quietly serve " +
-        "something out of date.",
+        "[[invalidation:Cache invalidation]] means stopping the cache from serving a value after the underlying data has " +
+        "changed. The simplest form is: on a write, update the database and then delete the key, so the next read misses " +
+        "and reloads from the source. In our system short TTLs do most of this work, so an entry cannot drift for long. It " +
+        "is a hard problem because the failure is silent: nothing crashes, you simply return data that is out of date.",
     },
     note: {
       zh:
-        "定义 + 最简做法（写后 DEL key）+ 你们靠短 TTL 兜底。加一句“bug 是静默的”点出它难在哪。经典梗“计算机科学两大" +
-        "难题之一”可以提，但别当成答案主体。",
+        "面试官想听两件事：写操作之后你是删 key 而不是改 key；以及你知道这类 bug 为什么危险。采分点在“静默”二字——" +
+        "失效 bug 不报错、监控看不见，最后是用户先发现的。收口用“我们靠短 TTL 兜底”，诚实又具体。" +
+        "“计算机科学两大难题”那个梗提一次可以，但它不是答案。",
       en:
-        "Definition + simplest approach (DEL the key on write) + how short TTLs cover you. Add “the bugs are silent” to " +
-        "explain why it’s hard. The classic “two hard things in CS” joke is fine to mention but shouldn’t be the whole answer.",
+        "The interviewer wants to hear two things: that you delete the key on a write rather than rewrite it, and that you " +
+        "know why this bug class is dangerous. Credit comes from the word silent, because an invalidation bug raises no " +
+        "error and monitoring does not see it, so users find it first. Closing with the short TTL as your backstop is " +
+        "honest and concrete. The old joke about two hard things in computer science can be mentioned once, but it is not " +
+        "an answer.",
     },
   },
   {
@@ -424,24 +458,31 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "A [[stampede:cache stampede]] is when a hot key expires and, in that instant, hundreds of requests all miss and " +
-        "hit the backend or the [[carrier:carrier]] API at once — overwhelming it right when the cache was supposed to " +
-        "protect it. The usual fixes are: a lock or single-flight so only one request rebuilds the entry while the others " +
-        "wait, request coalescing, and adding jitter to TTLs so keys don’t all expire together.",
+        "A [[stampede:cache stampede]] happens when many requests miss the same key at the same moment and all rebuild it " +
+        "together. The usual cause is a popular key that has just expired: for a short moment the cache holds nothing, so " +
+        "the full load reaches the database or the [[carrier:carrier]] API. The fixes are a lock or single flight, so one " +
+        "request rebuilds while the others wait, request coalescing in the service layer, and refreshing the value shortly " +
+        "before it expires instead of after. This is about one key. Many keys expiring at once is a different problem, an " +
+        "avalanche, with a different fix.",
       en:
-        "A [[stampede:cache stampede]] is when a hot key expires and, in that instant, hundreds of requests all miss and " +
-        "hit the backend or the [[carrier:carrier]] API at once — overwhelming it right when the cache was supposed to " +
-        "protect it. The usual fixes are: a lock or single-flight so only one request rebuilds the entry while the others " +
-        "wait, request coalescing, and adding jitter to TTLs so keys don’t all expire together.",
+        "A [[stampede:cache stampede]] happens when many requests miss the same key at the same moment and all rebuild it " +
+        "together. The usual cause is a popular key that has just expired: for a short moment the cache holds nothing, so " +
+        "the full load reaches the database or the [[carrier:carrier]] API. The fixes are a lock or single flight, so one " +
+        "request rebuilds while the others wait, request coalescing in the service layer, and refreshing the value shortly " +
+        "before it expires instead of after. This is about one key. Many keys expiring at once is a different problem, an " +
+        "avalanche, with a different fix.",
     },
     note: {
       zh:
-        "先描述现象（热 key 过期瞬间大量 miss 同时冲后端），再给三个解法：加锁 / single-flight、请求合并、TTL 抖动。" +
-        "能说出“本该保护后端的缓存，反而在最脆弱的瞬间放开了闸”这层反讽，说明你真理解。",
+        "面试官要的是机制，不是名词：同一个 key 上并发 miss 的瞬间峰值，恰好发生在缓存本该保护后端的时候。" +
+        "采分点是给出一个真正能压住并发的解法（加锁 / single flight），因为只有它能把回源请求数封顶。" +
+        "务必和雪崩分开——那是“很多 key 同时过期”。如果这些方案你没实际做过，就说你会选哪个、为什么，别说成做过。",
       en:
-        "First describe the phenomenon (a hot key expires and a burst of misses hits the backend at once), then give three " +
-        "fixes: lock / single-flight, request coalescing, TTL jitter. Noting the irony — the cache lets the flood through " +
-        "exactly when it was meant to shield the backend — shows real understanding.",
+        "The interviewer wants the mechanism, not the label: a burst of concurrent misses on one key, at the exact moment " +
+        "the cache was supposed to protect the source. Credit comes from naming a fix that limits concurrency, such as a " +
+        "lock or single flight, because that is the one that caps how many requests reach the source. Keep it separate from " +
+        "an avalanche, which is many keys expiring together. If you have not built one of these, say which one you would " +
+        "choose and why, rather than implying you shipped it.",
     },
   },
   {
@@ -453,24 +494,27 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "You could, but it’s the wrong tool. Rate quotes are temporary, read very frequently, and are meant to expire — " +
-        "which is exactly what a cache with a [[ttl:TTL]] is for. Doing it in [[mysql:MySQL]] means writing your own " +
-        "expiry logic, adding read load and churn to the primary that the real data depends on, and you still don’t get " +
-        "memory-speed reads. Redis gives you expiry and speed for free and keeps that throwaway traffic off the database.",
+        "You could, but it is the wrong tool for this data. Rate quotes are temporary, read very often, and meant to " +
+        "expire, which is exactly the shape of a cache entry. In [[mysql:MySQL]] I would have to write my own expiry job, " +
+        "and I would add read load and row churn to the database that the real data depends on. I would still not get " +
+        "memory-speed reads. Redis provides the expiry and the fast reads directly, and keeps this short-lived traffic away " +
+        "from the database.",
       en:
-        "You could, but it’s the wrong tool. Rate quotes are temporary, read very frequently, and are meant to expire — " +
-        "which is exactly what a cache with a [[ttl:TTL]] is for. Doing it in [[mysql:MySQL]] means writing your own " +
-        "expiry logic, adding read load and churn to the primary that the real data depends on, and you still don’t get " +
-        "memory-speed reads. Redis gives you expiry and speed for free and keeps that throwaway traffic off the database.",
+        "You could, but it is the wrong tool for this data. Rate quotes are temporary, read very often, and meant to " +
+        "expire, which is exactly the shape of a cache entry. In [[mysql:MySQL]] I would have to write my own expiry job, " +
+        "and I would add read load and row churn to the database that the real data depends on. I would still not get " +
+        "memory-speed reads. Redis provides the expiry and the fast reads directly, and keeps this short-lived traffic away " +
+        "from the database.",
     },
     note: {
       zh:
-        "别贬低 MySQL，而是讲“工具匹配”：报价临时、高频读、要过期——正好是缓存的形状。用 MySQL 要自管过期、给主库加压、" +
-        "还没内存快。采分点是你能从数据的生命周期 / 访问模式来选型，而不是“Redis 就是快”。",
+        "面试官考的是选型方法，所以从数据的形状答起：临时、高频读、本来就该过期。采分点是你替数据库省下的成本" +
+        "（自己写过期逻辑、主库多出的读压力和行变更），而不是一句“Redis 快”。别去贬低 MySQL——重点是匹配，" +
+        "同样的推理反过来会把需要持久化的账务数据留在 MySQL。",
       en:
-        "Don’t trash MySQL — frame it as tool fit: quotes are temporary, high-read, and want to expire, which is exactly a " +
-        "cache’s shape. MySQL means self-managed expiry, extra load on the primary, and still no memory-speed reads. The " +
-        "scoring point is choosing by the data’s lifecycle and access pattern, not “Redis is just fast”.",
+        "The interviewer is checking how you choose a tool, so answer with the shape of the data: temporary, read-heavy, and " +
+        "meant to expire. Credit comes from the cost you avoid on the database side, not from the claim that Redis is fast. " +
+        "Do not argue that MySQL is bad. The point is fit, and the same reasoning keeps durable financial data in MySQL.",
     },
   },
   {
@@ -483,28 +527,31 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "Honestly, and I’d scope it carefully. The number compares response time for the same package and route, before " +
-        "and after caching, on repeated requests — the ones that can actually be served from cache. It is not a claim that " +
-        "every request got 40% faster; a first, uncached request still pays full price. And if I didn’t have real " +
-        "before-and-after measurements, I wouldn’t quote p50 or p95 figures — I’d rather drop the number from my resume " +
-        "than defend one I can’t back up.",
+        "I would scope the number carefully. It compares response time for the same package and the same route, before and " +
+        "after caching, on repeated requests, which are the ones a cache can serve. It is not a claim that every request " +
+        "became 40% faster, because the first, uncached request still pays the full cost. And if I did not have real " +
+        "before-and-after measurements, I would not quote a p50 or p95 figure. I would rather take the number off my resume " +
+        "than defend one I cannot support.",
       en:
-        "Honestly, and I’d scope it carefully. The number compares response time for the same package and route, before " +
-        "and after caching, on repeated requests — the ones that can actually be served from cache. It is not a claim that " +
-        "every request got 40% faster; a first, uncached request still pays full price. And if I didn’t have real " +
-        "before-and-after measurements, I wouldn’t quote p50 or p95 figures — I’d rather drop the number from my resume " +
-        "than defend one I can’t back up.",
+        "I would scope the number carefully. It compares response time for the same package and the same route, before and " +
+        "after caching, on repeated requests, which are the ones a cache can serve. It is not a claim that every request " +
+        "became 40% faster, because the first, uncached request still pays the full cost. And if I did not have real " +
+        "before-and-after measurements, I would not quote a p50 or p95 figure. I would rather take the number off my resume " +
+        "than defend one I cannot support.",
     },
     note: {
       zh:
-        "这条最重要：诚实。说清口径——对比同包裹 / 同路线、开缓存前后、可缓存的重复请求；提升只适用于能命中缓存的重复请求，" +
-        "不是所有首次请求。如果你没有真实测量数据，面试中不要临场编造 p50/p95 数据，宁可把简历里的 40% 删掉。面试官追问“怎么测的”" +
-        "时，编造的数字在追问下极易当场暴露；诚实反而是加分项。简历上写的每个数字，都要能扛住这一问。",
+        "这一题决定面试官还信不信你简历上的其他内容。先把口径说全：同包裹、同路线、能命中缓存的重复请求、开缓存前后对比。" +
+        "如果你根本没测过，就直说“这个我没有实际测量过，是粗略对比出来的印象”，然后讲你现在会怎么测——" +
+        "这句实话比任何数字都稳。绝对不要临场编 p50 / p95：下一句追问一定是“怎么测的、样本多大”，编的数字撑不过两轮。" +
+        "如果这个 40% 你撑不住，面试前就把它从简历上删掉。",
       en:
-        "The most important one: be honest. Scope it — same package/route, before vs after caching, on cacheable repeat " +
-        "requests; the gain only applies to requests that can hit the cache, not every first request. If you don’t have " +
-        "real measurements, do not invent p50/p95 on the spot — drop the 40% from your resume instead. “How did you measure " +
-        "it?” is where made-up numbers collapse; honesty scores points. Every number on your resume has to survive this question.",
+        "This question decides whether the interviewer trusts the rest of your resume. Say the scope out loud first: same " +
+        "package, same route, repeated requests only, measured before and after the cache. If you never measured it, say so " +
+        "in plain words — I did not measure that, it was a rough comparison — and then say how you would measure it now. " +
+        "Never invent a p50 or p95 under pressure, because the next question is how you measured it and with what sample " +
+        "size, and an invented number does not survive two follow-ups. If you cannot support the 40%, take it off the " +
+        "resume before the interview.",
     },
   },
   {
@@ -516,30 +563,30 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "Redis has two persistence options. RDB takes point-in-time snapshots of the whole dataset — the file is compact " +
-        "and restores fast, but if the process crashes between snapshots you lose everything since the last one. AOF " +
-        "instead logs every write command; with appendfsync everysec, the default, you lose at most about a second of " +
-        "writes, but the file is larger and replay on restart is slower. In production people often run AOF everysec, or a " +
-        "hybrid of RDB plus AOF, to balance durability and restart speed. Either way, Redis still isn’t the " +
-        "[[sourceoftruth:source of truth]] — the database is.",
+        "Redis has two persistence options. RDB writes a point-in-time snapshot of the dataset: the file is compact and " +
+        "restart is fast, but a crash between two snapshots loses everything written since the last one. AOF appends every " +
+        "write command to a log, and appendfsync decides how often that log is flushed to disk. The default, everysec, can " +
+        "lose about one second of writes, and the file is larger and slower to replay. Many teams run AOF with everysec, or " +
+        "both mechanisms together. Either way this is crash recovery, not a durability guarantee — the database is still " +
+        "the [[sourceoftruth:source of truth]].",
       en:
-        "Redis has two persistence options. RDB takes point-in-time snapshots of the whole dataset — the file is compact " +
-        "and restores fast, but if the process crashes between snapshots you lose everything since the last one. AOF " +
-        "instead logs every write command; with appendfsync everysec, the default, you lose at most about a second of " +
-        "writes, but the file is larger and replay on restart is slower. In production people often run AOF everysec, or a " +
-        "hybrid of RDB plus AOF, to balance durability and restart speed. Either way, Redis still isn’t the " +
-        "[[sourceoftruth:source of truth]] — the database is.",
+        "Redis has two persistence options. RDB writes a point-in-time snapshot of the dataset: the file is compact and " +
+        "restart is fast, but a crash between two snapshots loses everything written since the last one. AOF appends every " +
+        "write command to a log, and appendfsync decides how often that log is flushed to disk. The default, everysec, can " +
+        "lose about one second of writes, and the file is larger and slower to replay. Many teams run AOF with everysec, or " +
+        "both mechanisms together. Either way this is crash recovery, not a durability guarantee — the database is still " +
+        "the [[sourceoftruth:source of truth]].",
     },
     note: {
       zh:
-        "先分清两种机制：RDB=内存快照（紧凑、恢复快，但两次快照间宕机会丢数据）；AOF=记录每条写命令（appendfsync " +
-        "everysec 是默认、最多丢约 1 秒，但文件大、恢复慢）。采分点：说出 everysec 是默认、生产常用 AOF everysec 或 " +
-        "RDB+AOF 混合持久化。别背成“AOF 一定比 RDB 好”——是权衡。收口仍要表态：Redis 不是真相来源。",
+        "先把两种机制分清：RDB 是快照，AOF 是写命令日志。采分点是把“会丢多少”说出来——RDB 丢到上一次快照为止，" +
+        "AOF 在 everysec 下大约丢 1 秒。再提一句生产上常见的是 AOF everysec 或两者混用，说明你见过真实配置。" +
+        "别说“AOF 一定比 RDB 好”，那是权衡；也别因为有持久化就说 Redis 可以当持久化主库。",
       en:
-        "Distinguish the two: RDB = memory snapshot (compact, fast restore, but loses data between snapshots); AOF = logs " +
-        "every write (appendfsync everysec loses ~1s, but bigger file and slower replay). Scoring points: name everysec as " +
-        "the default and mention AOF everysec or a hybrid RDB+AOF in production. Don’t claim AOF is simply better — it’s a " +
-        "trade-off. Close by restating Redis isn’t the source of truth.",
+        "Keep the two mechanisms apart: RDB is a snapshot, AOF is a log of write commands. Credit comes from stating the " +
+        "loss window for each one: back to the last snapshot for RDB, about one second for AOF with everysec. Adding that " +
+        "production setups often run AOF everysec, or both, shows you have seen a real configuration. Do not say AOF is " +
+        "simply better, and do not let persistence turn into a claim that Redis is a durable primary database.",
     },
   },
   {
@@ -551,26 +598,30 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "Redis combines two strategies. Lazy deletion: when you access a key, it checks the [[ttl:TTL]] and deletes it " +
-        "right then if it has expired. Lazy alone would leak memory for keys nobody ever touches, so there’s also active " +
-        "expiration: a background job periodically samples a batch of keys that have a TTL and removes the expired ones. " +
-        "Redis deliberately does not attach a timer to every single key, because millions of timers would be far too " +
-        "expensive — sampling is good enough.",
+        "Redis combines two strategies. Lazy expiration: when a key is accessed, Redis checks the [[ttl:TTL]] and, if the " +
+        "key has expired, it is removed and not returned. Lazy expiration alone would hold memory for keys that nobody " +
+        "reads again, so there is also active expiration: a background job repeatedly samples keys that carry a TTL and " +
+        "removes the expired ones. So the guarantee is that an expired key is never returned, not that it is deleted at the " +
+        "exact second it expires. Redis avoids a timer per key on purpose, because millions of timers would cost more than " +
+        "sampling.",
       en:
-        "Redis combines two strategies. Lazy deletion: when you access a key, it checks the [[ttl:TTL]] and deletes it " +
-        "right then if it has expired. Lazy alone would leak memory for keys nobody ever touches, so there’s also active " +
-        "expiration: a background job periodically samples a batch of keys that have a TTL and removes the expired ones. " +
-        "Redis deliberately does not attach a timer to every single key, because millions of timers would be far too " +
-        "expensive — sampling is good enough.",
+        "Redis combines two strategies. Lazy expiration: when a key is accessed, Redis checks the [[ttl:TTL]] and, if the " +
+        "key has expired, it is removed and not returned. Lazy expiration alone would hold memory for keys that nobody " +
+        "reads again, so there is also active expiration: a background job repeatedly samples keys that carry a TTL and " +
+        "removes the expired ones. So the guarantee is that an expired key is never returned, not that it is deleted at the " +
+        "exact second it expires. Redis avoids a timer per key on purpose, because millions of timers would cost more than " +
+        "sampling.",
     },
     note: {
       zh:
-        "两种机制结合：惰性删除（访问到才检查 TTL 并删）+ 定期删除（后台随机抽一批带 TTL 的 key 删过期的）。采分点是解释" +
-        "“为什么不给每个 key 挂定时器”——开销太大。别说 Redis 到点就精确瞬删，实际是采样近似，过期 key 可能短时间仍占内存。",
+        "面试官要听两半机制——惰性 + 定期采样——以及它们背后的那条保证。采分点是把保证说准：过期的 key 不会被返回，" +
+        "内存是稍后才回收的。再解释“为什么不给每个 key 挂定时器”（记账成本高于采样），这是设计层面的加分。" +
+        "要避免的说法：到点即删——采样式的设计并没有做这个承诺。",
       en:
-        "Two mechanisms combined: lazy deletion (checked on access) + active sampling (a background job samples keys with a " +
-        "TTL and drops the expired ones). Scoring point: explain why there’s no per-key timer — the overhead would be huge. " +
-        "Don’t claim keys vanish the exact instant they expire; it’s approximate, and an expired key can briefly still hold memory.",
+        "The interviewer is listening for both halves, lazy and active, and for the guarantee behind them. Credit comes from " +
+        "the precise claim: an expired key is not returned, and the memory is reclaimed later. Explaining why there is no " +
+        "timer per key, because the bookkeeping would cost more than sampling, is the design-level point. The trap is " +
+        "saying keys are deleted the moment they expire, which the sampling design does not promise.",
     },
   },
   {
@@ -582,29 +633,31 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "When Redis reaches the maxmemory limit, it evicts keys according to maxmemory-policy. The default is noeviction, " +
-        "which just returns errors on further writes. The main alternatives are allkeys-lru or allkeys-lfu, which can evict " +
-        "any key, and the volatile-* variants, which only evict keys that carry a [[ttl:TTL]]. LRU evicts what hasn’t been " +
-        "used recently; LFU evicts what’s used least often, which resists a one-off scan polluting the cache. Note Redis " +
-        "uses approximate LRU by sampling, not a perfect ordering. For a pure cache I’d usually pick allkeys-lru or " +
-        "allkeys-lfu.",
+        "Eviction only starts when Redis reaches the maxmemory limit, and maxmemory-policy decides what happens then. The " +
+        "default is noeviction: reads keep working and writes return an error. The allkeys-lru and allkeys-lfu policies can " +
+        "evict any key, while the volatile policies only evict keys that carry a [[ttl:TTL]]. LRU drops what has not been " +
+        "used recently; LFU drops what is used least often, so a one-off scan of cold data pushes less useful data out. " +
+        "Both are approximate: Redis samples a small number of keys and evicts the best candidate instead of keeping an " +
+        "exact ordering. For a pure cache I would use allkeys-lru or allkeys-lfu.",
       en:
-        "When Redis reaches the maxmemory limit, it evicts keys according to maxmemory-policy. The default is noeviction, " +
-        "which just returns errors on further writes. The main alternatives are allkeys-lru or allkeys-lfu, which can evict " +
-        "any key, and the volatile-* variants, which only evict keys that carry a [[ttl:TTL]]. LRU evicts what hasn’t been " +
-        "used recently; LFU evicts what’s used least often, which resists a one-off scan polluting the cache. Note Redis " +
-        "uses approximate LRU by sampling, not a perfect ordering. For a pure cache I’d usually pick allkeys-lru or " +
-        "allkeys-lfu.",
+        "Eviction only starts when Redis reaches the maxmemory limit, and maxmemory-policy decides what happens then. The " +
+        "default is noeviction: reads keep working and writes return an error. The allkeys-lru and allkeys-lfu policies can " +
+        "evict any key, while the volatile policies only evict keys that carry a [[ttl:TTL]]. LRU drops what has not been " +
+        "used recently; LFU drops what is used least often, so a one-off scan of cold data pushes less useful data out. " +
+        "Both are approximate: Redis samples a small number of keys and evicts the best candidate instead of keeping an " +
+        "exact ordering. For a pure cache I would use allkeys-lru or allkeys-lfu.",
     },
     note: {
       zh:
-        "先说触发点（到 maxmemory 按 maxmemory-policy 淘汰）。采分点：noeviction 是默认（写报错）、allkeys-* vs volatile-*" +
-        "（后者只淘汰设了 TTL 的）、LRU（最近用没用）vs LFU（用得频不频、更抗偶发大扫描）。补一句“Redis 是近似 LRU（采样）”" +
-        "显得懂细节。纯缓存常选 allkeys-lru/lfu。",
+        "先说触发条件，因为淘汰和过期最容易被混在一起：淘汰发生在到达 maxmemory 时，过期是每个 key 按自己的 TTL 走。" +
+        "采分点是两组对比：allkeys 与 volatile、LRU 与 LFU。补一句“Redis 的 LRU/LFU 是采样近似、不是精确排序”，" +
+        "能把你和只看过博客的候选人区分开。要避免的答法：内存满了就删旧数据——这跳过了策略这一层。",
       en:
-        "Start with the trigger (at maxmemory, evict per maxmemory-policy). Scoring points: noeviction is the default (writes " +
-        "error), allkeys-* vs volatile-* (the latter only evicts keys with a TTL), LRU (recency) vs LFU (frequency, resists a " +
-        "one-off scan). Adding “approximate LRU via sampling” shows depth. For a pure cache, allkeys-lru/lfu is the common pick.",
+        "Start with the trigger, because eviction and expiry get mixed up: eviction happens at maxmemory, while expiry " +
+        "happens key by key from its own TTL. Credit comes from two contrasts, allkeys versus volatile and LRU versus LFU. " +
+        "The detail that both are sampled approximations rather than exact orderings separates you from a candidate who " +
+        "read one blog post. The trap is answering that Redis deletes old data when memory is full, which skips the policy " +
+        "entirely.",
     },
   },
   {
@@ -612,31 +665,36 @@ export const questions: QA[] = [
     category: "advanced",
     q: {
       zh: "Replication vs Sentinel vs Cluster?（主从、哨兵、集群的区别？）",
-      en: "What’s the difference between replication, Sentinel, and Cluster?",
+      en: "What is the difference between replication, Sentinel, and Cluster?",
     },
     answer: {
       zh:
-        "These solve different problems. Replication gives you read scaling: replicas copy the master, but replication is " +
-        "asynchronous, so a replica can serve slightly stale data. Sentinel adds high availability — it monitors the master " +
-        "and, if it dies, automatically promotes a replica and fails over. Cluster is about horizontal scale: it shards data " +
-        "across 16384 hash slots spread over multiple masters. The clean distinction is: Sentinel is HA without sharding, " +
-        "Cluster is sharding plus HA.",
+        "They solve three different problems. Replication copies a primary to one or more replicas, which gives read " +
+        "capacity and a standby copy, but replication is asynchronous, so a replica can return slightly stale data. " +
+        "Sentinel adds availability: it watches the primary and promotes a replica automatically when the primary fails. " +
+        "Cluster adds horizontal scale: the keyspace is sharded across 16384 hash slots spread over several primaries. The " +
+        "short version is that Sentinel is failover without sharding, and Cluster is sharding with failover. In both cases " +
+        "a failover can lose recent writes, because the promoted replica may not have received them yet.",
       en:
-        "These solve different problems. Replication gives you read scaling: replicas copy the master, but replication is " +
-        "asynchronous, so a replica can serve slightly stale data. Sentinel adds high availability — it monitors the master " +
-        "and, if it dies, automatically promotes a replica and fails over. Cluster is about horizontal scale: it shards data " +
-        "across 16384 hash slots spread over multiple masters. The clean distinction is: Sentinel is HA without sharding, " +
-        "Cluster is sharding plus HA.",
+        "They solve three different problems. Replication copies a primary to one or more replicas, which gives read " +
+        "capacity and a standby copy, but replication is asynchronous, so a replica can return slightly stale data. " +
+        "Sentinel adds availability: it watches the primary and promotes a replica automatically when the primary fails. " +
+        "Cluster adds horizontal scale: the keyspace is sharded across 16384 hash slots spread over several primaries. The " +
+        "short version is that Sentinel is failover without sharding, and Cluster is sharding with failover. In both cases " +
+        "a failover can lose recent writes, because the promoted replica may not have received them yet.",
     },
     note: {
       zh:
-        "三者别混：主从=读扩展（异步复制→从库可能读到旧数据）；哨兵=监控+主挂了自动故障转移（高可用，不分片）；集群=16384 " +
-        "个哈希槽分片（横向扩容+高可用）。采分点就是这句对比：哨兵=HA 不分片，集群=分片+HA。能提一句“异步复制导致主从延迟”加分。",
+        "面试官想确认你知道三者各自解决什么问题，所以开口就点出：读扩展、可用性、横向扩容。" +
+        "采分句就是那句对比——哨兵是不分片的故障转移，集群是带故障转移的分片。" +
+        "再加一句“复制是异步的，所以故障转移可能丢掉已确认的写”，这题就从背诵变成了工程判断。" +
+        "要避免的说法：把集群讲成哨兵的升级版——它们回答的是不同问题。",
       en:
-        "Keep them distinct: replication = read scaling (async → replicas can be stale); Sentinel = monitoring + automatic " +
-        "failover (HA, no sharding); Cluster = 16384 hash slots for sharding (horizontal scale + HA). The scoring line is the " +
-        "contrast: Sentinel is HA without sharding, Cluster is sharding plus HA. Mentioning replication lag from async " +
-        "replication is a bonus.",
+        "The interviewer is checking whether you know which problem each one solves, so lead with read capacity, " +
+        "availability, and scale. The line that earns the credit is the contrast: Sentinel is failover without sharding, " +
+        "Cluster is sharding with failover. Adding that replication is asynchronous, so a failover can lose already " +
+        "acknowledged writes, turns a memorized comparison into an engineering answer. The trap is presenting Cluster as an " +
+        "upgraded Sentinel; they answer different questions.",
     },
   },
   {
@@ -648,24 +706,29 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "It does, but not in the SQL sense. MULTI queues commands and EXEC runs them in order, as a unit, without another " +
-        "client’s commands interleaving. The big caveat is there’s no rollback: if one command fails at runtime, the others " +
-        "still execute. WATCH gives you optimistic locking — EXEC aborts if a watched key changed in the meantime. And when " +
-        "you need real atomic multi-step logic, you use a Lua script, which runs [[atomic:atomically]] on the single thread.",
+        "Yes, but not in the SQL sense. MULTI queues the commands and EXEC runs them in order, with no other client's " +
+        "command in between. There is no rollback: if one command fails at runtime, the commands around it still take " +
+        "effect. WATCH gives you optimistic concurrency control rather than a lock — if a watched key changed before EXEC, " +
+        "EXEC returns nil, nothing runs, and your code retries. When several steps really have to be one unit, I use a Lua " +
+        "script, which Redis runs [[atomic:atomically]] as a single unit.",
       en:
-        "It does, but not in the SQL sense. MULTI queues commands and EXEC runs them in order, as a unit, without another " +
-        "client’s commands interleaving. The big caveat is there’s no rollback: if one command fails at runtime, the others " +
-        "still execute. WATCH gives you optimistic locking — EXEC aborts if a watched key changed in the meantime. And when " +
-        "you need real atomic multi-step logic, you use a Lua script, which runs [[atomic:atomically]] on the single thread.",
+        "Yes, but not in the SQL sense. MULTI queues the commands and EXEC runs them in order, with no other client's " +
+        "command in between. There is no rollback: if one command fails at runtime, the commands around it still take " +
+        "effect. WATCH gives you optimistic concurrency control rather than a lock — if a watched key changed before EXEC, " +
+        "EXEC returns nil, nothing runs, and your code retries. When several steps really have to be one unit, I use a Lua " +
+        "script, which Redis runs [[atomic:atomically]] as a single unit.",
     },
     note: {
       zh:
-        "先肯定“有事务”，但立刻点出和 SQL 不同：MULTI/EXEC 只保证排队按序、不被打断，没有回滚（某条运行时出错其余照跑）。" +
-        "采分点：WATCH=乐观锁、复杂原子逻辑用 Lua 脚本。别说“Redis 事务能回滚”——这是高频翻车点。",
+        "先承认“有事务”，然后立刻修正这个词带来的预期。采分点是两句精确的话：MULTI/EXEC 只保证顺序执行、不被打断，没有回滚；" +
+        "WATCH 是乐观并发控制，所以你的代码必须处理 EXEC 返回 nil 并重试。真正多步的原子逻辑用 Lua 脚本，这是这题里最有分量的一句。" +
+        "绝对不要说“Redis 事务可以回滚”——这一句会把前面答对的都抵消掉。",
       en:
-        "Confirm “yes, transactions exist” but immediately flag the difference from SQL: MULTI/EXEC only guarantee ordered, " +
-        "uninterrupted execution, with no rollback (a runtime error doesn’t undo the rest). Scoring points: WATCH = optimistic " +
-        "lock, and Lua for real atomic logic. Never say Redis transactions roll back — that’s a common trip-up.",
+        "Confirm that transactions exist, then correct the expectation the word creates. Credit comes from two precise " +
+        "statements: MULTI and EXEC give ordering and isolation but no rollback, and WATCH is optimistic concurrency, so " +
+        "your code has to handle a nil reply and retry. Naming Lua as the tool for logic that is genuinely multi-step is " +
+        "the strongest part of the answer. Never say a Redis transaction can be rolled back; that one sentence undoes the " +
+        "rest.",
     },
   },
   {
@@ -673,31 +736,32 @@ export const questions: QA[] = [
     category: "advanced",
     q: {
       zh: "Pipeline vs transaction?（Pipeline 和事务有什么区别？）",
-      en: "What’s the difference between a pipeline and a transaction?",
+      en: "What is the difference between a pipeline and a transaction?",
     },
     answer: {
       zh:
-        "They’re often confused but do different things. A pipeline is purely a network optimization: you send many commands " +
-        "in one batch and read the replies together, cutting round-trip time (RTT). It does not make them [[atomic:atomic]] — " +
-        "another client’s commands can still interleave with yours. A transaction, MULTI/EXEC, guarantees the batch runs in " +
-        "order without interruption. So pipelining is about throughput and RTT; a transaction is about atomicity. You can " +
-        "even pipeline a MULTI/EXEC block to get both.",
+        "They are often confused, but they solve different problems. A pipeline is a network optimization: you send many " +
+        "commands without waiting for each reply, then read the replies together, which removes most of the round trips. A " +
+        "pipeline gives no [[atomic:atomicity]] — another client's commands can still run between yours. A transaction, " +
+        "MULTI and EXEC, guarantees that the queued commands run in order with nothing in between. So a pipeline is about " +
+        "round trips and a transaction is about ordering, and you can send a MULTI and EXEC block inside a pipeline.",
       en:
-        "They’re often confused but do different things. A pipeline is purely a network optimization: you send many commands " +
-        "in one batch and read the replies together, cutting round-trip time (RTT). It does not make them [[atomic:atomic]] — " +
-        "another client’s commands can still interleave with yours. A transaction, MULTI/EXEC, guarantees the batch runs in " +
-        "order without interruption. So pipelining is about throughput and RTT; a transaction is about atomicity. You can " +
-        "even pipeline a MULTI/EXEC block to get both.",
+        "They are often confused, but they solve different problems. A pipeline is a network optimization: you send many " +
+        "commands without waiting for each reply, then read the replies together, which removes most of the round trips. A " +
+        "pipeline gives no [[atomic:atomicity]] — another client's commands can still run between yours. A transaction, " +
+        "MULTI and EXEC, guarantees that the queued commands run in order with nothing in between. So a pipeline is about " +
+        "round trips and a transaction is about ordering, and you can send a MULTI and EXEC block inside a pipeline.",
     },
     note: {
       zh:
-        "核心区别：pipeline=一次发多条一次收、省网络往返(RTT)，不保证原子、中间可被别的客户端命令穿插；事务(MULTI/EXEC)=" +
-        "保证有序不被打断。采分点是别把两者混为一谈——一个解决吞吐/延迟，一个解决原子性。能说“可以把 MULTI/EXEC 也放进 " +
-        "pipeline”算加分。",
+        "面试官在验证一个很具体的误解：以为“打包发送”就等于原子。所以要明说 pipeline 只省网络往返，中间仍可能被别的客户端插入命令。" +
+        "采分点是把这组对照压成一句：一个解决往返次数，一个解决顺序与隔离。再补一句“事务可以放进 pipeline 一起发”，" +
+        "说明你两样都用过，而不只是读过。",
       en:
-        "Core difference: a pipeline batches sends/receives to save RTT but is not atomic (other clients can interleave); a " +
-        "transaction (MULTI/EXEC) guarantees ordered, uninterrupted execution. Scoring point: don’t conflate them — one is " +
-        "throughput/latency, the other is atomicity. Noting you can pipeline a MULTI/EXEC block is a bonus.",
+        "The interviewer is checking one specific misconception: that batching makes commands atomic. Say plainly that a " +
+        "pipeline only removes round trips and that another client can still run commands in between. Credit comes from " +
+        "compressing the contrast into one line: round trips versus ordering. Adding that a transaction can be sent inside " +
+        "a pipeline shows you have used both rather than read about them.",
     },
   },
   {
@@ -709,28 +773,33 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "The basic pattern is [[setnx:SET key <unique-value> NX EX <ttl>]] — NX means only one client can acquire it. Two " +
-        "things matter. First, when you release, don’t just DEL: run a small Lua script that checks the value is yours before " +
-        "deleting, so you never release someone else’s lock. Second, the TTL prevents a dead client from holding the lock " +
-        "forever, but if your work outlives the TTL you need a watchdog to renew it. For multi-master setups there’s the " +
-        "Redlock algorithm, though it’s debated — Kleppmann argued it isn’t safe under clock drift and GC pauses. Being able " +
-        "to say “I know Redlock and the controversy” is a plus.",
+        "The basic pattern is [[setnx:SET key <random-value> NX PX <ttl>]]. NX means the write only succeeds if the key does " +
+        "not exist, so exactly one client acquires the lock, and PX sets the timeout. Two details matter. To release, do not " +
+        "call DEL directly: run a small Lua script that checks the stored value is yours and deletes it in the same step, " +
+        "otherwise you can delete a lock that another client acquired after your TTL expired. And a lock on a single Redis " +
+        "instance is not safe across a failover, because replication is asynchronous and a promoted replica may never have " +
+        "received the lock. If correctness has to be absolute, I would use a system built for consensus instead.",
       en:
-        "The basic pattern is [[setnx:SET key <unique-value> NX EX <ttl>]] — NX means only one client can acquire it. Two " +
-        "things matter. First, when you release, don’t just DEL: run a small Lua script that checks the value is yours before " +
-        "deleting, so you never release someone else’s lock. Second, the TTL prevents a dead client from holding the lock " +
-        "forever, but if your work outlives the TTL you need a watchdog to renew it. For multi-master setups there’s the " +
-        "Redlock algorithm, though it’s debated — Kleppmann argued it isn’t safe under clock drift and GC pauses. Being able " +
-        "to say “I know Redlock and the controversy” is a plus.",
+        "The basic pattern is [[setnx:SET key <random-value> NX PX <ttl>]]. NX means the write only succeeds if the key does " +
+        "not exist, so exactly one client acquires the lock, and PX sets the timeout. Two details matter. To release, do not " +
+        "call DEL directly: run a small Lua script that checks the stored value is yours and deletes it in the same step, " +
+        "otherwise you can delete a lock that another client acquired after your TTL expired. And a lock on a single Redis " +
+        "instance is not safe across a failover, because replication is asynchronous and a promoted replica may never have " +
+        "received the lock. If correctness has to be absolute, I would use a system built for consensus instead.",
     },
     note: {
       zh:
-        "采分点分三层：加锁用 SET key 唯一值 NX EX ttl；释放要用 Lua 先校验 value 是自己的再删（避免误删别人的锁）；ttl 防死锁" +
-        "但业务超时要看门狗续期。能说出 Redlock 及 Kleppmann 的质疑（时钟漂移/GC 停顿）是加分。别把分布式锁说得绝对安全——它有边界。",
+        "三层都答到才算满分：加锁用一条同时“检查并设置”的命令；释放用 Lua 校验 value 再删（否则会删掉别人刚拿到的锁）；" +
+        "TTL 防止客户端崩溃后锁永远不释放，业务可能超时就再提一句看门狗续期。面试官真正在听的是边界那句——" +
+        "单实例锁在故障转移时可能丢失，因为复制是异步的。被问到多主时可以提 Redlock，但要说清它仍有争议" +
+        "（Kleppmann 关于时钟漂移和进程停顿的质疑是标准参考），别说成“用 Redlock 就解决了”。",
       en:
-        "Three scoring layers: acquire with SET key <unique> NX EX ttl; release via a Lua check-value-then-delete (never delete " +
-        "someone else’s lock); TTL avoids deadlock but a job that outlives it needs a watchdog to renew. Bonus: mention Redlock " +
-        "and Kleppmann’s critique (clock drift / GC pauses). Don’t present the lock as absolutely safe — it has limits.",
+        "Three layers earn credit: acquire with one command that both checks and sets, release with a compare-and-delete Lua " +
+        "script, and a TTL so a crashed client cannot hold the lock forever. If the work can outlive the TTL, mention a " +
+        "watchdog that renews it. What the interviewer is really listening for is the limit: a single-instance lock can be " +
+        "lost during a failover, because replication is asynchronous. Redlock is worth naming if they ask about multiple " +
+        "primaries, but present it as debated rather than as a fix — Kleppmann's critique about clock drift and process " +
+        "pauses is the standard reference.",
     },
   },
   {
@@ -742,24 +811,28 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "Cache penetration is when requests keep asking for data that doesn’t exist anywhere — every lookup misses the cache " +
-        "and falls through to the database, and an attacker can weaponize it by hammering random non-existent keys. The " +
-        "fixes: cache the empty result with a short [[ttl:TTL]] so repeats stop at the cache, put a Bloom filter in front to " +
-        "reject keys that definitely don’t exist, and validate inputs so obviously bogus requests never reach the DB.",
+        "Penetration is when requests ask for data that does not exist anywhere. The cache misses every time because there " +
+        "is nothing to store, so every request reaches the database and the cache gives no protection at all. It can also " +
+        "be abused, by sending random ids that will never exist. The fixes are to cache the empty result with a short " +
+        "[[ttl:TTL]], to put a Bloom filter in front so ids that certainly do not exist are rejected early, and to validate " +
+        "the id format before any lookup.",
       en:
-        "Cache penetration is when requests keep asking for data that doesn’t exist anywhere — every lookup misses the cache " +
-        "and falls through to the database, and an attacker can weaponize it by hammering random non-existent keys. The " +
-        "fixes: cache the empty result with a short [[ttl:TTL]] so repeats stop at the cache, put a Bloom filter in front to " +
-        "reject keys that definitely don’t exist, and validate inputs so obviously bogus requests never reach the DB.",
+        "Penetration is when requests ask for data that does not exist anywhere. The cache misses every time because there " +
+        "is nothing to store, so every request reaches the database and the cache gives no protection at all. It can also " +
+        "be abused, by sending random ids that will never exist. The fixes are to cache the empty result with a short " +
+        "[[ttl:TTL]], to put a Bloom filter in front so ids that certainly do not exist are rejected early, and to validate " +
+        "the id format before any lookup.",
     },
     note: {
       zh:
-        "先讲现象：查根本不存在的数据，缓存永远 miss、每次穿透到 DB，可被恶意刷。采分点三个解法：缓存空值（短 TTL）+ 布隆" +
-        "过滤器挡掉一定不存在的 key + 参数校验。注意和“击穿”“雪崩”区分——穿透查的是不存在的数据。",
+        "面试官在这一组题里考的是你能不能把三种缓存故障分清，所以要按成因定义：数据根本不存在，所以任何缓存都不可能装得下它。" +
+        "采分点是“缓存空值 + 短 TTL”，这是最多人漏掉的一条。再补一句布隆过滤器“能确定不存在，不能确定存在”，细节分就拿到了。" +
+        "别和热点 key 过期（击穿）混在一起。",
       en:
-        "Describe it: querying data that doesn’t exist, so the cache always misses and every request falls through to the DB — " +
-        "abusable by attackers. Three fixes: cache the null (short TTL) + a Bloom filter to reject definitely-missing keys + " +
-        "input validation. Distinguish it from breakdown and avalanche — penetration is about non-existent data.",
+        "The interviewer is checking whether you can separate the three cache failures, so define this one by its cause: the " +
+        "data does not exist, so no cache can ever hold it. Credit comes from caching the empty result with a short TTL, " +
+        "the fix most candidates forget. Mentioning that a Bloom filter can say no for certain but not yes for certain is a " +
+        "good extra detail. Do not mix this with a hot key expiring, which is breakdown.",
     },
   },
   {
@@ -771,24 +844,25 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "Cache breakdown is the single-hot-key version of a [[stampede:stampede]]: one very popular key expires and, in that " +
-        "instant, a flood of concurrent requests all miss and hit the database together. The fixes: a mutex or single-flight " +
-        "so only one request rebuilds the entry while the rest wait, logical expiration where you serve slightly stale data " +
-        "and rebuild asynchronously, or simply never expiring the hottest keys.",
+        "Breakdown is about one key that exists and is very popular. When that key expires, the requests that were being " +
+        "served from cache all miss within the same moment and reach the database together. The fixes are a mutex or single " +
+        "flight so one request rebuilds while the others wait, logical expiry where you keep serving the old value and " +
+        "rebuild in the background, or never expiring the hottest keys and refreshing them on a schedule.",
       en:
-        "Cache breakdown is the single-hot-key version of a [[stampede:stampede]]: one very popular key expires and, in that " +
-        "instant, a flood of concurrent requests all miss and hit the database together. The fixes: a mutex or single-flight " +
-        "so only one request rebuilds the entry while the rest wait, logical expiration where you serve slightly stale data " +
-        "and rebuild asynchronously, or simply never expiring the hottest keys.",
+        "Breakdown is about one key that exists and is very popular. When that key expires, the requests that were being " +
+        "served from cache all miss within the same moment and reach the database together. The fixes are a mutex or single " +
+        "flight so one request rebuilds while the others wait, logical expiry where you keep serving the old value and " +
+        "rebuild in the background, or never expiring the hottest keys and refreshing them on a schedule.",
     },
     note: {
       zh:
-        "和穿透区分：击穿查的是存在的热点 key，只是恰好过期的瞬间大量并发一起打 DB。采分点三个解法：互斥锁/单飞（只放一个去" +
-        "重建）、逻辑过期（异步重建）、热点 key 不过期。能点出“单个热 key 的 stampede”这层关系加分。",
+        "用两个条件来定义它，面试官听的就是这两个：key 存在，而且很热。采分点是给出能限制重建并发的解法，所以先说互斥锁 / single flight。" +
+        "如果对方追问延迟，就给逻辑过期——它让所有请求都不用等重建。要避免的答法：讲成“很多 key 同时过期”，那是雪崩。",
       en:
-        "Distinguish from penetration: breakdown is a hot key that exists but just expired, so a burst of concurrency hits the " +
-        "DB at once. Three fixes: mutex/single-flight (one rebuilder), logical expiration (async rebuild), or never expiring the " +
-        "hottest keys. Framing it as a single-hot-key stampede is a plus.",
+        "Define it by the two conditions the interviewer is listening for: the key exists, and it is hot. Credit comes from " +
+        "a fix that limits how many requests rebuild the value, so name the mutex or single-flight version first. Logical " +
+        "expiry is the answer if they push on latency, because then no request waits for the rebuild. The trap is " +
+        "describing many keys expiring together, which is avalanche.",
     },
   },
   {
@@ -800,24 +874,29 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "A cache avalanche is the large-scale version: a huge number of keys expire at the same moment, or Redis itself goes " +
-        "down, and the resulting flood of requests overwhelms the database. The fixes: add random jitter to TTLs so keys " +
-        "don’t all expire together, use multi-level caching, apply rate limiting and circuit breakers to shed load, and run " +
-        "Redis in a highly available setup so it isn’t a single point of failure.",
+        "An avalanche is the large-scale version: a large number of keys expire at nearly the same time, or the Redis node " +
+        "itself fails, so a big share of the traffic reaches the database at once. The classic cause is filling the cache in " +
+        "one batch with an identical [[ttl:TTL]]. The fixes are random jitter on the TTLs so keys expire at different " +
+        "times, a second cache layer, rate limiting and circuit breakers so the database is never asked for more than it " +
+        "can serve, and a replicated Redis setup so one node is not a single point of failure.",
       en:
-        "A cache avalanche is the large-scale version: a huge number of keys expire at the same moment, or Redis itself goes " +
-        "down, and the resulting flood of requests overwhelms the database. The fixes: add random jitter to TTLs so keys " +
-        "don’t all expire together, use multi-level caching, apply rate limiting and circuit breakers to shed load, and run " +
-        "Redis in a highly available setup so it isn’t a single point of failure.",
+        "An avalanche is the large-scale version: a large number of keys expire at nearly the same time, or the Redis node " +
+        "itself fails, so a big share of the traffic reaches the database at once. The classic cause is filling the cache in " +
+        "one batch with an identical [[ttl:TTL]]. The fixes are random jitter on the TTLs so keys expire at different " +
+        "times, a second cache layer, rate limiting and circuit breakers so the database is never asked for more than it " +
+        "can serve, and a replicated Redis setup so one node is not a single point of failure.",
     },
     note: {
       zh:
-        "和击穿的区别是规模：雪崩是大量 key 同时过期、或 Redis 整个宕机，请求洪流压垮 DB。采分点：TTL 加随机抖动（避免同时" +
-        "过期）、多级缓存、限流熔断降级、Redis 高可用别单点。三大缓存问题（穿透/击穿/雪崩）能一次讲清是很强的信号。",
+        "区别全在规模，所以开口就把数量说出来：很多 key，或者整个缓存。采分点先是那个你能预防的成因——一批 key 用同一个 TTL 灌进去，" +
+        "然后是对应的解法 TTL 加随机抖动。再补一条限流 / 熔断，说明你也为“预防失败之后”做了准备。" +
+        "如果穿透、击穿、雪崩你能用三句话分别讲清，这一组题就结束了。",
       en:
-        "Difference from breakdown is scale: avalanche is many keys expiring together, or Redis itself down, flooding the DB. " +
-        "Fixes: TTL jitter (avoid synchronized expiry), multi-level cache, rate limiting / circuit breaking, and HA Redis so it " +
-        "isn’t a single point of failure. Explaining the trio (penetration / breakdown / avalanche) cleanly is a strong signal.",
+        "Scale is the whole distinction, so say the number out loud: many keys, or the whole cache. Credit comes first from " +
+        "the cause you can prevent, a batch of keys written with the same TTL, and then from jitter as the direct fix. " +
+        "Adding a limit on how much traffic reaches the database shows you also plan for the case where prevention fails. " +
+        "If you can explain penetration, breakdown, and avalanche in three separate sentences, this group of questions is " +
+        "finished.",
     },
   },
   {
@@ -829,32 +908,34 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "There’s no perfect strong consistency once you add a cache — you aim for eventual consistency. Under " +
-        "[[cacheaside:cache-aside]] the common rule is: update the database first, then delete the cache key, not update it — " +
-        "deleting avoids two concurrent writers leaving a wrong value behind. Even then a rare interleaving can briefly serve " +
-        "stale data, so some teams do a delayed double-delete: delete after the write, then delete again a moment later. For " +
-        "something stronger you can subscribe to the [[mysql:database]] binlog with a tool like Canal and invalidate " +
-        "asynchronously, plus a short backstop [[ttl:TTL]] on the cache. The honest stance: don’t chase strong consistency — " +
-        "if you truly need it, don’t put a cache in front.",
+        "Once you add a cache you cannot have strong consistency, so the goal is a short window of staleness. Under " +
+        "[[cacheaside:cache-aside]] the rule is: write the database first, then delete the cache key. Delete rather than " +
+        "update, because two concurrent writers can otherwise leave the older value in the cache. A race still remains: a " +
+        "reader that loaded the old value before the write can put it back after the delete. A delayed double delete makes " +
+        "that window smaller but does not close it, and a short [[ttl:TTL]] limits how long any stale value can survive. If " +
+        "the data cannot tolerate that window at all, the honest answer is not to cache it.",
       en:
-        "There’s no perfect strong consistency once you add a cache — you aim for eventual consistency. Under " +
-        "[[cacheaside:cache-aside]] the common rule is: update the database first, then delete the cache key, not update it — " +
-        "deleting avoids two concurrent writers leaving a wrong value behind. Even then a rare interleaving can briefly serve " +
-        "stale data, so some teams do a delayed double-delete: delete after the write, then delete again a moment later. For " +
-        "something stronger you can subscribe to the [[mysql:database]] binlog with a tool like Canal and invalidate " +
-        "asynchronously, plus a short backstop [[ttl:TTL]] on the cache. The honest stance: don’t chase strong consistency — " +
-        "if you truly need it, don’t put a cache in front.",
+        "Once you add a cache you cannot have strong consistency, so the goal is a short window of staleness. Under " +
+        "[[cacheaside:cache-aside]] the rule is: write the database first, then delete the cache key. Delete rather than " +
+        "update, because two concurrent writers can otherwise leave the older value in the cache. A race still remains: a " +
+        "reader that loaded the old value before the write can put it back after the delete. A delayed double delete makes " +
+        "that window smaller but does not close it, and a short [[ttl:TTL]] limits how long any stale value can survive. If " +
+        "the data cannot tolerate that window at all, the honest answer is not to cache it.",
     },
     note: {
       zh:
-        "采分点：Cache-Aside 下“先更新数据库、再删缓存”（删而不是更新，避免并发覆盖留脏值）；极端时序仍可能短暂不一致→" +
-        "延迟双删；更强可订阅 binlog(canal) 异步删缓存 + 短 TTL 兜底。最重要的表态：别追求强一致——要强一致就别加缓存。" +
-        "这条最能体现你懂权衡、不过度包装。",
+        "这一题考的是你会不会说过头。永远别说“缓存和数据库是一致的”，要描述那个不一致的窗口有多大、能持续多久。" +
+        "采分点有两个：先写库再删缓存，以及“为什么是删不是改”（并发写会把旧值留在缓存里）。" +
+        "然后主动承认剩下的竞态——慢读请求可能在删除之后把旧值写回；延迟双删只是把窗口缩小，没有关掉它。" +
+        "如果对方还想更强，就提订阅数据库变更日志（例如用 Canal 读 MySQL binlog）异步失效，加短 TTL 兜底。" +
+        "声称自己“做到了强一致”的候选人，会被追问得最狠。",
       en:
-        "Scoring points: under cache-aside, “update DB first, then delete the cache” (delete, not update, to avoid concurrent " +
-        "writers leaving a stale value); rare interleavings still allow brief staleness → delayed double-delete; stronger " +
-        "still, subscribe to the binlog (Canal) and invalidate async, with a short backstop TTL. The key stance: don’t chase " +
-        "strong consistency — if you truly need it, don’t add a cache. This shows you understand the trade-off.",
+        "This question is about whether you will overclaim. Never say the cache and the database are consistent; describe " +
+        "the window in which they disagree and how long it lasts. Credit comes from two things: write the database first " +
+        "and delete the key, and the reason delete beats update. Then admit the race that remains, because a slow reader can " +
+        "write the old value back after the delete and a delayed double delete only narrows that window. If they want more, " +
+        "mention invalidating from the database change log, for example a tool such as Canal reading the MySQL binlog, with " +
+        "a short TTL as a backstop.",
     },
   },
   {
@@ -862,31 +943,34 @@ export const questions: QA[] = [
     category: "advanced",
     q: {
       zh: "Redis is single-threaded — so why is 6.0 multithreaded?（单线程为什么还快？6.0 的多线程是什么？）",
-      en: "If Redis is single-threaded, why is it fast — and what did 6.0’s multithreading change?",
+      en: "If Redis is single-threaded, why is it fast — and what did 6.0 multithreading change?",
     },
     answer: {
       zh:
-        "Command execution is [[singlethread:single-threaded]], and that’s a feature, not a limitation: with one thread " +
-        "there are no locks and no context switching, and since everything is in memory it’s still extremely fast — much " +
-        "like Node’s event loop. Redis 6.0 added multithreading, but only for network I/O — reading and writing sockets and " +
-        "parsing the protocol. The actual command execution stays single-threaded, which is why data operations still need " +
-        "no locking.",
+        "Redis executes commands one at a time on a [[singlethread:single thread]]. That is a design choice: with one " +
+        "thread there are no locks and no context switching between commands, and because the data is in memory each " +
+        "command finishes quickly. Redis 6 added extra threads, but only for network I/O — reading and writing sockets and " +
+        "parsing the protocol. Command execution is still serialized on one thread, which is why every command is still " +
+        "[[atomic:atomic]] and why data operations still need no locking. So the accurate sentence is that command " +
+        "execution is single-threaded, not that Redis is single-threaded.",
       en:
-        "Command execution is [[singlethread:single-threaded]], and that’s a feature, not a limitation: with one thread " +
-        "there are no locks and no context switching, and since everything is in memory it’s still extremely fast — much " +
-        "like Node’s event loop. Redis 6.0 added multithreading, but only for network I/O — reading and writing sockets and " +
-        "parsing the protocol. The actual command execution stays single-threaded, which is why data operations still need " +
-        "no locking.",
+        "Redis executes commands one at a time on a [[singlethread:single thread]]. That is a design choice: with one " +
+        "thread there are no locks and no context switching between commands, and because the data is in memory each " +
+        "command finishes quickly. Redis 6 added extra threads, but only for network I/O — reading and writing sockets and " +
+        "parsing the protocol. Command execution is still serialized on one thread, which is why every command is still " +
+        "[[atomic:atomic]] and why data operations still need no locking. So the accurate sentence is that command " +
+        "execution is single-threaded, not that Redis is single-threaded.",
     },
     note: {
       zh:
-        "采分点：核心命令执行仍是单线程（免加锁、免上下文切换、内存够快）。关键澄清：6.0+ 的多线程只是网络 I/O（读写 socket、" +
-        "协议解析）多线程，命令执行仍单线程，所以数据操作依然无需加锁。别误说“Redis 6.0 变成多线程执行命令了”——这是高频误区。",
+        "题目本身就带着陷阱：对 Redis 6 之后的版本来说，“单线程”这个说法已经不准确了。采分点是把两层分开——" +
+        "I/O 线程负责收发和解析，执行仍然只有一条线程。要把“单执行线程”讲成一种收益（免加锁、免上下文切换），" +
+        "而不是一个还没修好的缺陷。反方向的坑同样要避开：别说 Redis 6 开始并行执行命令了，它没有。",
       en:
-        "Scoring points: core command execution is still single-threaded (no locks, no context switches, fast in memory). Key " +
-        "clarification: 6.0+ multithreading is only for network I/O (socket read/write, protocol parsing); command execution " +
-        "stays single-threaded, so data ops still need no locking. Don’t say “Redis 6.0 executes commands multithreaded” — a " +
-        "common misconception.",
+        "The question contains its own trap, because for Redis 6 and later the phrase single-threaded is not accurate. " +
+        "Credit comes from separating the two layers: I/O threads read and parse, one thread executes. Present the single " +
+        "execution thread as a benefit, no locks and no context switching, rather than a limitation nobody has fixed yet. " +
+        "The opposite trap matters too: do not say Redis 6 runs commands in parallel, because it does not.",
     },
   },
 ];
@@ -902,16 +986,16 @@ export const summary = {
   takeaways: [
     {
       zh:
-        "[[redis:Redis]] 是加速层，不是[[sourceoftruth:真相来源]]；它随时可能挂，所以每处用法都要能降级，或从原始来源重算。",
+        "[[redis:Redis]] 是加速层，不是[[sourceoftruth:真相来源]]；它随时可能不可用，所以每处用法都要能降级，或从原始来源重算。",
       en:
-        "[[redis:Redis]] is a speed layer, not the [[sourceoftruth:source of truth]]. It can go down at any time, so every " +
-        "usage must degrade gracefully or recompute from the original source.",
+        "[[redis:Redis]] is a speed layer, not the [[sourceoftruth:source of truth]]. It can become unavailable at any " +
+        "time, so every usage needs a fallback or a way to recompute from the original source.",
     },
     {
       zh:
         "[[cacheaside:cache-aside]] 四拍：查缓存 →（命中）直接返回 /（未命中）取原始来源 → 写回并设 [[ttl:TTL]]。",
       en:
-        "[[cacheaside:Cache-aside]] in four beats: check the cache → (hit) return it / (miss) fetch the source → write it " +
+        "[[cacheaside:Cache-aside]] in four beats: check the cache → (hit) return it / (miss) read the source → write it " +
         "back with a [[ttl:TTL]].",
     },
     {
@@ -925,8 +1009,8 @@ export const summary = {
       zh:
         "诚实原则：简历上每个词都要扛得住追问；没做过的别说做过，没测过的数字（比如那个 40%）别编。",
       en:
-        "The honesty rule: every word on your resume must survive follow-ups; don’t claim what you didn’t do, and don’t " +
-        "invent numbers (like that 40%) you never measured.",
+        "The honesty rule: every word on your resume has to survive follow-up questions. Do not claim work you did not do, " +
+        "and do not invent numbers, such as that 40%, that you never measured.",
     },
   ] as L[],
 
@@ -941,7 +1025,7 @@ export const summary = {
       sub: { zh: "cache hit", en: "cache hit" },
     },
     {
-      label: { zh: "③ 未命中？取原始来源", en: "③ Miss? fetch source" },
+      label: { zh: "③ 未命中？取原始来源", en: "③ Miss? read source" },
       sub: { zh: "DB / carrier API", en: "DB / carrier API" },
     },
     {

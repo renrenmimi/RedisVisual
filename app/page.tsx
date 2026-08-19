@@ -3,7 +3,7 @@
 import "./home.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { scenes, stage } from "@/lib/intro";
+import { scenes, stage, meta } from "@/lib/intro";
 import { ui, useLang, t, type Lang } from "@/lib/i18n";
 import { RichText } from "@/lib/glossary";
 
@@ -47,21 +47,17 @@ export default function IntroPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // 序号写法在两种语言里位置不同（第 N 幕 / Scene N），所以就地拼一次。
   const sceneLabel = lang === "zh" ? `第 ${cursor + 1} 幕` : `Scene ${cursor + 1}`;
-  const title = lang === "zh" ? "第 1 站 · 什么是 Redis？" : "Stop 1 · What is Redis?";
-  const subtitle =
-    lang === "zh"
-      ? "八幕小动画，从“你已经会的东西”出发，讲透是什么、为什么快、为什么用"
-      : "Eight short scenes — starting from what you already know: what it is, why it's fast, why we use it";
 
   return (
     <main className="page">
       <header className="header">
         <div>
-          <h1 className="page-title">{title}</h1>
-          <p className="subtitle">{subtitle}</p>
+          <h1 className="page-title">{t(meta.title, lang)}</h1>
+          <p className="subtitle">{t(meta.subtitle, lang)}</p>
         </div>
-        <div className="progress" aria-label="progress">
+        <div className="progress" aria-label={t(meta.progressLabel, lang)}>
           {scenes.map((s, i) => (
             <button
               key={i}
@@ -292,12 +288,14 @@ function SceneVisual({ id, lang }: { id: number; lang: Lang }) {
               <div className="hm-lane-node hm-lane-redis">
                 <span className="hm-lane-title">{t(stage.fastLane, lang)}</span>
                 <span className="hm-lane-sub">{t(stage.fastLaneSub, lang)}</span>
-                <span className="hm-lane-badge">⚡ fast</span>
+                <span className="hm-lane-badge">{t(stage.fastBadge, lang)}</span>
               </div>
               <div className="hm-lane-node hm-lane-db">
                 <span className="hm-lane-title">{t(stage.dbNode, lang)}</span>
                 <span className="hm-lane-sub">{t(stage.dbNodeSub, lang)}</span>
-                <span className="hm-lane-badge hm-lane-badge-db">🗄️ truth</span>
+                <span className="hm-lane-badge hm-lane-badge-db">
+                  {t(stage.truthBadge, lang)}
+                </span>
               </div>
             </div>
           </div>

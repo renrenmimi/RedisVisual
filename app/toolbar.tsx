@@ -3,7 +3,7 @@
 // Sticky top toolbar of the workbench (ported from AgentLab).
 // Left:  menu/collapse button + breadcrumb of the current stop.
 // Middle: command-palette trigger (opens the ⌘K palette).
-// Right:  language switch (中 / EN) + theme toggle (☾ / ☀).
+// Right:  language switch (EN / 中) + theme toggle (☾ / ☀).
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -95,22 +95,30 @@ export default function Toolbar() {
       </button>
 
       <div className="toolbar-actions">
-        <div className="lang-switch" role="group" aria-label="Language">
-          <button
-            type="button"
-            className={lang === "zh" ? "on" : ""}
-            aria-pressed={lang === "zh"}
-            onClick={() => setLang("zh")}
-          >
-            中
-          </button>
+        <div
+          className="lang-switch"
+          role="group"
+          aria-label={t(ui.lang.group, lang)}
+        >
           <button
             type="button"
             className={lang === "en" ? "on" : ""}
             aria-pressed={lang === "en"}
+            aria-label={t(ui.lang.toEn, lang)}
+            title={t(ui.lang.toEn, lang)}
             onClick={() => setLang("en")}
           >
             EN
+          </button>
+          <button
+            type="button"
+            className={lang === "zh" ? "on" : ""}
+            aria-pressed={lang === "zh"}
+            aria-label={t(ui.lang.toZh, lang)}
+            title={t(ui.lang.toZh, lang)}
+            onClick={() => setLang("zh")}
+          >
+            中
           </button>
         </div>
 

@@ -29,7 +29,7 @@ minutes end to end, starting from things you already know.
    and the balance projection.
 4. **`/pitfalls` — Cache failures and consistency.** Penetration, breakdown and avalanche;
    database/cache double-write consistency (delayed double delete); hot keys and big keys.
-5. **`/internals` — Production mechanics.** Persistence (RDB/AOF), expiry and eviction
+5. **`/internals` — Redis in production.** Persistence (RDB/AOF), expiry and eviction
    policies, high availability (replication, Sentinel, Cluster), and transactions
    (MULTI, WATCH, Lua, pipelining, distributed locks).
 6. **`/code` — Write it yourself.** Step by step: open VS Code → start Redis in Docker →
@@ -70,9 +70,11 @@ The shell ("Research OS"): sidebar in `app/sidebar.tsx`, toolbar in `app/toolbar
 command palette (⌘K) in `app/command-palette.tsx`, theme and UI state in
 `app/theme-provider.tsx`.
 
-Bilingual throughout via `lib/i18n.tsx` — every string is a `{ zh, en }` pair. The glossary
-lives in `lib/glossary.tsx`; writing `[[key:label]]` in body text renders a clickable term
-that pops up its explanation.
+Bilingual throughout via `lib/i18n.tsx` — every string is a `{ zh, en }` pair. English is the
+default; the `EN / 中` switch in the toolbar stores the choice in `localStorage`, and a small
+inline script in `<head>` applies it before the first paint so the page never flashes the wrong
+language. The glossary lives in `lib/glossary.tsx`; writing `[[key:label]]` in body text renders
+a clickable term that pops up its explanation.
 
 Design tokens and shared component styles are in `app/globals.css`; each stop keeps its own
 animations in its own stylesheet.

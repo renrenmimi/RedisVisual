@@ -3,7 +3,7 @@
 // 新站「缓存的坑与一致性」(/pitfalls)。
 // 结构：开场讲解 + 5 个 tab（穿透 / 击穿 / 雪崩 / 一致性 / 热点·大key）。
 // 每个 tab = 症状讲解卡 + 一张纯 CSS 动画（可重播）+ 「怎么解」卡片列表 + 「面试深挖」手风琴。
-// 文案全部来自 lib/pitfalls.ts；正文用 Rich（反引号→mono，[[术语]]→弹层）。
+// 文案全部来自 lib/pitfalls.ts；正文用 Rich（反引号→mono，**强调**→strong，[[术语]]→弹层）。
 // 动画都是纯 CSS keyframes，靠 key 重挂载来重播；prefers-reduced-motion 下由 CSS 关掉。
 
 import { useState } from "react";
@@ -19,7 +19,7 @@ import {
 } from "@/lib/pitfalls";
 import "./pitfalls.css";
 
-/* 正文渲染器：先按反引号切出 `code` 段（渲成 mono），其余交给 RichText 处理 [[术语]]。 */
+/* 正文渲染器：先按反引号切出 `code` 段（渲成 mono），其余交给 Emph。 */
 function Rich({ text, lang }: { text: string; lang: Lang }) {
   const segs = text.split("`");
   return (
@@ -29,6 +29,42 @@ function Rich({ text, lang }: { text: string; lang: Lang }) {
           <code className="pf6-ic" key={i}>
             {seg}
           </code>
+        ) : (
+          <Emph key={i} text={seg} lang={lang} />
+        ),
+      )}
+    </>
+  );
+}
+
+/* **重强调** 渲成 <strong>；剩下的交给 Ital。 */
+function Emph({ text, lang }: { text: string; lang: Lang }) {
+  const segs = text.split("**");
+  return (
+    <>
+      {segs.map((seg, i) =>
+        i % 2 === 1 ? (
+          <strong key={i}>
+            <Ital text={seg} lang={lang} />
+          </strong>
+        ) : (
+          <Ital key={i} text={seg} lang={lang} />
+        ),
+      )}
+    </>
+  );
+}
+
+/* *轻强调* 渲成 <em>；两侧文本继续交给 RichText 处理 [[术语]]。 */
+function Ital({ text, lang }: { text: string; lang: Lang }) {
+  const segs = text.split("*");
+  return (
+    <>
+      {segs.map((seg, i) =>
+        i % 2 === 1 ? (
+          <em key={i}>
+            <RichText text={seg} lang={lang} />
+          </em>
         ) : (
           <RichText key={i} text={seg} lang={lang} />
         ),
@@ -80,7 +116,11 @@ export default function PitfallsPage() {
       </section>
 
       {/* 5 个 tab */}
-      <div className="pf6-tabs" role="tablist" aria-label="cache pitfalls">
+      <div
+        className="pf6-tabs"
+        role="tablist"
+        aria-label={t({ zh: "缓存的坑", en: "cache pitfalls" }, lang)}
+      >
         {pitfalls.map((p, i) => (
           <button
             key={p.id}
@@ -110,7 +150,11 @@ export default function PitfallsPage() {
       {/* 动画舞台 + 工具条 */}
       <section className="stage-panel appear">
         {pit.id === "consistency" && (
-          <div className="pf6-switch" role="tablist" aria-label="view">
+          <div
+            className="pf6-switch"
+            role="tablist"
+            aria-label={t({ zh: "切换视图", en: "switch view" }, lang)}
+          >
             <button
               className={`pf6-switch-b ${!fix ? "on" : ""}`}
               onClick={() => {
@@ -253,7 +297,7 @@ function PenetrationStage({ zh }: { zh: boolean }) {
           🙅
         </span>
         <span className="pf6-node-nm">{zh ? "假 id ×N" : "fake ids ×N"}</span>
-        <span className="pf6-node-sub">{zh ? "查不存在的数据" : "never exist"}</span>
+        <span className="pf6-node-sub">{zh ? "查不存在的数据" : "no such record"}</span>
       </div>
 
       <div className="pf6-pen-track">
@@ -276,7 +320,7 @@ function PenetrationStage({ zh }: { zh: boolean }) {
           🗄️
         </span>
         <span className="pf6-node-nm">{zh ? "数据库" : "database"}</span>
-        <span className="pf6-node-sub bad">{zh ? "直连数据库" : "unshielded"}</span>
+        <span className="pf6-node-sub bad">{zh ? "每次都被打到" : "hit every time"}</span>
       </div>
     </div>
   );
@@ -293,7 +337,7 @@ function BreakdownStage({ zh }: { zh: boolean }) {
           🔥
         </span>
         <span className="pf6-hotkey-nm">hot:product:42</span>
-        <span className="pf6-hotkey-expire">{zh ? "TTL 到点 → 消失" : "TTL hits 0 → gone"}</span>
+        <span className="pf6-hotkey-expire">{zh ? "TTL 到期 → 未命中" : "TTL expires → miss"}</span>
         <div className="pf6-ttlbar">
           <i />
         </div>
@@ -317,7 +361,7 @@ function BreakdownStage({ zh }: { zh: boolean }) {
           🗄️
         </span>
         <span className="pf6-node-nm">{zh ? "数据库" : "database"}</span>
-        <span className="pf6-node-sub bad">{zh ? "瞬间被压垮" : "crushed in a spike"}</span>
+        <span className="pf6-node-sub bad">{zh ? "并发重建打满" : "many rebuilds at once"}</span>
       </div>
     </div>
   );
@@ -362,7 +406,7 @@ function AvalancheStage({ zh }: { zh: boolean }) {
           🗄️
         </span>
         <span className="pf6-node-nm">{zh ? "数据库" : "database"}</span>
-        <span className="pf6-node-sub bad">{zh ? "被洪流打垮" : "buried by the flood"}</span>
+        <span className="pf6-node-sub bad">{zh ? "流量同时到达" : "all traffic at once"}</span>
       </div>
     </div>
   );
@@ -375,12 +419,12 @@ type TlEvent = { lane: "r" | "w"; label: string; bad?: boolean; good?: boolean }
 function ConsistencyStage({ fix, zh }: { fix: boolean; zh: boolean }) {
   const base: TlEvent[] = [
     { lane: "r", label: zh ? "读缓存 → 未命中" : "read cache → miss" },
-    { lane: "r", label: zh ? "读 DB → 拿到旧值 v1" : "read DB → gets old v1" },
+    { lane: "r", label: zh ? "读 DB → 拿到旧值 v1" : "read DB → gets old value v1" },
     { lane: "w", label: zh ? "更新 DB：v1 → v2" : "update DB: v1 → v2" },
-    { lane: "w", label: zh ? "删除缓存" : "delete cache" },
+    { lane: "w", label: zh ? "删除缓存 key" : "delete the cache key" },
     {
       lane: "r",
-      label: zh ? "把 v1 写回缓存 ⚠" : "write v1 back to cache ⚠",
+      label: zh ? "把 v1 写回缓存 ⚠" : "write v1 back to the cache ⚠",
       bad: true,
     },
   ];
@@ -388,7 +432,7 @@ function ConsistencyStage({ fix, zh }: { fix: boolean; zh: boolean }) {
     ? base.concat([
         {
           lane: "w",
-          label: zh ? "延迟一会，再删一次缓存" : "wait a beat, delete cache again",
+          label: zh ? "延迟一小段，再删一次" : "after a delay, delete again",
           good: true,
         },
       ])
@@ -434,11 +478,11 @@ function ConsistencyStage({ fix, zh }: { fix: boolean; zh: boolean }) {
       >
         {fix
           ? zh
-            ? "第二次删清掉了写回的旧值 → 下次读未命中，从 DB 回填 v2 ✓"
-            : "the second delete wipes the stale write-back → next read misses and refills v2 ✓"
+            ? "第二次删除清掉了写回的旧值 → 下次读未命中，从 DB 回填 v2 ✓"
+            : "the second delete removes the value written back → the next read misses and refills v2 ✓"
           : zh
-            ? "缓存 = v1（旧），DB = v2 → 不一致，直到 TTL 到期 ✗"
-            : "cache = v1 (stale), DB = v2 → inconsistent until the TTL expires ✗"}
+            ? "缓存 = v1（旧），DB = v2 → 对不上，直到这条缓存过期 ✗"
+            : "cache = v1 (stale), DB = v2 → they disagree until the entry expires ✗"}
       </div>
     </div>
   );
@@ -470,7 +514,7 @@ function HotBigStage({ zh }: { zh: boolean }) {
           </div>
         </div>
         <div className="pf6-hb-note">
-          {zh ? "一个 key 压满一个节点" : "one key maxes out one node"}
+          {zh ? "一个 key 打满一个节点" : "one key saturates one node"}
         </div>
       </div>
 
@@ -478,10 +522,12 @@ function HotBigStage({ zh }: { zh: boolean }) {
         <div className="pf6-hb-title">{zh ? "大 key" : "big key"}</div>
         <div className="pf6-thread">
           <div className="pf6-thread-lane">
-            <span className="pf6-thread-tag">{zh ? "单线程" : "1 thread"}</span>
+            <span className="pf6-thread-tag">
+              {zh ? "一次一条命令" : "one at a time"}
+            </span>
             <div className="pf6-bigkey">
               <span className="pf6-bigkey-nm">big:hash</span>
-              <span className="pf6-bigkey-sub">O(N) · HGETALL</span>
+              <span className="pf6-bigkey-sub">O(n) · HGETALL</span>
             </div>
             <div className="pf6-blocked-row">
               {blocked.map((i) => (
@@ -497,7 +543,9 @@ function HotBigStage({ zh }: { zh: boolean }) {
           </div>
         </div>
         <div className="pf6-hb-note">
-          {zh ? "大 key 阻塞线程，其后请求排队" : "big key blocks the thread; requests queue"}
+          {zh
+            ? "一条慢命令占住服务器，后面的全在排队"
+            : "one slow command; everything behind it waits"}
         </div>
       </div>
     </div>

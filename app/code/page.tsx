@@ -58,7 +58,7 @@ export default function CodeChapter() {
           <h1 className="page-title">{t(clui.title, lang)}</h1>
           <p className="subtitle">{t(clui.subtitle, lang)}</p>
         </div>
-        <div className="progress" aria-label="progress">
+        <div className="progress" aria-label={t(clui.ariaProgress, lang)}>
           {steps.map((s, i) => (
             <button
               key={i}
@@ -89,7 +89,10 @@ export default function CodeChapter() {
       </section>
 
       <div className="cl3-grid">
-        <section className="panel cl3-left" aria-label="commands">
+        <section
+          className="panel cl3-left"
+          aria-label={t(step.cmds ? clui.cmdsTitle : clui.pointsTitle, lang)}
+        >
           <div className="panel-title">
             <span
               className={`tdot ${
@@ -125,7 +128,7 @@ export default function CodeChapter() {
           )}
         </section>
 
-        <section className="cl3-stage" aria-label="stage">
+        <section className="cl3-stage" aria-label={t(clui.ariaStage, lang)}>
           {step.panel.kind === "term" ? (
             <Terminal
               key={cursor}
@@ -147,7 +150,12 @@ export default function CodeChapter() {
         <button className="btn" onClick={reset} disabled={cursor === 0}>
           {t(clui.reset, lang)}
         </button>
-        <button className="btn" onClick={back} disabled={cursor === 0}>
+        <button
+          className="btn"
+          onClick={back}
+          disabled={cursor === 0}
+          aria-label={t(clui.ariaPrev, lang)}
+        >
           ←
         </button>
         {nextAction ? (
