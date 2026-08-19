@@ -2,10 +2,8 @@
 
 **▶ [Open the course](https://redis-visual.vercel.app)** — runs in your browser, nothing to install.
 
-An interactive Redis course for people starting from zero. It plays the whole thing back
-in slow motion: what Redis is, why it is fast, why a real system (WeShipItNow) reaches for
-it, and finally how to write it yourself and talk about it in an interview — about 40
-minutes end to end, starting from things you already know.
+An interactive introduction to Redis, covering its core data structures, common application
+patterns, operational trade-offs, and a guided local implementation.
 
 ![Stop one: what Redis is, in eight animated scenes](docs/home.jpg)
 
@@ -35,8 +33,7 @@ minutes end to end, starting from things you already know.
 6. **`/code` — Write it yourself.** Step by step: open VS Code → start Redis in Docker →
    set up a Node/TypeScript project → write the code → run it → watch what happens through
    `redis-cli`. Lines light up as you go, with terminal output replayed.
-7. **`/interview` — Interview prep.** 26 frequently asked questions, grouped and
-   expandable, plus a summary — enough to hold the conversation in English.
+7. **`/interview` — Interview prep.** 26 review questions, grouped and expandable, with concise English summaries.
 
 ## Running locally
 
@@ -71,7 +68,7 @@ command palette (⌘K) in `app/command-palette.tsx`, theme and UI state in
 `app/theme-provider.tsx`.
 
 Bilingual throughout via `lib/i18n.tsx` — every string is a `{ zh, en }` pair. English is the
-default; the `EN / 中` switch in the toolbar stores the choice in `localStorage`, and a small
+default; the `English / Chinese` switch in the toolbar stores the choice in `localStorage`, and a small
 inline script in `<head>` applies it before the first paint so the page never flashes the wrong
 language. The glossary lives in `lib/glossary.tsx`; writing `[[key:label]]` in body text renders
 a clickable term that pops up its explanation.
