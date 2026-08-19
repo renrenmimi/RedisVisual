@@ -80,10 +80,7 @@ export default function InterviewPage() {
           ? iv.blurb.system
           : iv.blurb.advanced;
 
-  const countLabel =
-    lang === "zh"
-      ? `${visible.length} ${t(iv.countUnit, lang)}`
-      : `${visible.length} ${t(iv.questionWord, lang)}`;
+  const countLabel = `${visible.length} ${t(iv.countUnit, lang)}`;
 
   return (
     <div className="page iv4-root">
