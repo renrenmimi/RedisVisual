@@ -47,7 +47,7 @@ export default function Sidebar() {
     <>
       <aside
         className={`sidebar${sidebarOpen ? " open" : ""}`}
-        aria-label={t(ui.brand.name, lang)}
+        aria-label={t(ui.side.rail, lang)}
       >
         <Link href="/" className="brand" onClick={close} aria-label="RedisVisual">
           <span className="brand-mark" aria-hidden>
@@ -59,7 +59,7 @@ export default function Sidebar() {
           </span>
         </Link>
 
-        <nav className="side-nav" aria-label="Stops">
+        <nav className="side-nav" aria-label={t(ui.side.stops, lang)}>
           {STOPS.map((s, i) => {
             const active = i === activeIndex;
             return (
@@ -85,6 +85,7 @@ export default function Sidebar() {
           <div
             className="progress"
             role="progressbar"
+            aria-label={t(ui.side.progress, lang)}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress}

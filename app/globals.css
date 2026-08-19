@@ -1130,8 +1130,16 @@ html[data-sidebar="collapsed"] .sidebar {
   font-size: 13px;
   color: var(--text-2);
   border-left: 2px solid transparent;
-  white-space: nowrap;
+  /* English stop names run longer than the Chinese ones. Let a long label wrap
+     inside the rail instead of overflowing it; short labels are unaffected. */
+  white-space: normal;
+  line-height: 1.3;
+  padding-block: 7px;
   transition: background 0.16s ease, color 0.16s ease;
+}
+
+.side-label {
+  min-width: 0;
 }
 
 .side-link:hover {
