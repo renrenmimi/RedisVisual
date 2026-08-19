@@ -81,7 +81,10 @@ export default function ScenariosPage() {
           <h1 className="page-title">{t(meta.title, lang)}</h1>
           <p className="subtitle">{t(meta.subtitle, lang)}</p>
         </div>
-        <div className="progress" aria-label="progress">
+        <div
+          className="progress"
+          aria-label={t({ zh: "进度", en: "Progress" }, lang)}
+        >
           {steps.map((s, i) => (
             <button
               key={i}
@@ -107,7 +110,11 @@ export default function ScenariosPage() {
       </section>
 
       {/* 场景切换 tab */}
-      <div className="sc2-tabs" role="tablist" aria-label="scenarios">
+      <div
+        className="sc2-tabs"
+        role="tablist"
+        aria-label={t({ zh: "场景", en: "Scenarios" }, lang)}
+      >
         {scenarios.map((s, i) => (
           <button
             key={s.id}
@@ -189,6 +196,7 @@ export default function ScenariosPage() {
             setAuto(false);
           }}
           disabled={cursor === 0}
+          aria-label={t({ zh: "上一步", en: "Previous step" }, lang)}
         >
           ←
         </button>
@@ -318,7 +326,7 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
         </div>
         <div className="sc2-fan">
           <span className="sc2-fan-note">
-            {zh ? "每次未命中都要问这 4 家，等最慢的 ↓" : "every miss must ask all four, waiting on the slowest ↓"}
+            {zh ? "每次未命中都要问这 4 家，等最慢的 ↓" : "every miss asks all four and waits for the slowest ↓"}
           </span>
           <Carriers mode="calling" />
         </div>
@@ -346,7 +354,7 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
         </div>
         <div className="sc2-fan">
           <span className="sc2-fan-note">
-            {zh ? "BFF 并发调 4 家 carrier，等最慢的" : "BFF fans out to 4 carriers, waits for the slowest"}
+            {zh ? "BFF 并发调 4 家 carrier，等最慢的" : "BFF calls 4 carriers in parallel and waits for the slowest"}
           </span>
           <Carriers mode="calling" />
           <span className="sc2-agg">
@@ -380,7 +388,10 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
             <div className="sc2-ttl-bar">
               <i />
             </div>
-            <span>TTL 30s · {zh ? "到点自动过期" : "auto-expires"}</span>
+            <span>
+              TTL 30s ·{" "}
+              {zh ? "过期后不再被返回" : "not returned once it expires"}
+            </span>
           </div>
         </div>
       </div>
@@ -414,7 +425,7 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
         </div>
         <div className="sc2-fan">
           <span className="sc2-fan-note">
-            {zh ? "4 家 carrier 一个都没惊动" : "not one of the 4 carriers is touched"}
+            {zh ? "4 家 carrier 一个都没惊动" : "none of the 4 carriers is called"}
           </span>
           <Carriers mode="dim" />
         </div>
@@ -508,8 +519,8 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
       </div>
       <div className="sc2-degrade">
         {zh
-          ? "降级：Redis 不可用就绕过它、直连 carrier（慢但可用）——Redis 不能是单点"
-          : "Degrade: if Redis is down, bypass it and call carriers directly (slower but working) — Redis must not be a single point of failure"}
+          ? "降级：Redis 不可用就绕过它、直连 carrier（慢但仍可用）——Redis 不能是单点"
+          : "Fallback: if Redis is unavailable, skip it and call the carriers directly. Slower, but the request still works, so Redis is not a single point of failure."}
       </div>
     </div>
   );
@@ -539,7 +550,7 @@ function IdemStage({ phase, zh }: { phase: string; zh: boolean }) {
         <span className="sc2-fan-note">
           {zh
             ? "两个请求几乎同时到 → 若都执行，重复扣款 / 重复建标签"
-            : "two near-simultaneous requests → if both run, double charge / double label"}
+            : "two requests arrive at once → if both run: double charge, double label"}
         </span>
       </div>
     );
@@ -567,8 +578,8 @@ function IdemStage({ phase, zh }: { phase: string; zh: boolean }) {
         </div>
         <span className="sc2-fan-note">
           {zh
-            ? "命令原子执行 → 并发里只有第一个写成功"
-            : "atomic command → only the first write succeeds"}
+            ? "单线程逐条执行命令 → 并发里只有第一个写成功"
+            : "one thread, one command at a time → only the first write succeeds"}
         </span>
       </div>
     );
@@ -613,9 +624,13 @@ function IdemStage({ phase, zh }: { phase: string; zh: boolean }) {
       <div className="sc2-gates">
         <div className="sc2-gate fast">
           <b>Redis SET NX</b>
-          <small>{zh ? "快速拦住 99% 的重复请求" : "blocks 99% of duplicates, fast"}</small>
+          <small>
+            {zh ? "快速拦住绝大多数重复请求" : "blocks almost every duplicate, fast"}
+          </small>
           <div className="sc2-gate-warn">
-            {zh ? "可能过期 / 重启丢失" : "may expire / lost on restart"}
+            {zh
+              ? "可能过期；重启或故障切换会丢"
+              : "can expire; lost on restart or failover"}
           </div>
         </div>
         <div className="sc2-vlink">→</div>
@@ -630,8 +645,8 @@ function IdemStage({ phase, zh }: { phase: string; zh: boolean }) {
       </div>
       <span className="sc2-fan-note">
         {zh
-          ? "Redis 拦快的，数据库守最后一道线"
-          : "Redis catches the fast ones; the DB guards the last line"}
+          ? "Redis 是快速过滤，数据库唯一约束才是保证"
+          : "Redis is the fast filter; the database constraint is the guarantee"}
       </span>
     </div>
   );
@@ -641,8 +656,8 @@ function IdemStage({ phase, zh }: { phase: string; zh: boolean }) {
 
 const LEDGER: { cn: string; en: string; amt: string; sign: "pos" | "neg" }[] = [
   { cn: "充值", en: "top-up", amt: "+ $200.00", sign: "pos" },
-  { cn: "买标签", en: "label", amt: "− $ 42.30", sign: "neg" },
-  { cn: "买标签", en: "label", amt: "− $ 29.30", sign: "neg" },
+  { cn: "买标签", en: "buy label", amt: "− $ 42.30", sign: "neg" },
+  { cn: "买标签", en: "buy label", amt: "− $ 29.30", sign: "neg" },
 ];
 
 function LedgerRows({
@@ -668,7 +683,7 @@ function LedgerRows({
       ))}
       {appended && (
         <div className="sc2-row sc2-new">
-          <span>{zh ? "新交易" : "new txn"}</span>
+          <span>{zh ? "新交易" : "new entry"}</span>
           <span className="amt neg">− $ 15.00</span>
         </div>
       )}
@@ -721,7 +736,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
             <LedgerRows zh={zh} summing />
           </div>
           <div className="sc2-vlink">
-            →<small>{zh ? "从头加一遍" : "sum it up"}</small>
+            →<small>{zh ? "从头加一遍" : "add it up"}</small>
           </div>
           <div className="sc2-bal rebuilt">
             <span className="sc2-badge bad">MISS</span>
@@ -759,7 +774,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
         <span className="sc2-fan-note">
           {zh
             ? "先 append 账本，再 DEL 投影；下次读未命中 → 重算"
-            : "append the ledger, then DEL the projection; next read misses → recompute"}
+            : "append to the ledger, then DEL the projection; the next read misses → recompute"}
         </span>
       </div>
     );
@@ -780,7 +795,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
           <span className="sc2-bolt" aria-hidden>
             ⚡️
           </span>
-          <small>{zh ? "Redis 不可用" : "Redis down"}</small>
+          <small>{zh ? "Redis 不可用" : "Redis unavailable"}</small>
         </div>
         <div className="sc2-bal miss">
           <span className="sc2-bal-label">{zh ? "读模型 (可丢弃)" : "read model (disposable)"}</span>
@@ -792,8 +807,8 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
       </div>
       <span className="sc2-fan-note">
         {zh
-          ? "账本是真相，Redis 只是快照——丢了能一分不差地重算回来"
-          : "the ledger is the truth; Redis is just a snapshot — recomputable to the cent"}
+          ? "账本是真相，Redis 只是副本——丢了能一分不差地重算回来"
+          : "the ledger is the record; the Redis copy can be rebuilt from it, to the cent"}
       </span>
     </div>
   );

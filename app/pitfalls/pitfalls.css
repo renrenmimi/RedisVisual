@@ -613,9 +613,10 @@
 
 /* ================= Tab 4：一致性时间线 ================= */
 
+/* 行里的 chip 文案英文比中文长不少，给时间线多留一点宽度，避免频繁折行 */
 .pf6-tl {
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
   display: flex;
   flex-direction: column;
   gap: 4px;

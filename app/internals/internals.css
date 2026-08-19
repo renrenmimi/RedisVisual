@@ -21,7 +21,8 @@
 
 .in7-tab {
   flex: 1;
-  min-width: 170px;
+  /* 190 而不是 170：英文 tab 名/副标比中文长（Availability and scaling） */
+  min-width: 190px;
   text-align: left;
   font: inherit;
   cursor: pointer;
@@ -235,11 +236,11 @@
   background: var(--panel-2);
 }
 
+/* 英文维度名比中文长，允许换行；只有等宽的策略名（allkeys-lru）保持不折行 */
 .in7-td-label {
   font-weight: 600;
   color: var(--text);
   background: var(--panel-2);
-  white-space: nowrap;
 }
 
 .in7-td-label.mono {
@@ -247,6 +248,7 @@
   font-size: 12px;
   color: var(--accent-text);
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .in7-table td {
