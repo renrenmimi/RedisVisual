@@ -92,8 +92,8 @@ export const ui = {
   brand: {
     name: { zh: "RedisVisual", en: "RedisVisual" },
     tagline: {
-      zh: "看得见的 Redis · See Inside Redis",
-      en: "See Inside Redis · 看得见的 Redis",
+      zh: "看得见的 Redis",
+      en: "See inside Redis",
     },
   },
   side: {

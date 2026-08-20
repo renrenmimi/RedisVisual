@@ -7,7 +7,7 @@ import Toolbar from "./toolbar";
 import CommandPalette from "./command-palette";
 
 export const metadata: Metadata = {
-  title: "RedisVisual — See Inside Redis · 看得见的 Redis",
+  title: "RedisVisual — See inside Redis",
   description:
     "A visual Redis course for people starting from zero. Seven stops explain what Redis is, why it is fast, how each data structure works, how caching fails and how to fix it, what changes in production, and how to answer the common interview questions. Available in English and Chinese.",
 };
