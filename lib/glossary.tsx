@@ -37,6 +37,13 @@ export const glossary: Record<string, { word: L; def: L }> = {
       en: "An expiry time set on a key. Once that time has passed, Redis no longer returns the key. The key is actually removed either when something tries to read it, or later by a background job that samples keys, so an expired key can still hold memory for a short while. Caches use a TTL so old values disappear on their own instead of being served forever.",
     },
   },
+  eviction: {
+    word: { zh: "内存淘汰 (eviction)", en: "eviction" },
+    def: {
+      zh: "内存用到上限（maxmemory）时，Redis 按策略挑一些 key 删掉给新数据腾地方，最常用的是 LRU（最近最少用）或 LFU（最不常用）。这和 TTL 过期是两回事：过期是到点自己失效，淘汰是内存不够被动清退。缓存容量小于数据总量时，淘汰会直接压低命中率。",
+      en: "When memory reaches its limit (maxmemory), Redis picks some keys to delete to make room for new data — most commonly by LRU (least recently used) or LFU (least frequently used). This differs from TTL expiry: expiry is a key timing out on its own, while eviction is keys being pushed out because memory is full. When the cache is smaller than the working set, eviction directly drags the hit rate down.",
+    },
+  },
   cache: {
     word: { zh: "缓存 (cache)", en: "cache" },
     def: {

@@ -13,7 +13,7 @@ import { BrandMark } from "./logo";
 
 export type SideStop = { href: string; glyph: string; label: L };
 
-// The seven stops of the learning path, in order.
+// The eight stops of the learning path, in order.
 export const STOPS: SideStop[] = [
   { href: "/", glyph: "1", label: ui.nav.stop1 },
   { href: "/data", glyph: "2", label: ui.nav.stop2 },
@@ -22,6 +22,7 @@ export const STOPS: SideStop[] = [
   { href: "/internals", glyph: "5", label: ui.nav.stop5 },
   { href: "/code", glyph: "6", label: ui.nav.stop6 },
   { href: "/interview", glyph: "7", label: ui.nav.stop7 },
+  { href: "/simulator", glyph: "8", label: ui.nav.stop8 },
 ];
 
 // Which stop is active for a given path ("/code/x" still counts as /code).

@@ -87,6 +87,7 @@ export const ui = {
     stop5: { zh: "生产机制", en: "Redis in production" },
     stop6: { zh: "跟着写一遍", en: "Write it yourself" },
     stop7: { zh: "面试速通", en: "Interview prep" },
+    stop8: { zh: "故障模拟器", en: "Fault simulator" },
   },
 
   brand: {
@@ -98,8 +99,8 @@ export const ui = {
   },
   side: {
     status: { zh: "STATUS", en: "STATUS" },
-    progress: { zh: "七站学习闭环", en: "A 7-stop learning path" },
-    stops: { zh: "七站导航", en: "Stops" },
+    progress: { zh: "八站学习闭环", en: "An 8-stop learning path" },
+    stops: { zh: "八站导航", en: "Stops" },
     rail: { zh: "课程导航", en: "Course navigation" },
   },
   toolbar: {
@@ -108,7 +109,7 @@ export const ui = {
     search: { zh: "搜索 / Search…", en: "Search…" },
   },
   cmdk: {
-    placeholder: { zh: "搜索七站 / Search…", en: "Search the seven stops…" },
+    placeholder: { zh: "搜索八站 / Search…", en: "Search the eight stops…" },
     empty: { zh: "没有匹配项", en: "No matches" },
     navHint: {
       zh: "↑↓ 选择 · ↵ 跳转 · esc 关闭",
