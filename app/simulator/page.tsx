@@ -1,74 +1,79 @@
 "use client";
 
-// 第 8 站「故障模拟器」。
-// 一个真正在跑的仿真：每个 tick 按 QPS 生成一批请求，查一个带 TTL + LRU 淘汰的
-// 模拟缓存；命中快、未命中回源到 DB（回源过多会排队变慢）。命中率、延迟、DB 压力
-// 实时算出来画在右边。左边调参数 / 触发故障 / 开修复开关。
-// 所有教学文案在 lib/simulator.ts；这里是引擎 + 界面。
+// Stop 8 - the Redis fault simulator (UI shell).
+//
+// All simulation math lives in the pure engine at lib/simulator/engine.ts.
+// This component only advances the clock, feeds fault commands in, and renders
+// the metrics, cache cells and metric-derived events the engine returns. Event
+// copy is produced from measured numbers, so the log can never claim a fix
+// worked unless the simulation state actually shows it.
 
 import "./simulator.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang, t, type L, type Lang } from "@/lib/i18n";
 import { RichText } from "@/lib/glossary";
-import { SIM, RANGES, DEFAULT_CONFIG, sm, type SimConfig } from "@/lib/simulator";
+import { sm } from "@/lib/simulator";
+import {
+  SIM,
+  RANGES,
+  DEFAULT_CONFIG,
+  DEFAULT_SEED,
+  createState,
+  tick,
+  type SimConfig,
+  type SimState,
+  type SimEvent,
+  type Metrics,
+  type Cell,
+  type FaultKind,
+} from "@/lib/simulator/engine";
 
-// ---------- 小工具 ----------
+// ---------- helpers ----------
 
-// 把模板里的 {name} 替换成数字
+// Fill {name} placeholders in a template with measured numbers.
 function fmt(l: L, lang: Lang, vars: Record<string, string | number>): string {
   return t(l, lang).replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? `{${k}}`));
 }
 
-type Entry = { expireAt: number; lastUsed: number };
-type Cell = { state: "empty" | "fresh" | "expiring" | "hot"; frac: number };
-type Metrics = { hit: number; avg: number; p99: number; dbQps: number; size: number };
 type Point = { hit: number; p99: number };
 type LogItem = { id: number; text: L; vars: Record<string, string | number> };
-type Fault = "breakdown" | "avalanche" | "redisDown";
+type Tone = "ok" | "amber" | "red" | "neutral";
 
-type SimState = {
-  cache: Map<number, Entry>;
-  now: number;
-  redisUntil: number;
-  pendingFault: Fault | null;
-  badTicks: number;
-  wasDown: boolean;
-  lastAvalancheN: number;
-  logSeq: number;
+const EMPTY_METRICS: Metrics = {
+  hit: 1,
+  avg: SIM.hitLatency,
+  p99: SIM.hitLatency,
+  dbQps: 0,
+  size: 0,
 };
 
-const EMPTY_METRICS: Metrics = { hit: 1, avg: SIM.hitLatency, p99: SIM.hitLatency, dbQps: 0, size: 0 };
+const emptyGrid = (): Cell[] =>
+  Array.from({ length: SIM.gridCells }, () => ({ state: "empty", frac: 0 }) as Cell);
 
-function freshState(): SimState {
-  return {
-    cache: new Map(),
-    now: 0,
-    redisUntil: -1,
-    pendingFault: null,
-    badTicks: 0,
-    wasDown: false,
-    lastAvalancheN: 0,
-    logSeq: 0,
-  };
-}
-
-// 预热：开局就填到接近稳态，避免一上来命中率从 0 爬
-function prewarm(s: SimState, cfg: SimConfig) {
-  s.cache.clear();
-  const n = Math.min(cfg.capacity, SIM.keyspace);
-  for (let k = 0; k < n; k++) {
-    s.cache.set(k, {
-      expireAt: s.now + cfg.ttl * 1000 * (0.2 + Math.random() * 0.8),
-      lastUsed: s.now - Math.random() * 1000,
-    });
+// Turn one engine event into a localized, measurement-backed log line.
+function eventToLog(e: SimEvent): { text: L; vars: Record<string, string | number> } {
+  switch (e.kind) {
+    case "breakdown":
+      return e.absorbed
+        ? { text: sm.ev.breakdownAbsorbed, vars: { p99: e.p99 } }
+        : { text: sm.ev.breakdown, vars: { db: e.dbQps, p99: e.p99 } };
+    case "avalanche":
+      // "Spread" wording appears only when the engine measured expiry across
+      // more than one tick; otherwise it is honest synchronized expiry.
+      return e.spread
+        ? {
+            text: sm.ev.avalancheSpread,
+            vars: { n: e.cohort, span: e.spanTicks, peak: e.peak, hit: e.hit, p99: e.p99 },
+          }
+        : { text: sm.ev.avalancheSync, vars: { n: e.cohort, hit: e.hit, p99: e.p99 } };
+    case "redisDown":
+      return { text: sm.ev.redisDown, vars: {} };
+    case "redisUp":
+      return { text: sm.ev.redisUp, vars: {} };
+    case "recovered":
+      return { text: sm.ev.recovered, vars: { hit: e.hit, p99: e.p99 } };
   }
-  s.cache.set(0, { expireAt: s.now + cfg.ttl * 1000, lastUsed: s.now }); // 热点 key 保证在
-}
-
-function pickKey(cfg: SimConfig): number {
-  if (Math.random() * 100 < cfg.hot) return 0; // 热点 key = 0
-  return 1 + Math.floor(Math.random() * (SIM.keyspace - 1));
 }
 
 export default function SimulatorPage() {
@@ -78,198 +83,90 @@ export default function SimulatorPage() {
 
   const [metrics, setMetrics] = useState<Metrics>(EMPTY_METRICS);
   const [history, setHistory] = useState<Point[]>([]);
-  const [grid, setGrid] = useState<Cell[]>(() =>
-    Array.from({ length: SIM.gridCells }, () => ({ state: "empty", frac: 0 }) as Cell),
-  );
+  const [grid, setGrid] = useState<Cell[]>(emptyGrid);
   const [log, setLog] = useState<LogItem[]>([]);
 
-  const simRef = useRef<SimState>(freshState());
+  // The engine's mutable state lives in a ref; React re-renders from its output.
+  const stateRef = useRef<SimState | null>(null);
+  if (stateRef.current === null) stateRef.current = createState(DEFAULT_CONFIG, DEFAULT_SEED);
+
   const cfgRef = useRef<SimConfig>(config);
   cfgRef.current = config;
+  const pendingFaultRef = useRef<FaultKind | null>(null);
   const logRef = useRef<LogItem[]>([]);
+  const logSeqRef = useRef(0);
 
-  const pushLog = useCallback((text: L, vars: Record<string, string | number> = {}) => {
-    const s = simRef.current;
-    const next = [{ id: s.logSeq++, text, vars }, ...logRef.current].slice(0, 8);
+  const pushLog = useCallback((text: L, vars: Record<string, string | number>) => {
+    const next = [{ id: logSeqRef.current++, text, vars }, ...logRef.current].slice(0, 8);
     logRef.current = next;
     setLog(next);
   }, []);
 
-  // 开局预热一次
-  useEffect(() => {
-    prewarm(simRef.current, cfgRef.current);
-  }, []);
-
   const reset = useCallback(() => {
-    simRef.current = freshState();
-    prewarm(simRef.current, cfgRef.current);
+    stateRef.current = createState(cfgRef.current, DEFAULT_SEED);
     logRef.current = [];
     setLog([]);
     setHistory([]);
     setMetrics(EMPTY_METRICS);
-    setGrid(Array.from({ length: SIM.gridCells }, () => ({ state: "empty", frac: 0 }) as Cell));
+    setGrid(emptyGrid());
   }, []);
 
-  const trigger = useCallback((f: Fault) => {
-    simRef.current.pendingFault = f;
-    if (!running) setRunning(true);
-  }, [running]);
+  const trigger = useCallback(
+    (f: FaultKind) => {
+      pendingFaultRef.current = f;
+      if (!running) setRunning(true);
+    },
+    [running],
+  );
 
-  // ---------- 主循环 ----------
+  // The clock: advance one engine tick per interval and render its output.
   useEffect(() => {
     if (!running) return;
     const id = setInterval(() => {
-      const cfg = cfgRef.current;
-      const s = simRef.current;
-      s.now += SIM.tickMs;
+      const state = stateRef.current;
+      if (!state) return;
+      const fault = pendingFaultRef.current;
+      pendingFaultRef.current = null;
 
-      // 1) 应用待处理故障（在 tick 开头，和仿真时钟对齐）
-      const fault = s.pendingFault;
-      s.pendingFault = null;
-      if (fault === "redisDown") {
-        s.redisUntil = s.now + SIM.redisDownMs;
-      } else if (fault === "breakdown") {
-        const e = s.cache.get(0);
-        if (e) e.expireAt = s.now; // 让热点 key 立刻过期
-      } else if (fault === "avalanche") {
-        const keys = [...s.cache.keys()].filter((k) => k !== 0);
-        for (let i = keys.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [keys[i], keys[j]] = [keys[j], keys[i]];
-        }
-        const n = Math.floor(keys.length * SIM.avalancheFrac);
-        for (let i = 0; i < n; i++) {
-          const e = s.cache.get(keys[i]);
-          if (e) e.expireAt = s.now;
-        }
-        s.lastAvalancheN = n;
+      const out = tick(state, cfgRef.current, fault);
+
+      setMetrics(out.metrics);
+      setHistory((h) =>
+        [...h, { hit: out.metrics.hit * 100, p99: out.metrics.p99 }].slice(-SIM.historyLen),
+      );
+      setGrid(out.cells);
+      for (const e of out.events) {
+        const { text, vars } = eventToLog(e);
+        pushLog(text, vars);
       }
-
-      const down = s.now < s.redisUntil;
-
-      // 2) 生成这一批请求，对「tick 开始时」的缓存状态做判定（并发批次，不中途回填）
-      const reqs = Math.max(1, Math.round((cfg.qps * SIM.tickMs) / 1000));
-      let hits = 0;
-      const missedKeys = new Set<number>();
-      const hitKeys = new Set<number>();
-      for (let r = 0; r < reqs; r++) {
-        const key = pickKey(cfg);
-        const e = s.cache.get(key);
-        if (!down && e && e.expireAt > s.now) {
-          hits++;
-          hitKeys.add(key);
-        } else {
-          missedKeys.add(key);
-        }
-      }
-      const misses = reqs - hits;
-
-      // 3) 算 DB 回源量：单飞把「同一个 key 的并发回源」压成 1 次
-      const dbCalls = down ? misses : cfg.singleFlight ? missedKeys.size : misses;
-      const overload = Math.max(0, dbCalls - SIM.dbCapacity) / SIM.dbCapacity;
-      const dbLat = SIM.dbBaseLatency * (1 + overload * SIM.overloadK);
-      const avg = (hits * SIM.hitLatency + misses * dbLat) / reqs;
-      const hitRate = hits / reqs;
-      const p99 = 1 - hitRate >= 0.01 ? dbLat : SIM.hitLatency;
-      const dbQps = Math.round(dbCalls * (1000 / SIM.tickMs));
-
-      // 4) 更新缓存：命中的刷新 lastUsed；未命中的回填一次；超容量按 LRU 淘汰
-      for (const k of hitKeys) {
-        const e = s.cache.get(k);
-        if (e) e.lastUsed = s.now;
-      }
-      if (!down) {
-        for (const k of missedKeys) {
-          const jitter = cfg.jitter ? 0.6 + Math.random() * 0.8 : 1; // ±40%
-          s.cache.set(k, { expireAt: s.now + cfg.ttl * 1000 * jitter, lastUsed: s.now });
-        }
-        while (s.cache.size > cfg.capacity) {
-          let lruKey = -1;
-          let lruTime = Infinity;
-          for (const [k, e] of s.cache) {
-            if (e.lastUsed < lruTime) {
-              lruTime = e.lastUsed;
-              lruKey = k;
-            }
-          }
-          if (lruKey === -1) break;
-          s.cache.delete(lruKey);
-        }
-      }
-
-      // 5) 事件日志：故障后果 / 宕机恢复 / 稳态恢复
-      const iHit = Math.round(hitRate * 100);
-      const iP99 = Math.round(p99);
-      if (fault === "breakdown") {
-        pushLog(cfg.singleFlight ? sm.ev.breakdownSafe : sm.ev.breakdown, { db: dbQps, p99: iP99 });
-      } else if (fault === "avalanche") {
-        pushLog(cfg.jitter ? sm.ev.avalancheSafe : sm.ev.avalanche, {
-          n: s.lastAvalancheN,
-          hit: iHit,
-          p99: iP99,
-        });
-      } else if (fault === "redisDown") {
-        pushLog(sm.ev.redisDown, {});
-      }
-      if (s.wasDown && !down) pushLog(sm.ev.redisUp, {});
-      s.wasDown = down;
-
-      const bad = p99 > 60 || hitRate < 0.6;
-      if (bad) {
-        s.badTicks++;
-      } else {
-        if (s.badTicks >= 6) pushLog(sm.ev.recovered, { hit: iHit, p99: iP99 });
-        s.badTicks = 0;
-      }
-
-      // 6) 输出给界面
-      setMetrics({ hit: hitRate, avg, p99, dbQps, size: s.cache.size });
-      setHistory((h) => [...h, { hit: hitRate * 100, p99 }].slice(-SIM.historyLen));
-
-      const cells: Cell[] = [];
-      const ttlMs = cfg.ttl * 1000;
-      for (let k = 0; k < SIM.gridCells; k++) {
-        const e = s.cache.get(k);
-        if (!e || e.expireAt <= s.now) {
-          cells.push({ state: "empty", frac: 0 });
-        } else {
-          const frac = Math.max(0, Math.min(1, (e.expireAt - s.now) / ttlMs));
-          const state = k === 0 ? "hot" : frac < 0.25 ? "expiring" : "fresh";
-          cells.push({ state, frac });
-        }
-      }
-      setGrid(cells);
     }, SIM.tickMs);
 
     return () => clearInterval(id);
   }, [running, pushLog]);
 
-  // ---------- 预设剧本 ----------
-  const runPreset = useCallback(
-    (id: string) => {
-      if (id === "breakdown") {
-        setConfig((c) => ({ ...c, hot: 70, singleFlight: false, jitter: c.jitter }));
-        setRunning(true);
-        window.setTimeout(() => (simRef.current.pendingFault = "breakdown"), 700);
-      } else if (id === "avalanche") {
-        setConfig((c) => ({ ...c, jitter: false, capacity: 180 }));
-        setRunning(true);
-        window.setTimeout(() => (simRef.current.pendingFault = "avalanche"), 700);
-      } else if (id === "eviction") {
-        setConfig((c) => ({ ...c, capacity: 40, hot: 25, ttl: 12 }));
-        setRunning(true);
-      } else if (id === "ttl") {
-        setConfig((c) => ({ ...c, ttl: 1, capacity: 180, hot: 20 }));
-        setRunning(true);
-      }
-    },
-    [],
-  );
-
   const set = useCallback(
     (patch: Partial<SimConfig>) => setConfig((c) => ({ ...c, ...patch })),
     [],
   );
+
+  // One-click scenarios set the controls and (for faults) queue an injection.
+  const runPreset = useCallback((id: string) => {
+    if (id === "breakdown") {
+      setConfig((c) => ({ ...c, hot: 70, singleFlight: false }));
+      setRunning(true);
+      window.setTimeout(() => (pendingFaultRef.current = "breakdown"), 700);
+    } else if (id === "avalanche") {
+      setConfig((c) => ({ ...c, jitter: false, capacity: 180 }));
+      setRunning(true);
+      window.setTimeout(() => (pendingFaultRef.current = "avalanche"), 700);
+    } else if (id === "eviction") {
+      setConfig((c) => ({ ...c, capacity: 40, hot: 25, ttl: 12 }));
+      setRunning(true);
+    } else if (id === "ttl") {
+      setConfig((c) => ({ ...c, ttl: 1, capacity: 180, hot: 20 }));
+      setRunning(true);
+    }
+  }, []);
 
   return (
     <main className="page">
@@ -291,7 +188,7 @@ export default function SimulatorPage() {
       </section>
 
       <div className="sim8-grid">
-        {/* ============ 左：控制台 ============ */}
+        {/* ============ left: controls ============ */}
         <section className="sim8-panel sim8-controls">
           <div className="sim8-panel-title">{t(sm.ctrlTitle, lang)}</div>
 
@@ -368,7 +265,7 @@ export default function SimulatorPage() {
           </div>
         </section>
 
-        {/* ============ 右：仪表盘 ============ */}
+        {/* ============ right: dashboard ============ */}
         <section className="sim8-dash">
           <div className="sim8-tiles">
             <Tile label={t(sm.mHit, lang)} value={`${Math.round(metrics.hit * 100)}%`} tone={hitTone(metrics.hit)} />
@@ -383,23 +280,20 @@ export default function SimulatorPage() {
           </div>
 
           <Chart title={t(sm.chartHit, lang)} data={history} pick={(p) => p.hit} max={100} tone="teal" unit="%" invert />
-          <Chart
-            title={t(sm.chartLat, lang)}
-            data={history}
-            pick={(p) => p.p99}
-            max={250}
-            tone="accent"
-            unit="ms"
-          />
+          <Chart title={t(sm.chartLat, lang)} data={history} pick={(p) => p.p99} max={250} tone="accent" unit="ms" />
 
           <div className="sim8-cache">
             <div className="sim8-cache-head">
               <span>{t(sm.gridTitle, lang)}</span>
               <span className="sim8-legend">
-                <i className="sim8-lg hot" />{t(sm.legHot, lang)}
-                <i className="sim8-lg fresh" />{t(sm.legFresh, lang)}
-                <i className="sim8-lg expiring" />{t(sm.legExpiring, lang)}
-                <i className="sim8-lg empty" />{t(sm.legEmpty, lang)}
+                <i className="sim8-lg hot" />
+                {t(sm.legHot, lang)}
+                <i className="sim8-lg fresh" />
+                {t(sm.legFresh, lang)}
+                <i className="sim8-lg expiring" />
+                {t(sm.legExpiring, lang)}
+                <i className="sim8-lg empty" />
+                {t(sm.legEmpty, lang)}
               </span>
             </div>
             <div className="sim8-cellwrap">
@@ -415,7 +309,7 @@ export default function SimulatorPage() {
         </section>
       </div>
 
-      {/* ============ 预设剧本 ============ */}
+      {/* ============ one-click scenarios ============ */}
       <section className="sim8-presets">
         <div className="sim8-panel-title">{t(sm.presetsTitle, lang)}</div>
         <div className="sim8-preset-grid">
@@ -428,7 +322,7 @@ export default function SimulatorPage() {
         </div>
       </section>
 
-      {/* ============ 事件日志 ============ */}
+      {/* ============ event log ============ */}
       <section className="sim8-log">
         <div className="sim8-panel-title">{t(sm.logTitle, lang)}</div>
         {log.length === 0 ? (
@@ -444,7 +338,7 @@ export default function SimulatorPage() {
         )}
       </section>
 
-      {/* ============ 小结 ============ */}
+      {/* ============ takeaways ============ */}
       <section className="sim8-takeaway">
         <div className="sim8-panel-title">{t(sm.takeawayTitle, lang)}</div>
         <ul>
@@ -465,7 +359,7 @@ export default function SimulatorPage() {
   );
 }
 
-// ---------- 界面积木 ----------
+// ---------- presentational pieces ----------
 
 function hitTone(hit: number): Tone {
   if (hit >= 0.9) return "ok";
@@ -477,8 +371,6 @@ function latTone(ms: number): Tone {
   if (ms <= 60) return "amber";
   return "red";
 }
-
-type Tone = "ok" | "amber" | "red" | "neutral";
 
 function Tile({ label, value, tone }: { label: string; value: string; tone: Tone }) {
   return (
@@ -532,12 +424,7 @@ function Toggle({
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      className={`sim8-toggle ${on ? "on" : ""}`}
-      aria-pressed={on}
-      onClick={onClick}
-    >
+    <button type="button" className={`sim8-toggle ${on ? "on" : ""}`} aria-pressed={on} onClick={onClick}>
       <span className="sim8-toggle-knob" aria-hidden />
       <span className="sim8-toggle-text">
         <span className="sim8-toggle-label">{label}</span>
@@ -599,7 +486,6 @@ function Chart({
       .join(" ");
   }, [data, max, pick]);
 
-  // 用最新值决定线的颜色档位（红/黄/绿）
   const level = invert
     ? last >= max * 0.9
       ? "ok"
