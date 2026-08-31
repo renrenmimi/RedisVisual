@@ -1,50 +1,19 @@
-// 第 8 站「故障模拟器」的文案 + 参数 + 预设数据（双语）。
-// 页面 app/simulator/page.tsx 里有一个真正的仿真引擎：按访问分布跑请求流，
-// 维护一个带 TTL + LRU 淘汰的模拟缓存，实时算出命中率和延迟。
-// 这里只放文字、参数范围和预设；引擎逻辑在页面里。
+// 第 8 站「故障模拟器」的双语文案 + 预设数据。
+// 仿真的数学在纯引擎 lib/simulator/engine.ts 里；这个文件只放文字和预设，
+// 并从引擎 re-export 参数，方便页面从一处取到配置和文案。
+// 事件日志的每条模板都由引擎的实测数据填充（{db}/{p99}/{hit}/{n}/{span}/{peak}），
+// 不存在只看开关、不看实测的「假成功」消息。
 
 import type { L } from "@/lib/i18n";
 
-// ---------- 仿真参数（引擎和滑块共用） ----------
-
-export const SIM = {
-  keyspace: 200, // 总共多少个不同的 key
-  gridCells: 60, // 缓存网格展示前多少个 key
-  tickMs: 100, // 每个 tick = 100ms 仿真时间（10 tick/秒）
-  historyLen: 90, // 图表保留最近多少个 tick（约 9 秒）
-  hitLatency: 1, // 命中延迟（ms）
-  dbBaseLatency: 40, // 未命中回源到 DB 的基础延迟（ms）
-  dbCapacity: 30, // DB 每 tick 能从容处理多少次回源；超过就排队变慢
-  overloadK: 3, // 过载惩罚系数：负载越超上限，延迟涨得越狠
-  redisDownMs: 3000, // 「Redis 宕机」持续时间
-  avalancheFrac: 0.8, // 「雪崩」一次让多大比例的已缓存 key 立刻过期
-};
-
-// 滑块范围（min / max / step / 默认）
-export const RANGES = {
-  qps: { min: 200, max: 6000, step: 100, def: 1200 }, // 每秒请求数
-  ttl: { min: 1, max: 30, step: 1, def: 8 }, // TTL（秒）
-  capacity: { min: 20, max: 200, step: 10, def: 160 }, // 缓存容量（最多缓存多少 key）
-  hot: { min: 0, max: 85, step: 5, def: 30 }, // 热点 key 占总流量的百分比
-};
-
-export type SimConfig = {
-  qps: number;
-  ttl: number; // 秒
-  capacity: number;
-  hot: number; // 0–85（%）
-  jitter: boolean; // TTL 随机抖动（防雪崩）
-  singleFlight: boolean; // 单飞 / 互斥（防击穿）
-};
-
-export const DEFAULT_CONFIG: SimConfig = {
-  qps: RANGES.qps.def,
-  ttl: RANGES.ttl.def,
-  capacity: RANGES.capacity.def,
-  hot: RANGES.hot.def,
-  jitter: false,
-  singleFlight: false,
-};
+// 仿真参数与配置类型的唯一真相来源是引擎，这里透传出去。
+export {
+  SIM,
+  RANGES,
+  DEFAULT_CONFIG,
+  DEFAULT_SEED,
+  type SimConfig,
+} from "./simulator/engine";
 
 // ---------- 页面外壳文案 ----------
 
@@ -91,8 +60,8 @@ export const sm = {
   },
   faultAvalanche: { zh: "缓存雪崩", en: "Cache avalanche" },
   faultAvalancheHint: {
-    zh: "让大批 key 同时过期，DB 被瞬间涌入的请求压垮",
-    en: "expire a large batch at once; the DB is flooded",
+    zh: "一批同时缓存、共用一个 TTL 的 key 一起到期——开 TTL 抖动能把到期时刻打散",
+    en: "a cohort cached together with one shared TTL all comes due — TTL jitter staggers when they expire",
   },
   faultRedisDown: { zh: "Redis 宕机 3 秒", en: "Redis down for 3s" },
   faultRedisDownHint: {
@@ -166,19 +135,22 @@ export const sm = {
   ev: {
     breakdown: {
       zh: "缓存击穿：热点 key 过期，DB 回源冲到 {db} 次/秒，p99 延迟 {p99}ms",
-      en: "Breakdown: hot key expired, DB load jumped to {db}/s, p99 latency {p99}ms",
+      en: "Breakdown: hot key expired, DB load hit {db}/s, p99 {p99}ms",
     },
-    breakdownSafe: {
-      zh: "缓存击穿被单飞挡住：只回源 1 次，p99 稳在 {p99}ms",
-      en: "Breakdown absorbed by single-flight: just 1 rebuild, p99 stays {p99}ms",
+    // 只有引擎实测 absorbed=true（单飞让 p99 没被拉高）时才会用这条。
+    breakdownAbsorbed: {
+      zh: "单飞挡住了击穿：并发回源被合并成 1 次，实测 p99 稳在 {p99}ms",
+      en: "Single-flight absorbed the breakdown: concurrent rebuilds collapsed to one, measured p99 stayed {p99}ms",
     },
-    avalanche: {
-      zh: "缓存雪崩：{n} 个 key 同时过期，命中率跌到 {hit}%，p99 延迟 {p99}ms",
-      en: "Avalanche: {n} keys expired at once, hit rate fell to {hit}%, p99 latency {p99}ms",
+    // 同步过期（未开抖动）：整批在同一 tick 到期，数字来自那一 tick 的实测。
+    avalancheSync: {
+      zh: "同步过期：{n} 个 key 在同一 tick 一起到期，命中率跌到 {hit}%，p99 延迟 {p99}ms",
+      en: "Synchronized expiry: {n} keys came due in the same tick — hit rate {hit}%, p99 {p99}ms",
     },
-    avalancheSafe: {
-      zh: "TTL 抖动生效：过期被打散，命中率只轻微波动",
-      en: "TTL jitter working: expiry is spread out, hit rate only dips slightly",
+    // 铺开过期：只有引擎实测到期确实跨越了多个 tick（spread=true）时才会用这条。
+    avalancheSpread: {
+      zh: "TTL 抖动把 {n} 个 key 的到期铺开到 {span} 个 tick，单 tick 最多 {peak} 个过期；实测命中率最低 {hit}%，p99 峰值 {p99}ms",
+      en: "TTL jitter spread the {n}-key cohort over {span} ticks — at most {peak} expired in one tick; measured hit rate dipped to {hit}%, peak p99 {p99}ms",
     },
     redisDown: {
       zh: "Redis 宕机：缓存全失效，所有请求直连 DB，命中率 0%",
