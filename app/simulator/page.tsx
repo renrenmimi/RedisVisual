@@ -12,7 +12,7 @@ import "./simulator.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang, t, type L, type Lang } from "@/lib/i18n";
-import { RichText } from "@/lib/glossary";
+import { Markup } from "@/lib/glossary";
 import { sm } from "@/lib/simulator";
 import {
   SIM,
@@ -183,7 +183,7 @@ export default function SimulatorPage() {
           <h2>{t(sm.introTitle, lang)}</h2>
         </div>
         <p className="n-body">
-          <RichText text={t(sm.intro, lang)} lang={lang} />
+          <Markup text={t(sm.intro, lang)} lang={lang} />
         </p>
       </section>
 
@@ -344,7 +344,7 @@ export default function SimulatorPage() {
         <ul>
           {sm.takeaways.map((li, i) => (
             <li key={i}>
-              <RichText text={t(li, lang)} lang={lang} />
+              <Markup text={t(li, lang)} lang={lang} />
             </li>
           ))}
         </ul>

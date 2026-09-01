@@ -9,7 +9,7 @@ import CommandPalette from "./command-palette";
 export const metadata: Metadata = {
   title: "RedisVisual — See inside Redis",
   description:
-    "A visual Redis course for people starting from zero. Seven stops explain what Redis is, why it is fast, how each data structure works, how caching fails and how to fix it, what changes in production, and how to answer the common interview questions. Available in English and Chinese.",
+    "A visual Redis course for people starting from zero. Eight stops explain what Redis is, why it is fast, how each data structure works, how caching fails and how to fix it, what changes in production, how to answer the common interview questions, and — in a running simulator — what a cache breakdown or avalanche does to hit rate and latency. Available in English and Chinese.",
 };
 
 export default function RootLayout({

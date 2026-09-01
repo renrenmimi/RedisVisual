@@ -9,7 +9,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLang, t, type Lang } from "@/lib/i18n";
-import { RichText } from "@/lib/glossary";
+import { Markup } from "@/lib/glossary";
 import {
   meta,
   intro,
@@ -19,58 +19,10 @@ import {
 } from "@/lib/pitfalls";
 import "./pitfalls.css";
 
-/* 正文渲染器：先按反引号切出 `code` 段（渲成 mono），其余交给 Emph。 */
+/* 正文标记(反引号/粗/斜/术语)统一走 lib/glossary 的 Markup —— 这一套原本
+   只长在这个文件里,而 /simulator 也按同一套约定写正文。 */
 function Rich({ text, lang }: { text: string; lang: Lang }) {
-  const segs = text.split("`");
-  return (
-    <>
-      {segs.map((seg, i) =>
-        i % 2 === 1 ? (
-          <code className="pf6-ic" key={i}>
-            {seg}
-          </code>
-        ) : (
-          <Emph key={i} text={seg} lang={lang} />
-        ),
-      )}
-    </>
-  );
-}
-
-/* **重强调** 渲成 <strong>；剩下的交给 Ital。 */
-function Emph({ text, lang }: { text: string; lang: Lang }) {
-  const segs = text.split("**");
-  return (
-    <>
-      {segs.map((seg, i) =>
-        i % 2 === 1 ? (
-          <strong key={i}>
-            <Ital text={seg} lang={lang} />
-          </strong>
-        ) : (
-          <Ital key={i} text={seg} lang={lang} />
-        ),
-      )}
-    </>
-  );
-}
-
-/* *轻强调* 渲成 <em>；两侧文本继续交给 RichText 处理 [[术语]]。 */
-function Ital({ text, lang }: { text: string; lang: Lang }) {
-  const segs = text.split("*");
-  return (
-    <>
-      {segs.map((seg, i) =>
-        i % 2 === 1 ? (
-          <em key={i}>
-            <RichText text={seg} lang={lang} />
-          </em>
-        ) : (
-          <RichText key={i} text={seg} lang={lang} />
-        ),
-      )}
-    </>
-  );
+  return <Markup text={text} lang={lang} codeClass="pf6-ic" />;
 }
 
 export default function PitfallsPage() {

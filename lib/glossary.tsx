@@ -291,3 +291,78 @@ function Term({
     </span>
   );
 }
+
+/**
+ * 正文标记：`code` → <code>，**粗** → <strong>，*斜* → <em>，[[术语]] → 词典弹层。
+ *
+ * 这一套原本只长在 /pitfalls 页面里，而 lib/pitfalls.ts 顶部那句约定
+ * （「正文里用反引号标命令，**强调**渲成 strong」）是写给全站数据文件的。
+ * 于是 /simulator 按约定写了 **强调**，却直接调 RichText —— 那一层只认
+ * [[术语]]，星号被原样印在页面上（线上 12 处）。
+ *
+ * 所以搬到这里，两处共用一份。四层由外往内依次剥：
+ * 反引号 → 双星号 → 单星号 → 术语。
+ */
+export function Markup({
+  text,
+  lang,
+  codeClass,
+}: {
+  text: string;
+  lang: Lang;
+  /** 各站代码片段的行内样式类名不同,由调用方给。 */
+  codeClass?: string;
+}) {
+  return <MarkupCode text={text} lang={lang} codeClass={codeClass} />;
+}
+
+function MarkupCode({ text, lang, codeClass }: { text: string; lang: Lang; codeClass?: string }) {
+  const segs = text.split("`");
+  return (
+    <>
+      {segs.map((seg, i) =>
+        i % 2 === 1 ? (
+          <code className={codeClass} key={i}>
+            {seg}
+          </code>
+        ) : (
+          <MarkupStrong key={i} text={seg} lang={lang} />
+        ),
+      )}
+    </>
+  );
+}
+
+function MarkupStrong({ text, lang }: { text: string; lang: Lang }) {
+  const segs = text.split("**");
+  return (
+    <>
+      {segs.map((seg, i) =>
+        i % 2 === 1 ? (
+          <strong key={i}>
+            <MarkupEm text={seg} lang={lang} />
+          </strong>
+        ) : (
+          <MarkupEm key={i} text={seg} lang={lang} />
+        ),
+      )}
+    </>
+  );
+}
+
+function MarkupEm({ text, lang }: { text: string; lang: Lang }) {
+  const segs = text.split("*");
+  return (
+    <>
+      {segs.map((seg, i) =>
+        i % 2 === 1 ? (
+          <em key={i}>
+            <RichText text={seg} lang={lang} />
+          </em>
+        ) : (
+          <RichText key={i} text={seg} lang={lang} />
+        ),
+      )}
+    </>
+  );
+}
