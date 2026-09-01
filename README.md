@@ -3,7 +3,8 @@
 **▶ [Open the course](https://redis-visual.vercel.app)** — runs in your browser, nothing to install.
 
 An interactive introduction to Redis, covering its core data structures, common application
-patterns, operational trade-offs, and a guided local implementation.
+patterns, operational trade-offs, a guided local implementation, and a running simulator where
+you break the cache on purpose and watch hit rate and latency react.
 
 ![Stop one: what Redis is, in eight animated scenes](docs/home.jpg)
 
@@ -12,6 +13,10 @@ patterns, operational trade-offs, and a guided local implementation.
 ![The data structures, each with its own animation and commands](docs/data.jpg)
 
 *The data structures, each with its own animation and commands*
+
+![Stop eight: trigger an avalanche and watch hit rate dip and p99 latency spike](docs/simulator.jpg)
+
+*Stop eight: trigger a fault and watch hit rate, latency and DB load react — then flip TTL jitter or single-flight and watch the curves recover*
 
 ## Stops
 
@@ -34,6 +39,11 @@ patterns, operational trade-offs, and a guided local implementation.
    set up a Node/TypeScript project → write the code → run it → watch what happens through
    `redis-cli`. Lines light up as you go, with terminal output replayed.
 7. **`/interview` — Interview prep.** 26 review questions, grouped and expandable, with concise English summaries.
+8. **`/simulator` — Fault simulator.** The pitfalls from stop four, running. A deterministic
+   engine drives your chosen QPS against a mock cache with TTL and LRU eviction; trigger a
+   breakdown, an avalanche, a hot key or a three-second outage and watch hit rate, latency
+   and DB load react live. Two fixes — TTL jitter and single-flight rebuild — are switches,
+   so the recovery is something you measure rather than something the page claims.
 
 ## Running locally
 

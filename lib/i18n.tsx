@@ -76,7 +76,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
 export const useLang = () => useContext(LangContext);
 
-// ---------- 界面通用文案（Research OS 外壳 + 七站导航名） ----------
+// ---------- 界面通用文案（Research OS 外壳 + 八站导航名） ----------
 
 export const ui = {
   nav: {
