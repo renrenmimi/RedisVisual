@@ -185,13 +185,11 @@ function SceneVisual({ id, lang }: { id: number; lang: Lang }) {
         <div className="stage">
           <div className="hm-vs">
             <div className="hm-vs-card hm-warehouse">
-              <span className="hm-vs-emoji">🏢</span>
               <span className="hm-vs-name">{t(stage.warehouse, lang)}</span>
               <span className="hm-vs-sub">{t(stage.warehouseSub, lang)}</span>
             </div>
             <div className="hm-vs-plus">+</div>
             <div className="hm-vs-card hm-workbench">
-              <span className="hm-vs-emoji">🛠️</span>
               <span className="hm-vs-name">{t(stage.workbench, lang)}</span>
               <span className="hm-vs-sub">{t(stage.workbenchSub, lang)}</span>
             </div>
@@ -207,12 +205,12 @@ function SceneVisual({ id, lang }: { id: number; lang: Lang }) {
           <div className="hm-ladder">
             <div className="hm-lad hm-lad-mem">
               <span className="hm-lad-name">{t(stage.ladMem, lang)}</span>
-              <span className="hm-lad-bar" style={{ width: "14%" }} />
+              <span className="hm-lad-bar" style={{ width: "29%" }} />
               <span className="hm-lad-val">{t(stage.ladMemV, lang)}</span>
             </div>
             <div className="hm-lad hm-lad-ssd">
               <span className="hm-lad-name">{t(stage.ladSsd, lang)}</span>
-              <span className="hm-lad-bar" style={{ width: "48%" }} />
+              <span className="hm-lad-bar" style={{ width: "71%" }} />
               <span className="hm-lad-val">{t(stage.ladSsdV, lang)}</span>
             </div>
             <div className="hm-lad hm-lad-hdd">
