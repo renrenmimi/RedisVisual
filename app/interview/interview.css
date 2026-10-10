@@ -197,7 +197,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-bg);
   padding: 3px 9px;
   border-radius: 8px;
@@ -247,11 +247,18 @@
 .iv4-ans {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Closed answers are hidden from Tab and screen readers too; visibility flips after
+     the collapse has finished. */
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.34s;
 }
 
 .iv4-card.open .iv4-ans {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .iv4-ans-clip {

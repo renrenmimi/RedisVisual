@@ -263,7 +263,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-bg);
   padding: 3px 8px;
   border-radius: 7px;
@@ -290,11 +290,18 @@
 .ds5-probe-ans {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Closed answers are hidden from Tab and screen readers too; visibility flips after
+     the collapse has finished. */
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.34s;
 }
 
 .ds5-probe.open .ds5-probe-ans {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ds5-probe-clip {
@@ -1125,6 +1132,19 @@
   }
   45%,
   65% {
+    opacity: 1;
+  }
+}
+
+/* Without the swap animation both values would sit on top of each other: show the
+   state after the HSET instead. */
+@media (prefers-reduced-motion: reduce) {
+  .ds5-hv-a {
+    opacity: 0;
+  }
+
+  .ds5-hv-b,
+  .ds5-hset-badge {
     opacity: 1;
   }
 }

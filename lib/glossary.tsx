@@ -4,7 +4,7 @@
 // 带虚线下划线的可点击术语，点开是一段“通俗解释”的解释。
 // 各站数据文件里都可以直接用这些 key；找不到 key 时只渲染显示文字，绝不报错。
 
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, useId, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { t, type L, type Lang } from "@/lib/i18n";
 
@@ -212,6 +212,9 @@ export function RichText({ text, lang }: { text: string; lang: Lang }) {
 
 type PopPos = { left: number; top: number; below: boolean };
 
+// Only one definition is open at a time: opening a term closes the one before it.
+let closeOpenTerm: (() => void) | null = null;
+
 function Term({
   termKey,
   display,
@@ -224,7 +227,33 @@ function Term({
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<PopPos | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const popRef = useRef<HTMLSpanElement>(null);
+  const popId = useId();
   const entry = glossary[termKey];
+
+  // While open: Esc or a press anywhere outside the term and its definition closes it,
+  // and opening another term closes this one.
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    closeOpenTerm?.();
+    closeOpenTerm = close;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    const onPointer = (e: PointerEvent) => {
+      const target = e.target as Node;
+      if (btnRef.current?.contains(target) || popRef.current?.contains(target)) return;
+      close();
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+      if (closeOpenTerm === close) closeOpenTerm = null;
+    };
+  }, [open]);
 
   // 弹层用 portal 渲染到 body + 固定定位，从触发词的位置算坐标——这样无论
   // 祖先有没有 overflow:hidden / backdrop-filter，都不会被裁掉。滚动/改窗口就关掉。
@@ -237,7 +266,10 @@ function Term({
       const vw = window.innerWidth;
       const halfW = Math.min(300, vw * 0.78) / 2;
       const center = r.left + r.width / 2;
-      const below = r.top < 200; // 靠近视口顶部就朝下弹，免得顶出屏幕
+      // 上方放得下整个弹层才朝上弹，否则朝下，免得顶出屏幕。弹层第一次渲染前量不到高度，
+      // 先按 240px 估，渲染后的下一帧再按实际高度重算一次。
+      const h = popRef.current?.offsetHeight ?? 240;
+      const below = r.top - 8 - h < 8;
       setPos({
         left: Math.min(Math.max(center, halfW + 8), vw - halfW - 8),
         top: below ? r.bottom + 8 : r.top - 8,
@@ -245,10 +277,12 @@ function Term({
       });
     };
     place();
+    const frame = requestAnimationFrame(place);
     // 滚动/改窗口时跟随重新定位（而不是关闭）——既稳，也不会被残余的平滑滚动误关。
     window.addEventListener("scroll", place, true);
     window.addEventListener("resize", place);
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener("scroll", place, true);
       window.removeEventListener("resize", place);
     };
@@ -262,6 +296,8 @@ function Term({
         ref={btnRef}
         type="button"
         className={`term ${open ? "term-on" : ""}`}
+        aria-expanded={open}
+        aria-describedby={open ? popId : undefined}
         onClick={() => setOpen((o) => !o)}
       >
         {display}
@@ -271,6 +307,8 @@ function Term({
         typeof document !== "undefined" &&
         createPortal(
           <span
+            ref={popRef}
+            id={popId}
             className="term-pop"
             role="tooltip"
             style={{

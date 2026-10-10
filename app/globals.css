@@ -26,7 +26,7 @@
   --elevated: #202938;
   --text: #f0f2f6;
   --text-2: #b0b7c3;
-  --text-3: #788292;
+  --text-3: #8b95a5;
   --border: rgba(255, 255, 255, 0.085);
   --border-strong: rgba(255, 255, 255, 0.14);
   --shadow:
@@ -84,6 +84,9 @@
   --code-dim: 0.4;
   --code-hl: rgba(224, 72, 61, 0.14);
   --code-hl-bar: #e0483d;
+  /* Text on the dark code surface, which stays dark in both themes. */
+  --code-muted: #a9b0bf;
+  --code-accent: #ff8a80;
 }
 
 [data-theme="light"] {
@@ -98,7 +101,7 @@
   --elevated: #ffffff;
   --text: #1a1f2b;
   --text-2: #565f6e;
-  --text-3: #8a93a2;
+  --text-3: #5f6877;
   --border: rgba(20, 25, 35, 0.1);
   --border-strong: rgba(20, 25, 35, 0.16);
   --shadow:
@@ -142,6 +145,8 @@
   --code-dim: 0.36;
   --code-hl: rgba(200, 53, 43, 0.14);
   --code-hl-bar: #c8352b;
+  --code-muted: #a9b0bf;
+  --code-accent: #ff8a80;
 }
 
 /* ---------- 基础 ---------- */
@@ -288,7 +293,8 @@ body::after {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  /* 9px dots 16px apart: each dot's 25px hit area (.pdot::after) touches the next. */
+  gap: 16px;
   padding: 8px 6px;
 }
 
@@ -318,6 +324,14 @@ body::after {
     transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
     background 0.25s ease,
     box-shadow 0.25s ease;
+}
+
+/* A transparent 25x25 hit area around the 9px dot, for fingers. */
+.pdot::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
 }
 
 .pdot:hover {
@@ -375,7 +389,7 @@ body::after {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-bg);
   padding: 2px 10px;
   border-radius: 999px;
@@ -384,7 +398,7 @@ body::after {
 
 .n-step i {
   font-style: normal;
-  opacity: 0.55;
+  opacity: 0.75;
 }
 
 .n-head h2 {
@@ -646,7 +660,7 @@ body::after {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.04em;
-  color: rgba(220, 220, 234, 0.45);
+  color: rgba(220, 220, 234, 0.6);
 }
 
 .code {
@@ -992,6 +1006,10 @@ a.btn {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

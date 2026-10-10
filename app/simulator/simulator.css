@@ -91,11 +91,30 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
+  /* A 24px-tall target for fingers; the visible 5px track is drawn by the track
+     pseudo-elements below. */
+  height: 24px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.sim8-slider input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.sim8-slider input[type="range"]::-webkit-slider-runnable-track {
   height: 5px;
   border-radius: 999px;
   background: var(--panel-2);
-  outline: none;
-  cursor: pointer;
+}
+
+.sim8-slider input[type="range"]::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--panel-2);
 }
 
 .sim8-slider input[type="range"]::-webkit-slider-thumb {
@@ -108,6 +127,8 @@
   box-shadow: 0 2px 6px var(--accent-glow);
   cursor: pointer;
   border: 2px solid var(--panel);
+  /* Centre the 16px thumb on the 5px track. */
+  margin-top: -5.5px;
 }
 
 .sim8-slider input[type="range"]::-moz-range-thumb {
