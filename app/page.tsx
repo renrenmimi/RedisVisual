@@ -6,6 +6,7 @@ import Link from "next/link";
 import { scenes, stage, meta } from "@/lib/intro";
 import { ui, useLang, t, type Lang } from "@/lib/i18n";
 import { RichText } from "@/lib/glossary";
+import { readingMs } from "@/lib/reading";
 
 export default function IntroPage() {
   const [cursor, setCursor] = useState(0);
@@ -22,12 +23,13 @@ export default function IntroPage() {
       setAuto(false);
       return;
     }
+    // 按这一幕讲解的长度停留（原先固定 8 秒，读不完 60–90 词的讲解）
     const id = setTimeout(
       () => setCursor((c) => Math.min(c + 1, scenes.length - 1)),
-      8000,
+      readingMs(t(scenes[cursor].text, lang), lang),
     );
     return () => clearTimeout(id);
-  }, [auto, cursor]);
+  }, [auto, cursor, lang]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

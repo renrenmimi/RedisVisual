@@ -10,6 +10,7 @@ import Link from "next/link";
 import { scenarios, intro, meta, type Scenario } from "@/lib/scenarios";
 import { useLang, t, type Lang } from "@/lib/i18n";
 import { RichText } from "@/lib/glossary";
+import { readingMs } from "@/lib/reading";
 import "./scenarios.css";
 
 // carrier 报价延迟（场景 A 反复用到）
@@ -38,7 +39,7 @@ export default function ScenariosPage() {
     setAuto(false);
   };
 
-  // 自动播放：给足阅读时间
+  // 自动播放：按这一步讲解的长度给足阅读时间（原先固定 5.2 秒，读不完 60–130 词的讲解）
   useEffect(() => {
     if (!auto) return;
     if (cursor >= steps.length - 1) {
@@ -47,10 +48,10 @@ export default function ScenariosPage() {
     }
     const id = setTimeout(
       () => setCursor((c) => Math.min(c + 1, steps.length - 1)),
-      5200,
+      readingMs(t(steps[cursor].text, lang), lang),
     );
     return () => clearTimeout(id);
-  }, [auto, cursor, steps.length]);
+  }, [auto, cursor, steps, lang]);
 
   // 键盘：→ / 空格推进，← 回退（本场景内）
   useEffect(() => {
