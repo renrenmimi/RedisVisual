@@ -297,8 +297,15 @@ export function tick(
   let hits = 0;
   const missed = new Set<number>();
   const hitKeys = new Set<number>();
+  // When each key was last requested inside this tick. The batch is spread evenly over
+  // (prevNow, now], so LRU sees real recency: a hot key asked for all through the tick
+  // stays more recent than a cold key asked for once early on. (Stamping every key with
+  // `now` made them all tie, and the tie fell to Map order, which evicted the hot key
+  // first whenever one tick missed more keys than the cache had untouched entries.)
+  const lastSeen = new Map<number, number>();
   for (let r = 0; r < reqs; r++) {
     const key = pickKey(s, cfg);
+    lastSeen.set(key, prevNow + ((r + 1) / reqs) * SIM.tickMs);
     const e = s.cache.get(key);
     if (!down && e && e.expireAt > s.now) {
       hits++;
@@ -322,11 +329,11 @@ export function tick(
   // 5) Update the cache: refresh hits, refill misses, evict by LRU.
   for (const k of hitKeys) {
     const e = s.cache.get(k);
-    if (e) e.lastUsed = s.now;
+    if (e) e.lastUsed = lastSeen.get(k) ?? s.now;
   }
   if (!down) {
     for (const k of missed) {
-      s.cache.set(k, { expireAt: s.now + refillTtl(s, cfg), lastUsed: s.now });
+      s.cache.set(k, { expireAt: s.now + refillTtl(s, cfg), lastUsed: lastSeen.get(k) ?? s.now });
     }
     evict(s, cfg.capacity);
   }
