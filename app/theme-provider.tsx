@@ -2,8 +2,11 @@
 
 // App-level client providers (ported from the AgentLab / "Research OS" shell).
 //  - ThemeProvider: mirrors data-theme ("dark" | "light") onto <html>, persisted
-//    in localStorage. A tiny inline script (themeScript) runs before first paint
-//    so there is no flash of the wrong theme.
+//    in localStorage. A tiny inline script (themeScript, at the top of <body>) runs
+//    before first paint so there is no flash of the wrong theme.
+//    The providers read their settings back from localStorage, not from the <html>
+//    attributes, and write those attributes back on mount: if React ever renders the
+//    root again on the client, the attributes the inline script wrote are gone.
 //  - ShellProvider: holds the workbench UI state shared by the sidebar drawer,
 //    the toolbar, the scrim and the command palette.
 
@@ -23,9 +26,18 @@ export type Theme = "dark" | "light";
 const THEME_KEY = "redisvisual-theme";
 const SIDEBAR_KEY = "redisvisual-sidebar";
 
-// Runs in <head> before paint: read the saved theme + sidebar state and set them
-// on <html> so the first frame already matches (no flash of wrong theme, and no
-// flash of an expanded rail when the user had it collapsed).
+/** A saved setting, or null when there is none or storage access is blocked. */
+function stored(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+// Runs at the top of <body> before paint: read the saved theme + sidebar state and
+// set them on <html> so the first frame already matches (no flash of wrong theme,
+// and no flash of an expanded rail when the user had it collapsed).
 // Defaults: theme "dark", sidebar "expanded".
 export const themeScript = `(function(){var d=document.documentElement;try{var t=localStorage.getItem("${THEME_KEY}");if(t!=="light"&&t!=="dark"){t="dark";}d.dataset.theme=t;}catch(e){d.dataset.theme="dark";}try{d.dataset.sidebar=localStorage.getItem("${SIDEBAR_KEY}")==="collapsed"?"collapsed":"expanded";}catch(e){d.dataset.sidebar="expanded";}})();`;
 
@@ -44,15 +56,11 @@ const ThemeContext = createContext<ThemeCtx>({
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, set] = useState<Theme>("dark");
 
-  // Sync React state with whatever the no-flash script already applied.
+  // Adopt the saved theme and write it back onto <html> (see the note at the top).
   useEffect(() => {
-    const saved = window.localStorage.getItem(THEME_KEY);
-    if (saved === "light" || saved === "dark") {
-      set(saved);
-      return;
-    }
-    const current = document.documentElement.dataset.theme;
-    if (current === "light" || current === "dark") set(current);
+    const current: Theme = stored(THEME_KEY) === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = current;
+    set(current);
   }, []);
 
   const setTheme = useCallback((t: Theme) => {
@@ -114,9 +122,11 @@ export function ShellProvider({ children }: { children: ReactNode }) {
   const [cmdkOpen, setCmdkOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Adopt whatever the no-flash script already wrote onto <html data-sidebar>.
+  // Adopt the saved rail state and write it back onto <html data-sidebar>.
   useEffect(() => {
-    setSidebarCollapsed(document.documentElement.dataset.sidebar === "collapsed");
+    const collapsed = stored(SIDEBAR_KEY) === "collapsed";
+    document.documentElement.dataset.sidebar = collapsed ? "collapsed" : "expanded";
+    setSidebarCollapsed(collapsed);
   }, []);
 
   const toggleSidebarCollapsed = useCallback(() => {
