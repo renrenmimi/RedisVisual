@@ -1,8 +1,8 @@
-// 第 8 站「故障模拟器」的双语文案 + 预设数据。
+// 第 8 站“故障模拟器”的双语文案 + 预设数据。
 // 仿真的数学在纯引擎 lib/simulator/engine.ts 里；这个文件只放文字和预设，
 // 并从引擎 re-export 参数，方便页面从一处取到配置和文案。
 // 事件日志的每条模板都由引擎的实测数据填充（{db}/{p99}/{hit}/{n}/{span}/{peak}），
-// 不存在只看开关、不看实测的「假成功」消息。
+// 不存在只看开关、不看实测的“假成功”消息。
 
 import type { L } from "@/lib/i18n";
 
@@ -31,11 +31,11 @@ export const sm = {
   intro: {
     zh:
       "下面是一个**真的在跑**的仿真：引擎每秒按你设的 QPS 生成请求，查一个带 [[ttl:TTL]] 和 [[eviction:LRU 淘汰]]的模拟缓存，" +
-      "命中就快（约 1ms），未命中就回源到「数据库」（约 40ms，且回源太多会排队变得更慢）。" +
+      "命中就快（约 1ms），未命中就回源到“数据库”（约 40ms；同一时刻回源太多、超过数据库的处理能力后会更慢）。" +
       "**调左边的参数、点故障按钮**，右边的命中率、延迟、DB 压力会实时变化。开两个开关（TTL 抖动 / 单飞）能看到修复手段怎么把曲线拉回来。",
     en:
       "Below is a simulation that is **actually running**: each second the engine generates your chosen QPS of requests against a mock cache with [[ttl:TTL]] and [[eviction:LRU eviction]]. " +
-      "A hit is fast (~1ms); a miss falls through to the “database” (~40ms — and gets slower as too many misses queue up). " +
+      "A hit is fast (~1ms); a miss falls through to the “database” (~40ms, and slower once more misses arrive at once than the database can handle). " +
       "**Move the controls on the left and press the fault buttons**; the hit rate, latency, and DB load on the right react live. Flip the two fixes (TTL jitter / single-flight) to watch the curves recover.",
   },
 
@@ -65,8 +65,8 @@ export const sm = {
   },
   faultRedisDown: { zh: "Redis 宕机 3 秒", en: "Redis down for 3s" },
   faultRedisDownHint: {
-    zh: "缓存整个消失，所有请求直连 DB",
-    en: "the cache vanishes; every request hits the DB",
+    zh: "缓存不可用，3 秒内所有请求直连 DB",
+    en: "the cache is unreachable; for three seconds every request hits the DB",
   },
 
   // 运行控制
@@ -117,16 +117,16 @@ export const sm = {
       id: "eviction",
       name: { zh: "演示：内存不够（淘汰）", en: "Demo: not enough memory (eviction)" },
       desc: {
-        zh: "把容量调到远小于 key 总数——热点还在，但冷数据被 LRU 不停淘汰，命中率稳稳地低。",
-        en: "Set capacity far below the keyspace — hot keys survive, but cold data is evicted by LRU, so the hit rate settles low.",
+        zh: "把容量调到远小于 key 总数——热点 key 一直留在缓存里，但冷数据被 LRU 不停淘汰，命中率稳在四成左右。",
+        en: "Set capacity far below the keyspace — the hot key stays cached, but cold data keeps being evicted by LRU, so the hit rate settles around 40%.",
       },
     },
     {
       id: "ttl",
       name: { zh: "演示：TTL 太短", en: "Demo: TTL too short" },
       desc: {
-        zh: "把 TTL 压到 1–2 秒——key 还没被复用就过期了，DB 一直有稳定的回源压力。",
-        en: "Drop TTL to 1–2s — keys expire before they get reused, so the DB carries a steady stream of rebuilds.",
+        zh: "把 TTL 压到 1 秒——每个 key 只被复用几次就过期，命中率从九成以上降到八成左右，DB 的回源量翻了一倍多，而且一直维持在这个水平。",
+        en: "Drop TTL to 1s — each key is reused only a few times before it expires, so the hit rate falls from above 90% to around 80% and the DB carries more than twice the rebuild traffic, all the time.",
       },
     },
   ] as { id: string; name: L; desc: L }[],
@@ -153,12 +153,12 @@ export const sm = {
       en: "TTL jitter spread the {n}-key cohort over {span} ticks — at most {peak} expired in one tick; measured hit rate dipped to {hit}%, peak p99 {p99}ms",
     },
     redisDown: {
-      zh: "Redis 宕机：缓存全失效，所有请求直连 DB，命中率 0%",
-      en: "Redis down: cache gone, every request hits the DB, hit rate 0%",
+      zh: "Redis 宕机：缓存不可用，所有请求直连 DB，命中率 0%",
+      en: "Redis down: cache unreachable, every request hits the DB, hit rate 0%",
     },
     redisUp: {
-      zh: "Redis 恢复：缓存回填中，命中率正在爬升",
-      en: "Redis back: cache is refilling, hit rate climbing",
+      zh: "Redis 恢复：未过期的缓存立即重新命中，这期间过期的 key 陆续回填",
+      en: "Redis back: unexpired entries hit again at once, and keys that expired meanwhile are refilled as they are requested",
     },
     recovered: {
       zh: "已恢复稳态：命中率 {hit}%，p99 延迟 {p99}ms",
@@ -173,8 +173,8 @@ export const sm = {
       en: "**Hit rate** is set by capacity, TTL and access pattern together; once capacity < keyspace, LRU eviction is unavoidable and the hit rate caps out.",
     },
     {
-      zh: "**延迟不是线性的**：回源一旦超过 DB 处理能力，就开始排队，p99 呈非线性飙升——这就是击穿/雪崩的杀伤力来源。",
-      en: "**Latency is not linear**: once rebuilds exceed the DB's capacity they queue, and p99 spikes non-linearly — that is what makes breakdown and avalanche dangerous.",
+      zh: "**延迟会陡增**：回源超过 DB 每个 tick 能处理的量之后，延迟随超出的部分迅速上升（本模型按超出比例线性增加）——这就是击穿和雪崩的危害所在。",
+      en: "**Latency climbs steeply**: once rebuilds exceed what the DB can handle per tick, latency grows with the excess (linearly with the overload in this model) — that is what makes breakdown and avalanche dangerous.",
     },
     {
       zh: "**单飞治击穿**（把 N 次回源压成 1 次），**TTL 抖动治雪崩**（把同时过期打散）。对症下药，一个开关就看得到。",
