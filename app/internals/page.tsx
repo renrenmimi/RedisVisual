@@ -391,7 +391,6 @@ function HaAnim({ zh }: { zh: boolean }) {
         </div>
 
         <div className="in7-sentinel">
-          <span aria-hidden>👁</span>
           {zh ? "哨兵" : "Sentinel"}
         </div>
       </div>

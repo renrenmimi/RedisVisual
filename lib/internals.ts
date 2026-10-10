@@ -62,7 +62,7 @@ export const meta = {
       "一台机器故障了怎么办、一台机器装不下了怎么办（高可用与扩展）；" +
       "好几条命令怎么作为一个整体执行（事务与原子）。" +
       "简历上写了 Redis，面试后半程问的基本就是这四件事。" +
-      "点上面的标签逐个看——每个都配一段会动的图、一张对比表，和几道面试深挖。",
+      "点下面的标签逐个看——每个都配一段会动的图、一张对比表，和几道面试深挖。",
     en:
       "By now you can use [[redis:Redis]] as a cache. Running it in production raises four more questions. " +
       "What happens to the data in [[memory:memory]] after a restart or a power cut (persistence)? " +
@@ -70,7 +70,7 @@ export const meta = {
       "What happens when one machine fails, or when one machine is no longer enough (availability and scaling)? " +
       "And how do several commands run as one unit (transactions and atomicity)? " +
       "Once Redis is on your resume, these are the questions an interviewer asks next. " +
-      "Open the tabs one at a time — each has an animation, a comparison table, and a few interview questions.",
+      "Open the tabs below one at a time — each has an animation, a comparison table, and a few interview questions.",
   },
 
   // 详情 / 对比 / 深挖 三段的小标题
@@ -115,16 +115,18 @@ export const tabs: Tab[] = [
             "RDB 把某一时刻的整份数据做成一份快照，写成一个紧凑的二进制文件（dump.rdb）。" +
             "文件小、加载快，适合做备份、也适合把整份数据搬到另一台机器上。" +
             "代价是会丢数据：如果 Redis 在两次快照之间停止，最后一次快照之后的写全部丢失。" +
-            "另外 BGSAVE 会 fork 一个子进程来写文件，父子进程按写时复制(copy-on-write)共享[[memory:内存]]，" +
-            "所以父进程在 fork 期间继续接收写入时，内存占用可能明显上升。",
+            "另外 BGSAVE 会 fork 一个子进程来写文件，父子进程按写时复制（copy-on-write）共享[[memory:内存]]，" +
+            "所以在子进程写快照期间，父进程每改动一页内存就要复制一份，内存占用可能明显上升。" +
+            "Redis 7 默认就开着 RDB：一小时内至少 1 次写、5 分钟内至少 100 次写或 1 分钟内至少 10000 次写，都会触发一次快照（save 3600 1 300 100 60 10000）。",
           en:
             "RDB writes a point-in-time snapshot of the whole dataset to one compact binary file (dump.rdb). " +
             "The file is small and loads quickly, which makes it good for backups and for moving a dataset to another machine. " +
             "The cost is data loss: if Redis stops between two snapshots, every write made after the last snapshot is gone. " +
             "BGSAVE also forks a child process to write the file. Parent and child share [[memory:memory]] copy-on-write, " +
-            "so while the parent keeps accepting writes during the fork, memory use can rise noticeably.",
+            "so while the child is writing the snapshot, every page the parent changes is copied, and memory use can rise noticeably. " +
+            "Redis 7 has RDB on by default: a snapshot is taken after an hour if at least 1 key changed, after 5 minutes if 100 changed, or after a minute if 10000 changed (save 3600 1 300 100 60 10000).",
         },
-        chips: ["dump.rdb", "SAVE / BGSAVE", "save 900 1"],
+        chips: ["dump.rdb", "SAVE / BGSAVE", "save 3600 1 300 100 60 10000"],
       },
       {
         head: { zh: "AOF · 追加日志", en: "AOF · append-only file" },
@@ -147,15 +149,19 @@ export const tabs: Tab[] = [
         chips: ["appendonly yes", "appendfsync everysec", "BGREWRITEAOF"],
       },
       {
-        head: { zh: "混合持久化 (Redis 4.0+)", en: "Hybrid persistence (Redis 4.0+)" },
+        head: { zh: "混合持久化（Redis 4.0+）", en: "Hybrid persistence (Redis 4.0+)" },
         tone: "amber",
         body: {
           zh:
-            "把两者合起来用：AOF 文件的前半段是一份 RDB 格式的全量快照，后半段再追加此后的写命令。" +
-            "重启时先快速加载快照，再重放很短的一小段命令——恢复比纯 AOF 快，丢失窗口又比纯 RDB 小。很多生产环境用的就是这个组合。",
+            "把两者合起来用：AOF 重写时先写一份 RDB 格式的全量快照作为基础，此后的写命令再以 AOF 格式追加。" +
+            "Redis 7.0 起它们分成多个文件放在 appendonlydir 目录里（一个基础文件加若干增量文件，由清单文件记录顺序）；更早的版本是同一个文件的前后两段。" +
+            "重启时先快速加载快照，再重放很短的一小段命令——恢复比纯 AOF 快，丢失窗口又比纯 RDB 小。" +
+            "aof-use-rdb-preamble 自 5.0 起默认开启，所以打开 AOF 就已经是这种组合。",
           en:
-            "This combines the two. The AOF file begins with a full snapshot in RDB format and appends the later write commands after it. " +
-            "On restart, Redis loads the snapshot quickly and then replays a short tail of commands, so recovery is faster than plain AOF and the loss window is smaller than plain RDB. Many production setups use this combination.",
+            "This combines the two. An AOF rewrite starts from a full snapshot in RDB format, and later write commands are appended in AOF format. " +
+            "Since Redis 7.0 these are separate files in the appendonlydir directory (one base file plus incremental files, tracked by a manifest); earlier versions kept them as the two halves of one file. " +
+            "On restart, Redis loads the snapshot quickly and then replays a short tail of commands, so recovery is faster than plain AOF and the loss window is smaller than plain RDB. " +
+            "aof-use-rdb-preamble has been on by default since 5.0, so turning on AOF already gives you this combination.",
         },
         chips: ["aof-use-rdb-preamble yes"],
       },
@@ -247,13 +253,13 @@ export const tabs: Tab[] = [
         q: { zh: "生产上常用什么组合？", en: "What is a common production setup?" },
         a: {
           zh:
-            "两种常见做法。一是 RDB 做定期备份 + AOF everysec 做主力持久化：既有紧凑的快照可以搬走，日常也丢得少。" +
-            "二是直接开混合持久化（AOF 文件里嵌一份 RDB 全量 + 之后的增量命令），恢复更快、丢得也少。" +
-            "选哪种取决于你更在意恢复速度还是丢失窗口。无论选哪种，都要说清楚：这是为了少丢数据，不是为了把 Redis 当主数据库用。",
+            "常见做法是 RDB 和 AOF 一起开：RDB 文件用来做定期备份、整份迁移；AOF 用 everysec 负责日常少丢数据。" +
+            "AOF 默认带 RDB 格式的基础文件（混合持久化），所以重启也快。只开 RDB 适合丢几分钟也能接受的数据。" +
+            "选哪种取决于你更在意恢复速度、丢失窗口还是磁盘开销。无论选哪种，都要说清楚：这是为了少丢数据，不是为了把 Redis 当主数据库用。",
           en:
-            "Two setups are common. One is RDB for periodic backups plus AOF everysec as the main persistence: you get a compact snapshot you can copy elsewhere, and day-to-day loss stays small. " +
-            "The other is hybrid persistence, where an RDB snapshot and the later commands live in the same AOF file. That restarts faster and still loses little. " +
-            "Which one you pick depends on whether restart time or the loss window matters more. Either way, say what this is for: reducing loss, not turning Redis into the primary database.",
+            "A common setup turns on both: RDB files for periodic backups and for moving a dataset, and AOF with everysec to keep day-to-day loss small. " +
+            "AOF uses an RDB-format base file by default (hybrid persistence), so restarts stay fast. RDB alone fits data where losing a few minutes is acceptable. " +
+            "Which one you pick depends on restart time, the loss window and disk use. Either way, say what this is for: reducing loss, not turning Redis into the primary database.",
         },
       },
     ],
@@ -468,28 +474,28 @@ export const tabs: Tab[] = [
         chips: ["REPLICAOF host port", "replica-read-only yes", "WAIT 1 100"],
       },
       {
-        head: { zh: "哨兵 (Sentinel)", en: "Sentinel" },
+        head: { zh: "哨兵（Sentinel）", en: "Sentinel" },
         tone: "accent",
         body: {
           zh:
             "光有从节点还不够，因为写请求仍然只能发给主节点。哨兵是一组独立进程，专门监控主从节点的健康状态。" +
-            "当足够多的哨兵都认为主节点不可达（这个数量就是 quorum，法定票数），它们自动执行故障转移：" +
-            "挑一个从节点提升为新主，让其余从节点改跟新主，并把新主地址告诉客户端。" +
-            "两点要记住：正因为要凑 quorum，哨兵一般至少部署三个、分布在不同机器上；" +
-            "网络分区时，旧主可能仍在接受那些还能连到它的客户端的写入，这就是脑裂(split brain)，等它重新加入、降级成从节点，这些写就丢了。" +
+            "当认为主节点不可达的哨兵数达到 quorum（法定票数），主节点被判定为客观下线；接着哨兵之间选出一个领头哨兵，这需要全体哨兵中过半数的同意，由它执行故障转移：" +
+            "挑一个从节点提升为新主，让其余从节点改跟新主。客户端向哨兵查询当前主节点的地址，也可以订阅主节点切换的通知。" +
+            "两点要记住：正因为选领头需要过半数，哨兵一般至少部署三个、分布在不同机器上，这样坏掉一个仍能凑够多数；" +
+            "网络分区时，旧主可能仍在接受那些还能连到它的客户端的写入，这就是脑裂（split brain），等它重新加入、降级成从节点，这些写就丢了。" +
             "min-replicas-to-write 能限制损失，但不能消除这种情况。",
           en:
             "Replicas alone do not restore service, because writes still have to go to the master. Sentinel is a set of separate processes that watch the health of masters and replicas. " +
-            "When enough Sentinels agree that the master is unreachable — that number is the quorum — they run an automatic failover: " +
-            "one replica is promoted to master, the others are told to follow it, and clients ask Sentinel for the new address. " +
-            "Two things follow. Because a quorum is needed, you normally run at least three Sentinels on separate machines. " +
+            "When the number of Sentinels that consider the master unreachable reaches the quorum, the master is marked as objectively down. The Sentinels then elect a leader, which needs a majority of all Sentinels, and the leader runs the failover: " +
+            "one replica is promoted to master and the others are told to follow it. Clients ask Sentinel for the current master's address, or subscribe to its switch notifications. " +
+            "Two things follow. Because electing a leader needs a majority, you normally run at least three Sentinels on separate machines, so the group still has a majority after one of them fails. " +
             "And during a network partition the old master can keep accepting writes from clients that still reach it. That is a split brain, and those writes are lost when it rejoins as a replica. " +
             "min-replicas-to-write limits the damage but does not remove the case.",
         },
         chips: ["sentinel monitor mymaster … quorum", "min-replicas-to-write 1"],
       },
       {
-        head: { zh: "集群 (Cluster) 与 16384 个槽", en: "Cluster and 16384 slots" },
+        head: { zh: "集群（Cluster）与 16384 个槽", en: "Cluster and 16384 slots" },
         tone: "amber",
         body: {
           zh:
@@ -593,7 +599,7 @@ export const tabs: Tab[] = [
         q: { zh: "集群为什么是 16384 个槽，不是更多？", en: "Why 16384 slots, and not more?" },
         a: {
           zh:
-            "节点之间要靠心跳消息互相同步“谁负责哪些槽”，这份归属信息在心跳包里是用一个位图(bitmap)传的。" +
+            "节点之间要靠心跳消息互相同步“谁负责哪些槽”，这份归属信息在心跳包里是用一个位图（bitmap）传的。" +
             "16384 位正好是 2KB，心跳包不至于太大；换成 65536 个槽，位图会到 8KB，节点一多、心跳又频繁，带宽就很不划算。" +
             "而作者建议集群规模一般不超过约 1000 个节点，16384 个槽已经足够把数据均匀分到这些节点上。" +
             "这是带宽和集群规模之间的权衡——面试里能讲出这层原因，比只记住数字强。",
@@ -670,12 +676,14 @@ export const tabs: Tab[] = [
             "把一段逻辑写成 Lua 脚本交给 Redis，整个脚本会作为一个[[atomic:原子]]单元执行：" +
             "因为命令是在[[singlethread:单线程]]上被一条一条执行的，脚本运行期间不会插入别的客户端的命令。" +
             "这正是 MULTI 做不到的事：脚本里可以先读一个值、据此判断、再决定写什么，把“判断 + 操作”合成一步原子操作，限流和扣库存是最常见的例子。" +
-            "要小心的是同一个性质的另一面：脚本运行期间其它客户端都在等，所以脚本要写得短。",
+            "要小心的是同一个性质的另一面：脚本运行期间其它客户端都在等，所以脚本要写得短。" +
+            "另外，脚本同样不回滚：中途出错时，出错之前执行的写入仍然生效。Redis 7 起还可以把这类逻辑注册成 Function（FUNCTION LOAD / FCALL），由服务器保存，不必每次发送脚本。",
           en:
             "Give Redis a piece of logic as a Lua script and the whole script runs as one [[atomic:atomic]] unit: " +
             "because commands run one at a time on [[singlethread:a single thread]], no other client's command runs in the middle of it. " +
             "This is what MULTI cannot do. Inside a script you can read a value, decide based on it, and then write — a check and an action in one atomic step. Rate limiting and decrementing stock are the usual examples. " +
-            "The caution is the same property seen from the other side: while a script runs, every other client waits, so keep scripts short.",
+            "The caution is the same property seen from the other side: while a script runs, every other client waits, so keep scripts short. " +
+            "A script does not roll back either: if it fails halfway, the writes it made before the error remain. Since Redis 7 you can also register such logic as a Function (FUNCTION LOAD / FCALL), which the server keeps, instead of sending the script each time.",
         },
         chips: ["EVAL script numkeys …", "redis.call(...)"],
       },
@@ -685,7 +693,7 @@ export const tabs: Tab[] = [
         body: {
           zh:
             "Pipeline 是一次发出多条命令、不逐条等回复，再一次性把所有回复读回来。" +
-            "命令本身没有任何变化，省下的是每条命令一次的网络往返(RTT)——而对小命令来说，往返往往就是耗时的大头。" +
+            "命令本身没有任何变化，省下的是每条命令一次的网络往返（RTT）——而对小命令来说，往返往往就是耗时的大头。" +
             "但 Pipeline 不提供原子性：别的客户端的命令可以插在你这批命令中间，其中一条失败也不会撤销别的。" +
             "它解决的是网络问题，不是正确性问题。要让这批命令作为一个整体执行，就在 pipeline 里放 MULTI/EXEC 或一段 Lua 脚本。",
           en:
@@ -707,6 +715,7 @@ export const tabs: Tab[] = [
             "还有一条限制一定要主动说出来：这把锁在故障转移时并不安全——复制是异步的，主节点已经确认的锁可能还没到从节点，" +
             "从节点被提升后，两个客户端就可能同时认为自己持有锁。" +
             "Redlock 把锁同时加在多个独立的主节点上，能减少其中一部分失败情形，但它依赖“时钟漂移有界、进程停顿有界”这两个假设，业界至今仍有争议。" +
+            "争议的核心之一是：持锁的进程可能停顿到锁过期之后才继续执行，所以被保护的资源最好再检查一个随每次加锁递增的栅栏令牌（fencing token），拒绝带着旧令牌的写入。" +
             "如果正确性必须绝对保证，就用为共识设计的系统（比如 ZooKeeper、etcd），或者把被保护的操作做成[[idempotency:幂等]]的。",
           en:
             "On a single instance, acquire the lock with [[setnx:SET]] key <unique-token> NX EX 30. " +
@@ -716,6 +725,7 @@ export const tabs: Tab[] = [
             "One more limit is worth stating yourself: this lock is not safe across a failover. Replication is asynchronous, so a lock the master acknowledged may be missing on the replica that gets promoted, " +
             "and two clients can then believe they hold it. " +
             "Redlock takes the lock on several independent masters, which reduces some of these failure modes, but it assumes bounded clock drift and bounded process pauses, and it is still debated. " +
+            "Part of the debate: a holder can pause until its lock has expired and then carry on, so the protected resource should also check a fencing token, a number that grows with every acquisition, and reject writes that carry an old one. " +
             "When correctness has to be absolute, use a system built for consensus such as ZooKeeper or etcd, or make the protected operation [[idempotency:idempotent]].",
         },
         chips: ["SET lock <uuid> NX EX 30", "if GET==uuid then DEL (Lua)"],
