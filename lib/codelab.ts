@@ -1,4 +1,4 @@
-// 第 3 站「跟着写一遍」的全部数据（双语）。
+// 第 6 站「跟着写一遍」的全部数据（双语）。
 // 一次「从零把 Redis Demo 跑起来」的过程被拆成若干步：
 // 每一步描述——到达它的按钮文字（action）、标题（title）、讲解正文（body，可含 [[key:文字]]）、
 // 左侧命令卡（cmds）或代码要点（points）、可选提醒（caution），
@@ -462,8 +462,8 @@ export const steps: Step[] = [
     title: { zh: "初始化 Node / TypeScript 项目", en: "Set up the Node / TypeScript project" },
     body: [
       {
-        zh: "回到普通终端，把项目搭起来。npm init -y 生成 package.json；然后装运行时依赖：redis 就是官方 Node 客户端 [[api:node-redis]]，代码里 import 的正是它。",
-        en: "Back in the normal shell, set the project up. npm init -y creates package.json. Then install the runtime dependency: redis is the official Node client, [[api:node-redis]], and it is what your code imports.",
+        zh: "回到普通终端，把项目搭起来。npm init -y 生成 package.json；然后装运行时依赖：redis 就是官方 Node 客户端 node-redis，代码里 import 的正是它。",
+        en: "Back in the normal shell, set the project up. npm init -y creates package.json. Then install the runtime dependency: redis is the official Node client, node-redis, and it is what your code imports.",
       },
       {
         zh: "开发依赖装 typescript、tsx、@types/node。tsx 是关键：它能直接跑 .ts 文件，省掉手动编译成 .js 这一步。最后建一个 src 文件夹放源码。",
@@ -477,7 +477,7 @@ export const steps: Step[] = [
       },
       {
         cmd: "npm install redis",
-        note: { zh: "装官方 Node 客户端 [[api:node-redis]]，写进 dependencies。", en: "Install the official Node client [[api:node-redis]]. It goes into dependencies." },
+        note: { zh: "装官方 Node 客户端 node-redis，写进 dependencies。", en: "Install the official Node client node-redis. It goes into dependencies." },
       },
       {
         cmd: "npm install -D typescript tsx @types/node",
@@ -531,8 +531,8 @@ export const steps: Step[] = [
     title: { zh: "写 src/index.ts · ① 运费缓存 (cache-aside)", en: "src/index.ts · ① rate cache (cache-aside)" },
     body: [
       {
-        zh: "在 src/index.ts 顶部连上 Redis，再定义几个类型和一个用来顶替数据库的 [[ledger:账本]]（真实系统里这些数据在 MySQL）。真正的重点是 getCarrierRates——一个最普通的 [[cacheaside:cache-aside]] 读取。",
-        en: "At the top of src/index.ts, connect to Redis, then define a few types and a stand-in [[ledger:ledger]] (in a real system that data lives in MySQL). The function that matters is getCarrierRates, a plain [[cacheaside:cache-aside]] read.",
+        zh: "在 src/index.ts 顶部连上 Redis，再定义请求和报价这两个类型。真正的重点是 getCarrierRates——一个最普通的 [[cacheaside:cache-aside]] 读取。",
+        en: "At the top of src/index.ts, connect to Redis, then define the request and rate types. The function that matters is getCarrierRates, a plain [[cacheaside:cache-aside]] read.",
       },
       {
         zh: "先 redis.get 查缓存：命中就 JSON.parse 直接返回；未命中才调 fetchRatesFromCarriers（用 sleep(1500) 模拟一次又慢又花钱的外部 [[carrier:承运商]] [[api:API]] 调用），拿到结果再写回缓存，并带上 EX: 30 这个 30 秒的 [[ttl:TTL]]。",
@@ -579,8 +579,8 @@ export const steps: Step[] = [
     title: { zh: "写 src/index.ts · ③ 余额投影 + 失效", en: "src/index.ts · ③ balance projection + invalidation" },
     body: [
       {
-        zh: "余额不该每次都从 [[ledger:账本]] 一条条加。getBalance 把它当成 [[projection:投影 / 读模型]]：Redis 里有就直接读（BALANCE HIT），没有才从账本重算并缓存 60 秒（BALANCE MISS）。账本始终是[[sourceoftruth:真相来源]]，Redis 里那份只是一个可以随时丢掉的副本。",
-        en: "A balance should not be summed from the [[ledger:ledger]] on every read. getBalance treats it as a [[projection:projection / read model]]: if Redis has it, read it (BALANCE HIT); if not, recompute from the ledger and cache it for 60 seconds (BALANCE MISS). The ledger stays the [[sourceoftruth:source of truth]], and the copy in Redis can be thrown away at any time.",
+        zh: "代码开头的 ledger 数组顶替了数据库里的[[ledger:账本]]（真实系统里这些数据在 MySQL）。余额不该每次都从账本一条条加。getBalance 把它当成 [[projection:投影 / 读模型]]：Redis 里有就直接读（BALANCE HIT），没有才从账本重算并缓存 60 秒（BALANCE MISS）。账本始终是[[sourceoftruth:真相来源]]，Redis 里那份只是一个可以随时丢掉的副本。",
+        en: "The ledger array near the top stands in for the database [[ledger:ledger]] (in a real system that data lives in MySQL). A balance should not be summed from the ledger on every read. getBalance treats it as a [[projection:projection / read model]]: if Redis has it, read it (BALANCE HIT); if not, recompute from the ledger and cache it for 60 seconds (BALANCE MISS). The ledger stays the [[sourceoftruth:source of truth]], and the copy in Redis can be thrown away at any time.",
       },
       {
         zh: "关键在 addLedgerEntry：写完账本立刻 redis.del 掉旧余额——这就是 [[invalidation:缓存失效]]。下次读就会 MISS，并重算出正确的新值。最后 runDemo 把三段依次跑一遍，用 console.time 顺手量出快慢。",
@@ -593,6 +593,10 @@ export const steps: Step[] = [
       { zh: "先写库再删缓存仍有竞态窗口：一个慢读可能在 del 之后把旧值写回去。EX 60 决定了这种旧值最多存活多久。", en: "Write first, then delete still leaves a race window: a slow reader can write the old value back after the del. The 60-second TTL is what limits how long such a value survives." },
       { zh: "runDemo 负责编排：connect → flushDb → 三段 demo → quit。", en: "runDemo orchestrates: connect → flushDb → the three demos → quit." },
     ],
+    caution: {
+      zh: "注意：runDemo 一连上就执行 flushDb，会清空当前数据库里的所有键，目的是让每次运行都从空库开始。只对本课的练习容器运行；如果你设置过环境变量 REDIS_URL、让它指向别的 Redis，先取消它再运行。",
+      en: "Note: runDemo calls flushDb right after connecting, which deletes every key in the current database so that each run starts empty. Run it only against this practice container; if you have set REDIS_URL to point at another Redis, unset it first.",
+    },
     panel: { kind: "code", file: "index", focus: [[24, 34], [93, 122], [124, 161]] },
   },
 
@@ -757,8 +761,8 @@ export const steps: Step[] = [
         en: "When you are done, stop the container: docker stop redis-lab. That only stops the process inside; the container itself stays, so next time docker start redis-lab picks it up again and you do not have to run it a second time.",
       },
       {
-        zh: "这个容器没有挂载数据卷，所以别把里面的数据当回事：Redis 一停，内存里的东西就没了；docker rm redis-lab 删掉容器，剩下的也一并消失。练习环境正好要这样——用完即弃。",
-        en: "This container has no volume mounted, so treat everything inside it as disposable. When Redis stops, whatever was in memory is gone, and docker rm redis-lab discards the rest with the container. For a practice environment that is exactly what you want.",
+        zh: "这个容器没有挂载你自己的数据目录，但 Redis 默认开启 RDB 快照：docker stop 时它会先把数据写进容器里的 dump.rdb 再退出，docker start 之后重新加载，所以刚才写入的键（以及还没到期的 TTL）都还在。练习结束后要彻底清空，用 docker rm -v redis-lab 把容器和它的匿名卷一起删掉。",
+        en: "This container does not mount a data directory of your own, but Redis takes RDB snapshots by default: on docker stop it saves its data to dump.rdb inside the container before it exits, and docker start loads that file again, so the keys you wrote (and any TTL that has not run out) come back. To wipe everything when you are done, remove the container together with its anonymous volume: docker rm -v redis-lab.",
       },
       {
         zh: "带走一句话：[[redis:Redis]] 是加速层，不是[[sourceoftruth:真相来源]]。它不可用、或者被清空了，你的系统必须还能照常工作——回到数据库、回到账本重算。缓存能丢，账不能错。",
@@ -768,7 +772,7 @@ export const steps: Step[] = [
     cmds: [
       {
         cmd: "docker stop redis-lab",
-        note: { zh: "停掉容器；里面的 Redis 进程结束，只存在内存里的数据也就没了。", en: "Stop the container. The Redis process ends, so anything held only in memory is gone." },
+        note: { zh: "停掉容器。Redis 收到停止信号后，会先保存一次快照再退出。", en: "Stop the container. Redis saves a snapshot before it exits." },
       },
       {
         cmd: "docker start redis-lab",
