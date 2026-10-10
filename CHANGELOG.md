@@ -73,6 +73,13 @@ browser tests from 2 to 23.
   [#18], [#19] and [#23] had limited the claim to the rate cache; the owner has
   since confirmed that all three were built ([#27]).
 
+### Tests
+
+- The TTL-jitter browser test runs the simulator's tick interval on
+  Playwright's fake clock, so both runs replay exactly the same ticks. On real
+  time the number of ticks between clicks varied, and the two peaks once tied
+  in CI ([#30]).
+
 ### Not changed
 
 - English is the default language and readers switch to Chinese by hand; a
@@ -102,3 +109,4 @@ browser tests from 2 to 23.
 [#23]: https://github.com/renrenmimi/RedisVisual/pull/23
 [#24]: https://github.com/renrenmimi/RedisVisual/pull/24
 [#27]: https://github.com/renrenmimi/RedisVisual/pull/27
+[#30]: https://github.com/renrenmimi/RedisVisual/pull/30
