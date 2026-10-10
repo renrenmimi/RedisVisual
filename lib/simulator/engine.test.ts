@@ -150,6 +150,27 @@ describe("other mechanisms are preserved", () => {
     for (const o of outputs) expect(o.metrics.size).toBeLessThanOrEqual(40);
   });
 
+  it("12. LRU keeps the hot key when the cache is far smaller than the keyspace", () => {
+    // The "not enough memory" preset: one tick misses more keys than the cache can hold.
+    const config = cfg({ capacity: 40, hot: 25, ttl: 12 });
+    const state = createState(config, SEED);
+    let present = 0;
+    let hit = 0;
+    const ticks = 200;
+    for (let i = 0; i < 400; i++) {
+      const before = state.cache.get(0);
+      const out = tick(state, config, null);
+      if (i < 400 - ticks) continue;
+      if (before && before.expireAt > state.now) present++;
+      hit += out.metrics.hit;
+    }
+    // The hot key is requested all through every tick, so it is never the least
+    // recently used entry: it stays cached apart from its own TTL refills.
+    expect(present / ticks).toBeGreaterThanOrEqual(0.9);
+    // And the hit rate cannot fall below the hot key's own share of the traffic.
+    expect(hit / ticks).toBeGreaterThan(config.hot / 100);
+  });
+
   it("9. Redis-down produces zero cache hits during the outage", () => {
     const { outputs } = run(cfg(), { ticks: 40, faultAt: 3, fault: "redisDown" });
     const outageTicks = SIM.redisDownMs / SIM.tickMs; // 30 ticks
