@@ -1165,11 +1165,18 @@
 .pf6-a {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Closed answers are hidden from Tab and screen readers too; visibility flips after
+     the collapse has finished. */
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.34s;
 }
 
 .pf6-qa.open .pf6-a {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .pf6-a-clip {
