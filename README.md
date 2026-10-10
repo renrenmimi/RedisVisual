@@ -27,9 +27,9 @@ you break the cache on purpose and watch hit rate and latency react.
    Set), the specialised ones (Bitmap, HyperLogLog, Geo, Stream), and the encodings
    underneath. Each with an animation, its commands, what it is for, and the interview
    follow-ups.
-3. **`/scenarios` — Why we use it.** Back to WeShipItNow, three real uses animated end to
-   end: caching shipping quotes (cache-aside), making label purchases idempotent (SET NX),
-   and the balance projection.
+3. **`/scenarios` — Why we use it.** Back to WeShipItNow and three places Redis fits there,
+   animated end to end: caching shipping quotes (cache-aside), making label purchases
+   idempotent (SET NX), and the balance projection.
 4. **`/pitfalls` — Cache failures and consistency.** Penetration, breakdown and avalanche;
    database/cache double-write consistency (delayed double delete); hot keys and big keys.
 5. **`/internals` — Redis in production.** Persistence (RDB/AOF), expiry and eviction
@@ -55,13 +55,15 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
-Build with type checking: `npm run build`.
+Build with type checking: `npm run build`. Unit tests: `npm test` (Vitest). Browser tests:
+`npm run test:e2e` (Playwright).
 
 ## Structure
 
 Next.js 15 (App Router) + TypeScript + React 19, plain CSS.
 
-Each stop is one group of three files — data, page, and its own stylesheet:
+Each stop is one group of three files — data, page, and its own stylesheet — plus a small
+`layout.tsx` in the stop's folder that sets its page title:
 
 | Data | Page | Styles |
 |---|---|---|
@@ -72,6 +74,7 @@ Each stop is one group of three files — data, page, and its own stylesheet:
 | `lib/internals.ts` | `app/internals/page.tsx` | `app/internals/internals.css` |
 | `lib/codelab.ts` | `app/code/page.tsx` | `app/code/code.css` |
 | `lib/interview.ts` | `app/interview/page.tsx` | `app/interview/interview.css` |
+| `lib/simulator.ts`, `lib/simulator/engine.ts` | `app/simulator/page.tsx` | `app/simulator/simulator.css` |
 
 The shell ("Research OS"): sidebar in `app/sidebar.tsx`, toolbar in `app/toolbar.tsx`,
 command palette (⌘K) in `app/command-palette.tsx`, theme and UI state in
@@ -79,8 +82,8 @@ command palette (⌘K) in `app/command-palette.tsx`, theme and UI state in
 
 Bilingual throughout via `lib/i18n.tsx` — every string is a `{ zh, en }` pair. English is the
 default; the `English / Chinese` switch in the toolbar stores the choice in `localStorage`, and a small
-inline script in `<head>` applies it before the first paint so the page never flashes the wrong
-language. The glossary lives in `lib/glossary.tsx`; writing `[[key:label]]` in body text renders
+inline script at the top of `<body>` applies it before the first paint so the page never flashes the
+wrong language. The glossary lives in `lib/glossary.tsx`; writing `[[key:label]]` in body text renders
 a clickable term that pops up its explanation.
 
 Design tokens and shared component styles are in `app/globals.css`; each stop keeps its own
