@@ -71,7 +71,8 @@ browser tests from 2 to 23.
   measures them ([#24]).
 - Stops 2, 3 and 7 again say that WeShipItNow uses Redis in all three places.
   [#18], [#19] and [#23] had limited the claim to the rate cache; the owner has
-  since confirmed that all three were built ([#27]).
+  since confirmed that all three were built ([#27]); the README's Stop 3 line
+  says so again too ([#31]).
 
 ### Tests
 
@@ -110,3 +111,4 @@ browser tests from 2 to 23.
 [#24]: https://github.com/renrenmimi/RedisVisual/pull/24
 [#27]: https://github.com/renrenmimi/RedisVisual/pull/27
 [#30]: https://github.com/renrenmimi/RedisVisual/pull/30
+[#31]: https://github.com/renrenmimi/RedisVisual/pull/31
