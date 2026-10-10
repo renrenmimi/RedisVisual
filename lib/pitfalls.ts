@@ -112,8 +112,8 @@ export const pitfalls: Pitfall[] = [
         tag: { zh: "布隆过滤器", en: "Bloom filter" },
         tone: "accent",
         text: {
-          zh: "把所有**真实存在的 key** 预先放进布隆过滤器（Bloom filter），请求先问它。它说“不存在”就一定不存在，直接拒绝，连缓存和数据库都不用碰。",
-          en: "Load every **key that really exists** into a Bloom filter and ask it first. If it answers \"not present\", the key definitely does not exist, so you can reject the request without touching the cache or the database.",
+          zh: "把所有**真实存在的 key** 预先放进布隆过滤器（Bloom filter），请求先问它。它说“不存在”就一定不存在，直接拒绝，连缓存和数据库都不用碰。Redis 8 已把布隆过滤器并入开源版（`BF.ADD` / `BF.EXISTS`），不必自己实现。",
+          en: "Load every **key that really exists** into a Bloom filter and ask it first. If it answers \"not present\", the key definitely does not exist, so you can reject the request without touching the cache or the database. Redis 8 includes Bloom filters in the open-source server (`BF.ADD` / `BF.EXISTS`), so you do not have to build one yourself.",
         },
       },
       {
@@ -192,8 +192,8 @@ export const pitfalls: Pitfall[] = [
         tag: { zh: "互斥锁 / 单飞", en: "Mutex / single-flight" },
         tone: "accent",
         text: {
-          zh: "未命中时先抢一把锁（如 `SET key value NX PX ttl`）。**只有抢到锁的那个请求**去查库、重建缓存，其余请求短暂等待重试，或者先返回上一个值。这样同一时刻只有一个请求打到数据库。",
-          en: "On a miss, take a lock first, for example `SET key value NX PX ttl`. **Only the request that wins the lock** reads the database and rebuilds the entry; the others wait and retry, or return the previous value. One request reaches the database instead of hundreds.",
+          zh: "未命中时先抢一把锁，锁用单独的 key（如 `SET lock:{key} <随机值> NX PX 3000`），释放时比对值再删。**只有抢到锁的那个请求**去查库、重建缓存，其余请求短暂等待重试，或者先返回上一个值。这样同一时刻只有一个请求打到数据库。",
+          en: "On a miss, take a lock on a separate key first, for example `SET lock:{key} <random-token> NX PX 3000`, and release it only if the value is still yours. **Only the request that wins the lock** reads the database and rebuilds the entry; the others wait and retry, or return the previous value. One request reaches the database instead of hundreds.",
         },
       },
       {
@@ -477,7 +477,7 @@ export const pitfalls: Pitfall[] = [
         "**热点 key**：单个 key 占了很大一部分访问量。所有请求都落到**存着它的那一个节点**上，那个节点被打满，集群里其它节点却很闲。" +
         "加机器也没用——一个 key 只会落在一个节点上。" +
         "**大 key**：单个 value 特别大（几 MB 的 String，或者几十万元素的 list / set / zset / hash）。" +
-        "[[redis:Redis]] 执行命令是[[singlethread:一次一条]]的（Redis 6 之后有额外线程处理网络 I/O，但执行命令的仍然只有一条线）。" +
+        "[[redis:Redis]] 执行命令是[[singlethread:一次一条]]的（Redis 6 之后有额外线程处理网络 I/O，但执行命令的仍然只有一个线程）。" +
         "所以对大 key 做一次 O(n) 操作——`HGETALL`、`SMEMBERS`、对一个巨大集合 `DEL`——会长时间占住服务器，**排在它后面的命令全都要等**。大 key 还很占内存，扩缩容迁移时也慢。",
       en:
         "**Hot key**: one key takes a very large share of the traffic. Every request for it lands on the **single node that holds it**, so that node saturates while the rest of the cluster stays idle. " +
@@ -556,12 +556,12 @@ export const pitfalls: Pitfall[] = [
         q: { zh: "怎么发现大 key / 热点 key？", en: "How do you find big keys and hot keys?" },
         a: {
           zh:
-            "**大 key**：`redis-cli --bigkeys` 用 `SCAN` 采样扫一遍，报出每种类型里最大的那个 key；`MEMORY USAGE <key>` 量单个 key；" +
+            "**大 key**：`redis-cli --bigkeys` 用 `SCAN` 分批扫完整个键空间，按类型报出最大的 key（字符串按字节数，集合类按元素个数；要按实际内存排序用 `--memkeys`）；`MEMORY USAGE <key>` 量单个 key；" +
             "离线分析 RDB 文件能看到全貌，而且完全不碰线上实例。" +
             "**热点 key**：`redis-cli --hotkeys` 需要把 `maxmemory-policy` 设成 LFU 才能用；更实际的做法是在客户端统计每个 key 的请求数。" +
             "线上繁忙的实例上别开 `MONITOR`——它会把每一条命令都推出来，实打实地吃掉吞吐。",
           en:
-            "**Big keys**: `redis-cli --bigkeys` samples the keyspace with `SCAN` and reports the largest key of each type; `MEMORY USAGE <key>` measures one key; " +
+            "**Big keys**: `redis-cli --bigkeys` walks the whole keyspace in batches with `SCAN` and reports the largest key of each type (strings by bytes, collections by element count; use `--memkeys` to rank by memory); `MEMORY USAGE <key>` measures one key; " +
             "and analysing an RDB file offline gives the full picture without touching the running server. " +
             "**Hot keys**: `redis-cli --hotkeys` needs an LFU `maxmemory-policy` to work; counting requests per key in the client is usually more practical. " +
             "Avoid `MONITOR` on a busy production server — it streams every command and costs real throughput.",
