@@ -5,6 +5,7 @@
 // rather than a chapter tree. The STOP list + active-stop rule are exported so
 // the toolbar and command palette share the same source.
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ui, useLang, t, type L } from "@/lib/i18n";
@@ -43,10 +44,58 @@ export default function Sidebar() {
   const progress = Math.round(((activeIndex + 1) / STOPS.length) * 100);
 
   const close = () => setSidebarOpen(false);
+  const railRef = useRef<HTMLElement>(null);
+
+  // Mobile drawer: move focus in when it opens, keep Tab inside it, close it with Esc
+  // (or when the window grows past the drawer breakpoint), and give focus back to the
+  // menu button when it closes.
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const rail = railRef.current;
+    if (!rail) return;
+    const links = () => Array.from(rail.querySelectorAll<HTMLElement>("a[href]"));
+    (rail.querySelector<HTMLElement>('[aria-current="page"]') ?? links()[0])?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setSidebarOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = links();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!rail.contains(document.activeElement)) {
+        e.preventDefault();
+        first?.focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+    const wide = window.matchMedia("(min-width: 961px)");
+    const onWide = () => {
+      if (wide.matches) setSidebarOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    wide.addEventListener("change", onWide);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+      if (rail.contains(document.activeElement)) {
+        document.querySelector<HTMLElement>(".menu-btn")?.focus();
+      }
+    };
+  }, [sidebarOpen, setSidebarOpen]);
 
   return (
     <>
       <aside
+        ref={railRef}
         className={`sidebar${sidebarOpen ? " open" : ""}`}
         aria-label={t(ui.side.rail, lang)}
       >
