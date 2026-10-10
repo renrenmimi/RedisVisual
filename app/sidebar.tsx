@@ -67,6 +67,9 @@ export default function Sidebar() {
               <Link
                 key={s.href}
                 href={s.href}
+                // No prefetch: the rail lists every stop, so prefetching would download the
+                // whole course on each visit. The page's own "next stop" link still prefetches.
+                prefetch={false}
                 className={`side-link${active ? " active" : ""}`}
                 aria-current={active ? "page" : undefined}
                 onClick={close}
