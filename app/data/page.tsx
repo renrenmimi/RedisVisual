@@ -2,13 +2,13 @@
 
 // 第 2 站「数据结构详解」：一排 7 个标签（5 种核心结构 + 专用类型 + 底层编码），
 // 选中某结构 → 左侧专属 CSS 动画 + 心智模型，右侧命令/用途/WeShipItNow/编码/深挖手风琴。
-// 文案全部来自 lib/datalab.ts；正文一律用 RichText（并额外把反引号 `code` 渲成 mono）。
+// 文案全部来自 lib/datalab.ts；正文一律用 lib/glossary 的 Markup（反引号 `code` 渲成 mono）。
 // 动画都是纯 CSS keyframes，prefers-reduced-motion 下由 globals.css 统一关掉。
 
 import { useState } from "react";
 import Link from "next/link";
 import { useLang, t, type Lang, type L } from "@/lib/i18n";
-import { RichText } from "@/lib/glossary";
+import { Markup } from "@/lib/glossary";
 import {
   dl,
   structures,
@@ -20,22 +20,9 @@ import {
 } from "@/lib/datalab";
 import "./data.css";
 
-/* 正文渲染器：先按反引号切出 `code` 段（渲成 mono），其余交给 RichText 处理 [[术语]]。 */
+/* 正文渲染器：反引号 → mono，**强调** → strong，[[术语]] → 弹层，与其它站共用 lib/glossary 的 Markup。 */
 function Rich({ text, lang }: { text: string; lang: Lang }) {
-  const segs = text.split("`");
-  return (
-    <>
-      {segs.map((seg, i) =>
-        i % 2 === 1 ? (
-          <code className="ds5-ic" key={i}>
-            {seg}
-          </code>
-        ) : (
-          <RichText key={i} text={seg} lang={lang} />
-        ),
-      )}
-    </>
-  );
+  return <Markup text={text} lang={lang} codeClass="ds5-ic" />;
 }
 
 export default function DataPage() {
@@ -102,6 +89,18 @@ export default function DataPage() {
         ) : active ? (
           <StructureDetail s={active} lang={lang} />
         ) : null}
+      </div>
+
+      {/* 压轴通用深挖：和哪种结构都有关，所以放在标签内容之后，每个标签都看得到 */}
+      <div className="ds5-boss">
+        <div className="ds5-sec-head ds5-sec-head-sm">
+          <h2>{t(dl.bossTitle, lang)}</h2>
+        </div>
+        <div className="ds5-probes">
+          {bossProbes.map((p, i) => (
+            <ProbeRow key={i} probe={p} lang={lang} />
+          ))}
+        </div>
       </div>
 
       {/* 上一站 / 下一站 */}
@@ -347,17 +346,6 @@ function EncodingView({ lang }: { lang: Lang }) {
         </p>
       </div>
 
-      {/* 压轴通用深挖 */}
-      <div className="ds5-boss">
-        <div className="ds5-sec-head ds5-sec-head-sm">
-          <h2>{t(dl.bossTitle, lang)}</h2>
-        </div>
-        <div className="ds5-probes">
-          {bossProbes.map((p, i) => (
-            <ProbeRow key={i} probe={p} lang={lang} />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -368,6 +356,7 @@ function ZDiagram({ lang }: { lang: Lang }) {
     { n: "alice", s: "230" },
     { n: "bob", s: "210" },
     { n: "carol", s: "300", hot: true },
+    { n: "dave", s: "180" },
   ];
   // 跳表两层：base 全量，express 跳过一部分节点（HEAD→210→300→NIL）
   type SkNode = { c: number; l: string; head?: boolean; nil?: boolean; hot?: boolean };

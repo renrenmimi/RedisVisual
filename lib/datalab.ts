@@ -37,11 +37,11 @@ export const dl = {
     zh:
       "很多人以为 Redis 就是存字符串的 [[keyvalue:key-value]]。更准确的说法是：key 永远是字符串，有类型的是 value。" +
       "Redis 之所以被叫作“数据结构服务器”（data structure server）而不只是缓存，正是因为 value 可以是好几种结构，每种都配一套专属命令。" +
-      "下面把它们一种种拆开——点上面的标签切换。每种都讲：怎么想它、常用命令、真实用途、[[encoding:底层编码]]、以及面试会怎么追问。",
+      "下面把它们一种种拆开——点下面的标签切换。每种都讲：怎么想它、常用命令、真实用途、[[encoding:底层编码]]、以及面试会怎么追问。",
     en:
       "Many people think Redis is a [[keyvalue:key-value]] store that only holds strings. More precisely: a key is always a string, and it is the value that has a type. " +
       "Redis is called a \"data structure server\", not just a cache, because a value can be one of several structures, and each structure has its own set of commands. " +
-      "The tabs above take them one at a time. For each one: how to think about it, the commands you will actually use, real uses, the [[encoding:underlying encoding]], and the questions an interviewer asks next.",
+      "The tabs below take them one at a time. For each one: how to think about it, the commands you will actually use, real uses, the [[encoding:underlying encoding]], and the questions an interviewer asks next.",
   },
 
   // 分区标签
@@ -86,7 +86,7 @@ export const dl = {
 
   encStar: {
     zh:
-      "最该记住这一对：Sorted Set = 跳表(skiplist) + 哈希表(hashtable)。哈希表存“成员 → 分数”，所以 ZSCORE 是 O(1)；" +
+      "最该记住这一对：Sorted Set = 跳表（skiplist）+ 哈希表（hashtable）。哈希表存“成员 → 分数”，所以 ZSCORE 是 O(1)；" +
       "跳表按分数把成员串起来，所以排名和范围查询约 O(log n) 找到起点，再加上实际返回的 m 个元素。" +
       "两套索引指向同一批成员，所以同一个结构既能回答“这个成员多少分”，也能回答“前十名是谁”。代价是每个成员被索引两次，多占内存。",
     en:
@@ -135,8 +135,8 @@ export const structures: Structure[] = [
       { zh: "分布式锁、幂等占位（配合 NX + TTL）", en: "distributed locks and idempotency claims (SET with NX and a TTL)" },
     ],
     ship: {
-      zh: "我们系统里三处 Redis 用法全是 String：运费报价存成 JSON 字符串、幂等 key、余额投影。一个 String 就能覆盖不少日常场景。",
-      en: "All three Redis uses in our system are Strings: the rate quote stored as a JSON string, the idempotency key, and the balance projection. One type covers a lot of ordinary work.",
+      zh: "这个系统里适合 Redis 的三处，用 String 就都够了：运费报价存成 JSON 字符串、幂等 key、余额投影。一个 String 就能覆盖不少日常场景。",
+      en: "All three places Redis fits in this system need only Strings: the rate quote stored as a JSON string, the idempotency key, and the balance projection. One type covers a lot of ordinary work.",
     },
     encoding: {
       zh: "三种编码：`int`（值是整数时直接按整数存，最省内存）、`embstr`（≤ 44 字节的短串，和对象头分配在同一块内存里）、`raw`（更长的串，单独分配）。选哪种由 Redis 自己决定。",
@@ -199,8 +199,8 @@ export const structures: Structure[] = [
       {
         q: { zh: "用 List 当消息队列有什么问题？", en: "What is wrong with using a List as a message queue?" },
         a: {
-          zh: "没有确认(ack)、没有重试、没有消费者组。消费者 RPOP 拿到消息后还没处理完就崩了，这条消息就没了，而且没有任何记录。要可靠就用 [[stream:Stream]]（消息留在 key 里直到被确认）或专门的消息中间件。这也是我们不把 List 说成生产级队列的原因。",
-          en: "There is no acknowledgement, no retry, and no consumer group. If a consumer pops a message and then crashes before finishing the work, the message is gone and nothing records that it was lost. For delivery you can rely on, use a [[stream:Stream]], where the message stays in the key until it is acknowledged, or a dedicated message broker. This is why we do not describe the List as a production queue.",
+          zh: "没有确认（ack）、没有重试、没有消费者组。消费者 RPOP 拿到消息后还没处理完就崩了，这条消息就没了，而且没有任何记录。用 LMOVE（阻塞版是 BLMOVE）把消息原子地挪进一个“处理中”列表、处理完再删掉，可以补上“崩溃就丢”这一条，但超时重投、消费者组仍要自己实现。要可靠就用 [[stream:Stream]]（消息留在 key 里直到被确认）或专门的消息中间件。这也是我们不把 List 说成生产级队列的原因。",
+          en: "There is no acknowledgement, no retry, and no consumer group. If a consumer pops a message and then crashes before finishing the work, the message is gone and nothing records that it was lost. LMOVE (or the blocking BLMOVE) can move the message atomically into a \"processing\" list that the consumer clears when it finishes, which covers the crash case, but timeouts, redelivery and consumer groups are still yours to build. For delivery you can rely on, use a [[stream:Stream]], where the message stays in the key until it is acknowledged, or a dedicated message broker. This is why we do not describe the List as a production queue.",
         },
       },
     ],
@@ -244,8 +244,8 @@ export const structures: Structure[] = [
       {
         q: { zh: "Hash 存对象 vs String 存 JSON，怎么选？", en: "Hash or a JSON String for an object — which one?" },
         a: {
-          zh: "看读写方式。经常只读或只改一个字段 → Hash。总是整体读、整体写、整体过期 → String 存 JSON 更简单（一次 GET 拿到、一个 TTL 管全体）。还有一点：TTL 只能加在整个 key 上，Hash 里的单个字段不能单独过期。我们的报价缓存属于后者。",
-          en: "It depends on how you read and write it. If you read or change one field at a time, use a Hash. If you always read, write, and expire the whole object, a JSON String is simpler: one GET, one TTL. One more point: a TTL applies to the whole key, so a single field of a Hash cannot expire on its own. Our rate cache is the second case.",
+          zh: "看读写方式。经常只读或只改一个字段 → Hash。总是整体读、整体写、整体过期 → String 存 JSON 更简单（一次 GET 拿到、一个 TTL 管全体）。还有一点：EXPIRE 作用于整个 key；Redis 7.4 起可以用 HEXPIRE 给 Hash 的单个字段单独设过期时间，更早的版本做不到。我们的报价缓存总是整体过期，属于后者。",
+          en: "It depends on how you read and write it. If you read or change one field at a time, use a Hash. If you always read, write, and expire the whole object, a JSON String is simpler: one GET, one TTL. One more point: EXPIRE applies to the whole key. Since Redis 7.4, HEXPIRE can give a single Hash field its own expiry; earlier versions cannot. Our rate cache always expires as a whole, so it is the second case.",
         },
       },
     ],
@@ -305,7 +305,7 @@ export const structures: Structure[] = [
     },
     model: {
       zh:
-        "成员像 Set 一样不重复，但每个成员多带一个分数(score)，Redis 按分数把成员排好序。ZADD 是 O(log n)；按排名或分数取一段是 O(log n + m)，m 是返回的元素个数。" +
+        "成员像 Set 一样不重复，但每个成员多带一个分数（score），Redis 按分数把成员排好序。ZADD 是 O(log n)；按排名或分数取一段是 O(log n + m)，m 是返回的元素个数。" +
         "分数放积分就是排行榜，分数放时间戳就能做滑动窗口限流。",
       en:
         "Members are unique, as in a Set, but each one carries a score and Redis keeps the members ordered by it. ZADD is O(log n). Reading a range by rank or by score is O(log n + m), where m is the number of elements returned. " +
@@ -314,9 +314,9 @@ export const structures: Structure[] = [
     commands: [
       { cmd: "ZADD board 230 alice", note: { zh: "加入成员并给分数", en: "add a member with a score" } },
       { cmd: "ZINCRBY board 5 alice", note: { zh: "给某成员加分", en: "raise a member's score" } },
-      { cmd: "ZREVRANGE board 0 9 WITHSCORES", note: { zh: "分数最高的前 10 名", en: "top 10 by score" } },
+      { cmd: "ZRANGE board 0 9 REV WITHSCORES", note: { zh: "分数最高的前 10 名（旧写法 ZREVRANGE 仍可用）", en: "top 10 by score (the older ZREVRANGE still works)" } },
       { cmd: "ZRANK board alice", note: { zh: "某成员当前排名", en: "a member's current rank" } },
-      { cmd: "ZRANGEBYSCORE win 0 1000", note: { zh: "按分数范围取（做限流）", en: "range by score (rate limiting)" } },
+      { cmd: "ZRANGE win 0 1000 BYSCORE", note: { zh: "按分数范围取（做限流；旧写法 ZRANGEBYSCORE）", en: "range by score, for rate limiting (formerly ZRANGEBYSCORE)" } },
       { cmd: "ZREMRANGEBYSCORE win 0 500", note: { zh: "删掉分数在区间内的（清窗口）", en: "drop a score range (trim the window)" } },
     ],
     uses: [
@@ -395,7 +395,7 @@ export const specials: Special[] = [
     name: { zh: "Stream 流", en: "Stream" },
     based: { zh: "独立类型（5.0+）", en: "own type (5.0+)" },
     what: {
-      zh: "追加式日志：消息被读走之后仍然留在 key 里，再配上消费者组和确认(ack)。没被确认的消息可以重新领取，这正是 List 当队列做不到的。代价是要自己裁剪（XADD 带 MAXLEN），否则会一直增长。",
+      zh: "追加式日志：消息被读走之后仍然留在 key 里，再配上消费者组和确认（ack）。没被确认的消息可以重新领取，这正是 List 当队列做不到的。代价是要自己裁剪（XADD 带 MAXLEN），否则会一直增长。",
       en: "An append-only log: a message stays in the key after it is read, with consumer groups and acknowledgements on top. A message nobody acknowledged can be claimed again, which a List cannot do. You have to trim it yourself (XADD with MAXLEN) or it grows without limit.",
     },
     cmds: "XADD / XREADGROUP / XACK",
