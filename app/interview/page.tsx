@@ -83,7 +83,7 @@ export default function InterviewPage() {
   const countLabel = `${visible.length} ${t(iv.countUnit, lang)}`;
 
   return (
-    <div className="page iv4-root">
+    <main className="page iv4-root">
       <header className="header">
         <div>
           <h1 className="page-title">{t(iv.title, lang)}</h1>
@@ -103,7 +103,11 @@ export default function InterviewPage() {
 
       {/* 分类 tab + 计数 */}
       <div className="iv4-bar">
-        <div className="iv4-tabs" role="tablist" aria-label="categories">
+        <div
+          className="iv4-tabs"
+          role="tablist"
+          aria-label={t({ zh: "题目分类", en: "Question categories" }, lang)}
+        >
           {TABS.map((tb) => {
             const on = tb.key === tab;
             return (
@@ -157,7 +161,7 @@ export default function InterviewPage() {
           {t(iv.backToStop1, lang)}
         </Link>
       </footer>
-    </div>
+    </main>
   );
 }
 

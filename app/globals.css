@@ -1274,6 +1274,14 @@ html[data-sidebar="collapsed"] .sidebar {
   text-overflow: ellipsis;
 }
 
+/* On phones the brand is already in the drawer: leave the room to the stop's name. */
+@media (max-width: 640px) {
+  .crumb-chapter,
+  .crumb-sep {
+    display: none;
+  }
+}
+
 .cmdk-trigger {
   flex: 1;
   max-width: 460px;

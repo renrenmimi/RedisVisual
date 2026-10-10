@@ -57,7 +57,7 @@ export default function IntroPage() {
           <h1 className="page-title">{t(meta.title, lang)}</h1>
           <p className="subtitle">{t(meta.subtitle, lang)}</p>
         </div>
-        <div className="progress" aria-label={t(meta.progressLabel, lang)}>
+        <div className="progress" role="group" aria-label={t(meta.progressLabel, lang)}>
           {scenes.map((s, i) => (
             <button
               key={i}
@@ -98,6 +98,7 @@ export default function IntroPage() {
             setAuto(false);
           }}
           disabled={cursor === 0}
+          aria-label={t({ zh: "上一幕", en: "Previous scene" }, lang)}
         >
           ←
         </button>

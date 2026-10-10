@@ -39,7 +39,14 @@ export default function Toolbar() {
   } = useShell();
   const isDesktop = useIsDesktop();
 
-  const stop = STOPS[activeStopIndex(path)];
+  const stopIndex = activeStopIndex(path);
+  const stopLabel = stopIndex >= 0 ? STOPS[stopIndex].label : ui.notFound.crumb;
+
+  // The palette opens with ⌘K on Apple devices and Ctrl+K everywhere else.
+  const [modKey, setModKey] = useState("⌘");
+  useEffect(() => {
+    if (!/Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent)) setModKey("Ctrl ");
+  }, []);
 
   // Desktop: is the rail currently showing? Mobile: is the drawer open?
   const navShown = isDesktop ? !sidebarCollapsed : sidebarOpen;
@@ -78,7 +85,7 @@ export default function Toolbar() {
         <span className="crumb-sep" aria-hidden>
           /
         </span>
-        <span className="crumb-stop">{t(stop.label, lang)}</span>
+        <span className="crumb-stop">{t(stopLabel, lang)}</span>
       </div>
 
       <button
@@ -91,7 +98,7 @@ export default function Toolbar() {
           ⌕
         </span>
         <span className="cmdk-trigger-text">{t(ui.toolbar.search, lang)}</span>
-        <kbd>⌘K</kbd>
+        <kbd>{modKey}K</kbd>
       </button>
 
       <div className="toolbar-actions">
