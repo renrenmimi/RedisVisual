@@ -45,7 +45,10 @@
 .hm-row-hot {
   background: var(--accent-bg);
   box-shadow: inset 3px 0 0 var(--accent);
-  animation: hm-slidein 0.5s backwards, hm-hotpulse 2.6s 0.8s ease-in-out infinite;
+  /* The glow, pulse and shimmer loops in this file play three times and then rest:
+     repainting a box-shadow on every frame kept the main thread busy for as long as a
+     reader stayed on the scene. */
+  animation: hm-slidein 0.5s backwards, hm-hotpulse 2.6s 0.8s ease-in-out 3;
 }
 
 .hm-k {
@@ -206,7 +209,7 @@
 .hm-workbench {
   border-color: var(--accent-glow);
   background: var(--accent-bg);
-  animation: hm-pop 0.5s 0.35s backwards, hm-benchglow 3s 1s ease-in-out infinite;
+  animation: hm-pop 0.5s 0.35s backwards, hm-benchglow 3s 1s ease-in-out 3;
 }
 
 .hm-vs-emoji {
@@ -365,7 +368,7 @@
 }
 
 .hm-path-redis .hm-gate-fast {
-  animation: hm-pop 0.4s backwards, hm-fastpulse 2s 0.8s ease-in-out infinite;
+  animation: hm-pop 0.4s backwards, hm-fastpulse 2s 0.8s ease-in-out 3;
 }
 
 @keyframes hm-fastpulse {
@@ -487,7 +490,7 @@
 .hm-lane-redis {
   border-color: var(--accent-glow);
   background: var(--accent-bg);
-  animation: hm-pop 0.5s 0.25s backwards, hm-benchglow 3s 1s ease-in-out infinite;
+  animation: hm-pop 0.5s 0.25s backwards, hm-benchglow 3s 1s ease-in-out 3;
 }
 
 .hm-lane-db {
@@ -566,7 +569,7 @@
   background-size: 220% 100%;
   color: #fff;
   box-shadow: 0 10px 32px var(--accent-glow);
-  animation: hm-pop 0.5s 0.95s backwards, hm-shimmer 6s 1.6s linear infinite;
+  animation: hm-pop 0.5s 0.95s backwards, hm-shimmer 6s 1.6s linear 3;
 }
 
 .hm-f-op {
