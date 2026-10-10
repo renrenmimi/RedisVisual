@@ -35,8 +35,8 @@ export type Scenario = {
 export const meta = {
   title: { zh: "第 3 站 · 我们为什么用 Redis", en: "Stop 3 · Why we use Redis" },
   subtitle: {
-    zh: "拿一个真实系统 WeShipItNow，把 Redis 适合的三处用法讲透——顺带教你面试怎么答。",
-    en: "One real system, WeShipItNow, and three places Redis fits in it — plus how to describe them in an interview.",
+    zh: "拿一个真实系统 WeShipItNow，把 Redis 的三处用法讲透——顺带教你面试怎么答。",
+    en: "One real system, WeShipItNow, and the three places it uses Redis — plus how to describe them in an interview.",
   },
   ivGood: { zh: "面试可以这样说", en: "In an interview, you can say" },
   ivHonest: { zh: "但要诚实 · 别过度包装", en: "But stay honest · don't oversell" },
@@ -56,18 +56,18 @@ export const intro = {
     en: "WeShipItNow · multi-carrier rate shopping and label platform",
   },
   title: {
-    zh: "以 WeShipItNow 为例：Redis 适合用在哪三处",
-    en: "WeShipItNow as the example: three places Redis fits",
+    zh: "一个真实系统里，Redis 到底用在哪三处",
+    en: "The three places Redis is actually used in one real system",
   },
   text: {
     zh:
       "WeShipItNow 让用户输入发货/收货邮编、包裹重量尺寸和发货日期，然后同时向 USPS、FedEx、UPS、Amazon 问[[carrier:承运商]]报价、比价，再买运费标签、追踪包裹。" +
-      "这个系统里有三个地方适合用 [[redis:Redis]]：报价缓存是简历上写的那一处；幂等和余额投影同样适合用 Redis，面试时只把你亲手做过的说成做过。每一处都要回答同一个问题：为什么是 Redis，而不是别的。" +
+      "[[redis:Redis]] 在这个系统里出现在三个地方——每一处都能回答同一个问题：为什么是 Redis，而不是别的。" +
       "下面三个场景，点 tab 切换，每个都能一步步看动画。",
     en:
       "WeShipItNow takes an origin ZIP, a destination ZIP, the package weight and dimensions, and a ship date. " +
       "It then asks USPS, FedEx, UPS, and Amazon for [[carrier:carrier]] quotes at the same time, compares them, and lets the user buy a label and track the parcel. " +
-      "Three places in this system suit [[redis:Redis]]. The rate cache is the one on the resume; idempotency and the balance projection suit Redis just as well, and in an interview you claim only the ones you built yourself. Each one answers the same question: why Redis, and not something else? " +
+      "[[redis:Redis]] is used in three places here, and each one answers the same question: why Redis, and not something else? " +
       "Switch tabs between the three scenarios below. Each one plays step by step.",
   },
 };
