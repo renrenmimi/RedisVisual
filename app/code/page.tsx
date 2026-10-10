@@ -76,7 +76,7 @@ export default function CodeChapter() {
       <section className="narration appear" key={`n-${cursor}-${lang}`}>
         <div className="n-head">
           <span className="n-step">
-            STEP {cursor + 1}
+            {lang === "zh" ? `第 ${cursor + 1} 步` : `STEP ${cursor + 1}`}
             <i>/{steps.length}</i>
           </span>
           <h2>{t(step.title, lang)}</h2>
@@ -208,7 +208,7 @@ function CmdCard({ c, lang }: { c: Cmd; lang: Lang }) {
 }
 
 function CopyBtn({ text, lang }: { text: string; lang: Lang }) {
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState<"idle" | "copied" | "failed">("idle");
   const timer = useRef<number | null>(null);
 
   // 卸载（换步骤时命令卡会重挂载）前清掉挂起的定时器
@@ -219,23 +219,32 @@ function CopyBtn({ text, lang }: { text: string; lang: Lang }) {
   }, []);
 
   const copy = async () => {
+    let ok = true;
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      // 剪贴板不可用时静默降级：按钮仍给出“已复制”反馈
+      // 剪贴板不可用（非安全上下文、权限被拒）：如实告诉读者没复制上，请手动选中
+      ok = false;
     }
-    setDone(true);
+    setDone(ok ? "copied" : "failed");
     if (timer.current !== null) window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setDone(false), 1300);
+    timer.current = window.setTimeout(() => setDone("idle"), ok ? 1300 : 2600);
   };
   return (
     <button
       type="button"
-      className={`cl3-copy ${done ? "done" : ""}`}
+      className={`cl3-copy ${done === "copied" ? "done" : ""}`}
       onClick={copy}
-      aria-label={t(done ? clui.copied : clui.copy, lang)}
+      aria-label={t(
+        done === "copied" ? clui.copied : done === "failed" ? clui.copyFailed : clui.copy,
+        lang,
+      )}
     >
-      {done ? `✓ ${t(clui.copied, lang)}` : t(clui.copy, lang)}
+      {done === "copied"
+        ? `✓ ${t(clui.copied, lang)}`
+        : done === "failed"
+          ? t(clui.copyFailed, lang)
+          : t(clui.copy, lang)}
     </button>
   );
 }
@@ -349,9 +358,10 @@ function CodeView({
     const first = Math.min(...focus.map((f) => f[0]));
     const el = container.querySelector<HTMLElement>(`[data-line="${first}"]`);
     if (el) {
+      const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       container.scrollTo({
         top: Math.max(0, el.offsetTop - container.clientHeight * 0.32),
-        behavior: "smooth",
+        behavior: still ? "auto" : "smooth",
       });
     }
     // 挂载即滚动一次即可；focus 随步骤变化时通过 key 重挂载

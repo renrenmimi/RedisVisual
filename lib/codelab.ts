@@ -50,6 +50,7 @@ export const clui = {
   pointsTitle: { zh: "这段代码在干嘛", en: "What this code does" },
   copy: { zh: "复制", en: "Copy" },
   copied: { zh: "已复制", en: "Copied" },
+  copyFailed: { zh: "复制失败，请手动选中", en: "Copy failed: select it by hand" },
   replay: { zh: "↻ 重新播放", en: "↻ Replay" },
   reset: { zh: "回到第一步", en: "Back to step 1" },
   nextStation: { zh: "下一站：面试速通 →", en: "Next stop: Interview prep →" },
