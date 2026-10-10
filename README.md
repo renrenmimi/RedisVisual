@@ -27,9 +27,9 @@ you break the cache on purpose and watch hit rate and latency react.
    Set), the specialised ones (Bitmap, HyperLogLog, Geo, Stream), and the encodings
    underneath. Each with an animation, its commands, what it is for, and the interview
    follow-ups.
-3. **`/scenarios` — Why we use it.** Back to WeShipItNow and three places Redis fits there,
-   animated end to end: caching shipping quotes (cache-aside), making label purchases
-   idempotent (SET NX), and the balance projection.
+3. **`/scenarios` — Why we use it.** Back to WeShipItNow, three real uses animated end to
+   end: caching shipping quotes (cache-aside), making label purchases idempotent (SET NX),
+   and the balance projection.
 4. **`/pitfalls` — Cache failures and consistency.** Penetration, breakdown and avalanche;
    database/cache double-write consistency (delayed double delete); hot keys and big keys.
 5. **`/internals` — Redis in production.** Persistence (RDB/AOF), expiry and eviction
