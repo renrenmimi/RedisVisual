@@ -36,7 +36,7 @@ export const iv = {
     body: {
       zh:
         "前面几站你已经见过 [[redis:Redis]] 是什么、为什么快、我们的系统为什么用它、缓存会怎么失效。这一站把它们变成面试能说出口的话：" +
-        "每题给出英文问题、一段可以直接背的英文示范回答，以及一段中文讲解——面试官到底在确认什么、哪一两句能拿分、哪句话会翻车。" +
+        "每题给出英文问题、一段可以直接背的英文示范回答，以及一段中文讲解——面试官到底在确认什么、哪一两句能得分、哪句话会失分。" +
         "点开任意一题展开答案；正文里带虚线的词，点一下就有解释。",
       en:
         "The earlier stops covered what [[redis:Redis]] is, why it is fast, how a real system uses it, and how caches fail. " +
@@ -64,8 +64,8 @@ export const iv = {
       en: "Say what Redis is and why it is fast in one or two sentences. This is the area interviewers probe first.",
     },
     system: {
-      zh: "WeShipItNow 里的三处真实用法：每一处都要能讲出“解决了什么问题”。",
-      en: "The three real usages in WeShipItNow. For each one, be able to say which problem it solved.",
+      zh: "WeShipItNow 里适合 Redis 的三处：每一处都要能讲出“解决了什么问题”，也要分清哪一处是你亲手做的。",
+      en: "Three places Redis fits in WeShipItNow. For each one, be able to say which problem it solves, and which ones you built yourself.",
     },
     advanced: {
       zh: "失效、穿透 / 击穿 / 雪崩、选型，以及那个 40% 该怎么诚实地讲。",
@@ -136,20 +136,20 @@ export const questions: QA[] = [
         "Three reasons, and memory is only the first one. The data is in [[memory:memory]], so there is no disk read. The " +
         "command path is also short: a GET is close to a hash-table lookup, while SQL has to parse the query, plan it, walk " +
         "a B+ tree, and apply transaction rules. And Redis runs commands one at a time on a [[singlethread:single thread]], " +
-        "so it needs no locks between them. That is why MySQL with a warm buffer pool is still slower: it does more work per " +
-        "request.",
+        "so it needs no locks between them, and that thread serves thousands of connections through I/O multiplexing, an " +
+        "event loop over epoll. That is why MySQL with a warm buffer pool is still slower: it does more work per request.",
       en:
         "Three reasons, and memory is only the first one. The data is in [[memory:memory]], so there is no disk read. The " +
         "command path is also short: a GET is close to a hash-table lookup, while SQL has to parse the query, plan it, walk " +
         "a B+ tree, and apply transaction rules. And Redis runs commands one at a time on a [[singlethread:single thread]], " +
-        "so it needs no locks between them. That is why MySQL with a warm buffer pool is still slower: it does more work per " +
-        "request.",
+        "so it needs no locks between them, and that thread serves thousands of connections through I/O multiplexing, an " +
+        "event loop over epoll. That is why MySQL with a warm buffer pool is still slower: it does more work per request.",
     },
     note: {
       zh:
         "这是全场最容易被追问的一题：面试官会立刻回你一句“MySQL 也有 buffer pool，也在内存里”，所以只答“因为在内存”一定被打回来。" +
         "采分点是第二层——每条命令要做的工作本来就少得多。第三层“单线程所以不用加锁”是加分项，但别顺口说成“Redis 全都是单线程”，" +
-        "Redis 6 已经有网络 I/O 多线程了（见最后一题）。",
+        "Redis 6 已经有网络 I/O 多线程了（见最后一题）。被追问“一个线程怎么扛住上万个连接”时，答 I/O 多路复用（epoll）。",
       en:
         "This is the most common follow-up in the whole set. The interviewer will answer that MySQL also keeps pages in " +
         "memory, so memory alone cannot be the reason. Credit comes from the second point: Redis does far less work per " +
@@ -210,11 +210,11 @@ export const questions: QA[] = [
     },
     note: {
       zh:
-        "这是一道热身题，答快一点，然后补一个定义里没有的东西：命中率。主动提命中率，说明你真的看过缓存的线上指标，" +
+        "这是一道热身题，答快一点，然后补一个定义里没有的东西：命中率。主动提命中率，说明你知道缓存上线后该看哪个指标，" +
         "而不只是背过概念。要避免的说法是把 miss 讲成“出错了”——它是正常路径，缓存本来就靠 miss 来填。",
       en:
         "This is a warm-up question, so answer it quickly and add one thing the definition does not contain. Hit rate is that " +
-        "thing, and naming it suggests you have watched a cache in production rather than read about one. The trap is " +
+        "thing, and naming it shows you know which number matters once a cache is in production. The trap is " +
         "calling a miss an error; a miss is the normal path that fills the cache in the first place.",
     },
   },
@@ -270,12 +270,12 @@ export const questions: QA[] = [
     note: {
       zh:
         "面试官想看的是“结构 → 场景”的对应，不是能背几个名字。所以每个结构配一句用途，其中 sorted set 要举具体例子" +
-        "（排行榜、滑动窗口限流），这是最能体现你真用过的一项。顺带提一句 streams / HyperLogLog 说明你知道还有更多，" +
+        "（排行榜、滑动窗口限流），这是最能体现你理解它用途的一项。顺带提一句 streams / HyperLogLog 说明你知道还有更多，" +
         "但别主动展开。要避免的答法：光报一串名字，一个场景都没有。",
       en:
         "The interviewer is checking whether you can map a structure to a problem, not whether you can list names. Give one " +
         "short use case per type, and make the sorted set example concrete, because leaderboards and rate limiting are the " +
-        "two that sound like real work. Naming streams or HyperLogLog shows wider reading, but do not start explaining them " +
+        "two that show you understand what it is for. Naming streams or HyperLogLog shows wider reading, but do not start explaining them " +
         "unless you are asked. The trap is a flat list with no use cases attached.",
     },
   },
@@ -290,30 +290,33 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
-        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. Second, an " +
-        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double click cannot " +
-        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]]: the " +
-        "[[ledger:ledger]] in the database stays the source of truth, and Redis holds the pre-computed balance so reads are " +
-        "fast. So one read cache, one concurrency guard, and one read model.",
+        "The part I built was a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
+        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. The same system has two " +
+        "more places where Redis fits, and I can explain both: an [[idempotency:idempotency]] key on label purchase using " +
+        "[[setnx:SET NX]], so a retry or a double click cannot charge the customer twice or create two labels, and an " +
+        "account balance [[projection:projection]], where the [[ledger:ledger]] in the database stays the source of truth " +
+        "and Redis holds the pre-computed balance so reads are fast. So one read cache, one concurrency guard, and one read " +
+        "model.",
       en:
-        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
-        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. Second, an " +
-        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double click cannot " +
-        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]]: the " +
-        "[[ledger:ledger]] in the database stays the source of truth, and Redis holds the pre-computed balance so reads are " +
-        "fast. So one read cache, one concurrency guard, and one read model.",
+        "The part I built was a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
+        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. The same system has two " +
+        "more places where Redis fits, and I can explain both: an [[idempotency:idempotency]] key on label purchase using " +
+        "[[setnx:SET NX]], so a retry or a double click cannot charge the customer twice or create two labels, and an " +
+        "account balance [[projection:projection]], where the [[ledger:ledger]] in the database stays the source of truth " +
+        "and Redis holds the pre-computed balance so reads are fast. So one read cache, one concurrency guard, and one read " +
+        "model.",
     },
     note: {
       zh:
         "这是最该背熟的一段，因为后面大半追问都是从这里分叉出去的。用“三处”的结构讲，每处一句：什么模式 + 解决了什么问题，" +
         "最后用“一个读缓存、一个并发保护、一个读模型”收口，面试官一听就知道你分得清三者的本质区别，而不是笼统一句“我用 Redis 做缓存”。" +
-        "诚实提醒：只讲你真正写过的那部分。如果某一处只是方案设计、没有落地，就直说“这块是设计，最后没上线”——" +
+        "诚实提醒：只讲你真正写过的那部分。示范回答按“只做了报价缓存”来写；三处都做过，才把后两处也说成你做的。如果某一处只是方案设计、没有落地，就直说“这块是设计，最后没上线”——" +
         "面试官几乎一定会挑其中一处往下追三四层。",
       en:
         "This is the answer to rehearse first, because most follow-up questions branch off it. Give the pattern and the " +
         "problem it solved for each place, then close with the one-line summary, so the interviewer hears three different " +
-        "jobs instead of one vague cache. Be honest about scope: describe only the parts you built, and if one of the three " +
+        "jobs instead of one vague cache. Be honest about scope: describe only the parts you built. The model answer assumes " +
+        "you built only the rate cache; claim the other two only if you built them too. If one of the three " +
         "was a design you proposed rather than shipped, say so in the same sentence. The interviewer will pick one and go " +
         "three levels deeper, so only list the ones you can defend.",
     },
@@ -390,17 +393,17 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "It depends on the usage, because each one degrades differently. For the rate cache we skip Redis and call the " +
-        "[[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance we recompute from the " +
-        "[[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a lost key could let a " +
-        "duplicate charge through. So it is backed by a unique constraint in the database and by the order status, and " +
-        "correctness never depends on a volatile key surviving.",
+        "It depends on the usage, because each one degrades differently. For the rate cache, which I built, we skip Redis " +
+        "and call the [[carrier:carrier]] APIs directly: slower, but still correct and available. A balance projection is " +
+        "recomputed from the [[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a " +
+        "lost key could let a duplicate charge through, so the design backs it with a unique constraint in the database and " +
+        "the order status, and correctness never depends on a volatile key surviving.",
       en:
-        "It depends on the usage, because each one degrades differently. For the rate cache we skip Redis and call the " +
-        "[[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance we recompute from the " +
-        "[[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a lost key could let a " +
-        "duplicate charge through. So it is backed by a unique constraint in the database and by the order status, and " +
-        "correctness never depends on a volatile key surviving.",
+        "It depends on the usage, because each one degrades differently. For the rate cache, which I built, we skip Redis " +
+        "and call the [[carrier:carrier]] APIs directly: slower, but still correct and available. A balance projection is " +
+        "recomputed from the [[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a " +
+        "lost key could let a duplicate charge through, so the design backs it with a unique constraint in the database and " +
+        "the order status, and correctness never depends on a volatile key surviving.",
     },
     note: {
       zh:
@@ -527,28 +530,26 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "I would scope the number carefully. It compares response time for the same package and the same route, before and " +
-        "after caching, on repeated requests, which are the ones a cache can serve. It is not a claim that every request " +
-        "became 40% faster, because the first, uncached request still pays the full cost. And if I did not have real " +
-        "before-and-after measurements, I would not quote a p50 or p95 figure. I would rather take the number off my resume " +
-        "than defend one I cannot support.",
+        "To be honest, I did not run a controlled benchmark. The 40% was a rough before-and-after impression on repeated " +
+        "lookups for the same route, which are the requests a cache can serve; the first, uncached request still pays the " +
+        "full cost. If I measured it today, I would replay the same set of requests with the cache off and on and compare " +
+        "p50 and p95. And if I cannot defend the number, I would rather take it off my resume.",
       en:
-        "I would scope the number carefully. It compares response time for the same package and the same route, before and " +
-        "after caching, on repeated requests, which are the ones a cache can serve. It is not a claim that every request " +
-        "became 40% faster, because the first, uncached request still pays the full cost. And if I did not have real " +
-        "before-and-after measurements, I would not quote a p50 or p95 figure. I would rather take the number off my resume " +
-        "than defend one I cannot support.",
+        "To be honest, I did not run a controlled benchmark. The 40% was a rough before-and-after impression on repeated " +
+        "lookups for the same route, which are the requests a cache can serve; the first, uncached request still pays the " +
+        "full cost. If I measured it today, I would replay the same set of requests with the cache off and on and compare " +
+        "p50 and p95. And if I cannot defend the number, I would rather take it off my resume.",
     },
     note: {
       zh:
-        "这一题决定面试官还信不信你简历上的其他内容。先把口径说全：同包裹、同路线、能命中缓存的重复请求、开缓存前后对比。" +
+        "这一题决定面试官还信不信你简历上的其他内容。先承认没有严格测量过，再说明那次粗略对比的范围（同包裹、同路线、能命中缓存的重复请求），最后讲你现在会怎么测。" +
         "如果你根本没测过，就直说“这个我没有实际测量过，是粗略对比出来的印象”，然后讲你现在会怎么测——" +
         "这句实话比任何数字都稳。绝对不要临场编 p50 / p95：下一句追问一定是“怎么测的、样本多大”，编的数字撑不过两轮。" +
         "如果这个 40% 你撑不住，面试前就把它从简历上删掉。",
       en:
-        "This question decides whether the interviewer trusts the rest of your resume. Say the scope out loud first: same " +
-        "package, same route, repeated requests only, measured before and after the cache. If you never measured it, say so " +
-        "in plain words — I did not measure that, it was a rough comparison — and then say how you would measure it now. " +
+        "This question decides whether the interviewer trusts the rest of your resume. Admit first that it was not a careful " +
+        "measurement, then give the scope of the rough comparison (same package, same route, repeated requests only), and " +
+        "then say how you would measure it now. Say it in plain words — I did not measure that, it was a rough comparison. " +
         "Never invent a p50 or p95 under pressure, because the next question is how you measured it and with what sample " +
         "size, and an invented number does not survive two follow-ups. If you cannot support the 40%, take it off the " +
         "resume before the interview.",
@@ -580,12 +581,12 @@ export const questions: QA[] = [
     note: {
       zh:
         "先把两种机制分清：RDB 是快照，AOF 是写命令日志。采分点是把“会丢多少”说出来——RDB 丢到上一次快照为止，" +
-        "AOF 在 everysec 下大约丢 1 秒。再提一句生产上常见的是 AOF everysec 或两者混用，说明你见过真实配置。" +
+        "AOF 在 everysec 下大约丢 1 秒。再提一句生产上常见的是 AOF everysec 或两者混用，说明你知道实际怎么配。" +
         "别说“AOF 一定比 RDB 好”，那是权衡；也别因为有持久化就说 Redis 可以当持久化主库。",
       en:
         "Keep the two mechanisms apart: RDB is a snapshot, AOF is a log of write commands. Credit comes from stating the " +
         "loss window for each one: back to the last snapshot for RDB, about one second for AOF with everysec. Adding that " +
-        "production setups often run AOF everysec, or both, shows you have seen a real configuration. Do not say AOF is " +
+        "production setups often run AOF everysec, or both, shows you know how it is usually configured. Do not say AOF is " +
         "simply better, and do not let persistence turn into a claim that Redis is a durable primary database.",
     },
   },
@@ -636,14 +637,16 @@ export const questions: QA[] = [
         "Eviction only starts when Redis reaches the maxmemory limit, and maxmemory-policy decides what happens then. The " +
         "default is noeviction: reads keep working and writes return an error. The allkeys-lru and allkeys-lfu policies can " +
         "evict any key, while the volatile policies only evict keys that carry a [[ttl:TTL]]. LRU drops what has not been " +
-        "used recently; LFU drops what is used least often, so a one-off scan of cold data pushes less useful data out. " +
+        "used recently; LFU drops what is used least often, so a one-off scan of cold keys is far less likely to push the " +
+        "hot keys out than it is under LRU. " +
         "Both are approximate: Redis samples a small number of keys and evicts the best candidate instead of keeping an " +
         "exact ordering. For a pure cache I would use allkeys-lru or allkeys-lfu.",
       en:
         "Eviction only starts when Redis reaches the maxmemory limit, and maxmemory-policy decides what happens then. The " +
         "default is noeviction: reads keep working and writes return an error. The allkeys-lru and allkeys-lfu policies can " +
         "evict any key, while the volatile policies only evict keys that carry a [[ttl:TTL]]. LRU drops what has not been " +
-        "used recently; LFU drops what is used least often, so a one-off scan of cold data pushes less useful data out. " +
+        "used recently; LFU drops what is used least often, so a one-off scan of cold keys is far less likely to push the " +
+        "hot keys out than it is under LRU. " +
         "Both are approximate: Redis samples a small number of keys and evicts the best candidate instead of keeping an " +
         "exact ordering. For a pure cache I would use allkeys-lru or allkeys-lfu.",
     },
@@ -710,13 +713,15 @@ export const questions: QA[] = [
         "command in between. There is no rollback: if one command fails at runtime, the commands around it still take " +
         "effect. WATCH gives you optimistic concurrency control rather than a lock — if a watched key changed before EXEC, " +
         "EXEC returns nil, nothing runs, and your code retries. When several steps really have to be one unit, I use a Lua " +
-        "script, which Redis runs [[atomic:atomically]] as a single unit.",
+        "script, which Redis runs [[atomic:atomically]] as a single unit, though, like MULTI, a script that fails halfway " +
+        "does not roll back.",
       en:
         "Yes, but not in the SQL sense. MULTI queues the commands and EXEC runs them in order, with no other client's " +
         "command in between. There is no rollback: if one command fails at runtime, the commands around it still take " +
         "effect. WATCH gives you optimistic concurrency control rather than a lock — if a watched key changed before EXEC, " +
         "EXEC returns nil, nothing runs, and your code retries. When several steps really have to be one unit, I use a Lua " +
-        "script, which Redis runs [[atomic:atomically]] as a single unit.",
+        "script, which Redis runs [[atomic:atomically]] as a single unit, though, like MULTI, a script that fails halfway " +
+        "does not roll back.",
     },
     note: {
       zh:
@@ -756,12 +761,12 @@ export const questions: QA[] = [
       zh:
         "面试官在验证一个很具体的误解：以为“打包发送”就等于原子。所以要明说 pipeline 只省网络往返，中间仍可能被别的客户端插入命令。" +
         "采分点是把这组对照压成一句：一个解决往返次数，一个解决顺序与隔离。再补一句“事务可以放进 pipeline 一起发”，" +
-        "说明你两样都用过，而不只是读过。",
+        "说明你清楚两者怎样组合使用。",
       en:
         "The interviewer is checking one specific misconception: that batching makes commands atomic. Say plainly that a " +
         "pipeline only removes round trips and that another client can still run commands in between. Credit comes from " +
         "compressing the contrast into one line: round trips versus ordering. Adding that a transaction can be sent inside " +
-        "a pipeline shows you have used both rather than read about them.",
+        "a pipeline shows you understand how the two combine.",
     },
   },
   {
@@ -949,14 +954,16 @@ export const questions: QA[] = [
       zh:
         "Redis executes commands one at a time on a [[singlethread:single thread]]. That is a design choice: with one " +
         "thread there are no locks and no context switching between commands, and because the data is in memory each " +
-        "command finishes quickly. Redis 6 added extra threads, but only for network I/O — reading and writing sockets and " +
+        "command finishes quickly. The one thread keeps thousands of connections going through I/O multiplexing: an event " +
+        "loop asks the kernel (epoll on Linux) which sockets are ready, so it never blocks on a single client. Redis 6 added extra threads, but only for network I/O — reading and writing sockets and " +
         "parsing the protocol. Command execution is still serialized on one thread, which is why every command is still " +
         "[[atomic:atomic]] and why data operations still need no locking. So the accurate sentence is that command " +
         "execution is single-threaded, not that Redis is single-threaded.",
       en:
         "Redis executes commands one at a time on a [[singlethread:single thread]]. That is a design choice: with one " +
         "thread there are no locks and no context switching between commands, and because the data is in memory each " +
-        "command finishes quickly. Redis 6 added extra threads, but only for network I/O — reading and writing sockets and " +
+        "command finishes quickly. The one thread keeps thousands of connections going through I/O multiplexing: an event " +
+        "loop asks the kernel (epoll on Linux) which sockets are ready, so it never blocks on a single client. Redis 6 added extra threads, but only for network I/O — reading and writing sockets and " +
         "parsing the protocol. Command execution is still serialized on one thread, which is why every command is still " +
         "[[atomic:atomic]] and why data operations still need no locking. So the accurate sentence is that command " +
         "execution is single-threaded, not that Redis is single-threaded.",
@@ -1000,10 +1007,10 @@ export const summary = {
     },
     {
       zh:
-        "WeShipItNow 三处用法记牢：运费 rate cache（读缓存）、买标签 [[idempotency:幂等]]（并发保护）、余额 [[projection:投影]]（读模型）。",
+        "WeShipItNow 里适合 Redis 的三处记牢：运费 rate cache（读缓存，简历上写的那一处）、买标签 [[idempotency:幂等]]（并发保护）、余额 [[projection:投影]]（读模型）。",
       en:
-        "Remember the three WeShipItNow usages: rate cache (a read cache), label [[idempotency:idempotency]] (a concurrency " +
-        "guard), and balance [[projection:projection]] (a read model).",
+        "Remember the three places Redis fits in WeShipItNow: rate cache (a read cache, the one on the resume), label " +
+        "[[idempotency:idempotency]] (a concurrency guard), and balance [[projection:projection]] (a read model).",
     },
     {
       zh:
