@@ -19,14 +19,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* No-flash theme: set data-theme before first paint. */}
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        {/* No-flash language: set data-lang + lang before first paint.
-            English is the default; Chinese only when it was chosen before. */}
-        <script dangerouslySetInnerHTML={{ __html: langScript }} />
-      </head>
       <body>
+        {/* No-flash theme, sidebar and language: set data-theme, data-sidebar, data-lang and
+            lang on <html> before first paint. English is the default; Chinese only when it
+            was chosen before. These sit at the top of <body>, not in <head>: when they were
+            hand-written nodes in <head>, hydration failed on a few percent of cold loads
+            (React error #418) and the whole root was rendered again on the client, which
+            drops the attributes these scripts wrote. */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: langScript }} />
         <LangProvider>
           <ThemeProvider>
             <ShellProvider>

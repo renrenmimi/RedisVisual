@@ -24,7 +24,7 @@ export const t = (l: L, lang: Lang) => l[lang];
 
 const LANG_KEY = "redisvisual-lang";
 
-// 首帧前跑（和 themeScript 一起放在 <head> 里）：读出保存的语言并写到
+// 首帧前跑（和 themeScript 一起放在 <body> 开头）：读出保存的语言并写到
 // <html data-lang> / <html lang> 上，这样第一次绘制就已经是正确的语言，
 // 不会先闪一下中文再切成英文。默认 "en"。
 export const langScript = `(function(){var d=document.documentElement;var l="en";try{if(localStorage.getItem("${LANG_KEY}")==="zh"){l="zh";}}catch(e){}d.dataset.lang=l;d.lang=l==="zh"?"zh-CN":"en";})();`;
@@ -35,24 +35,19 @@ const LangContext = createContext<Ctx>({ lang: "en", setLang: () => {} });
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, set] = useState<Lang>("en");
 
-  // 和无闪脚本已经写好的 <html data-lang> 对齐（脚本已经读过 localStorage）。
+  // 从 localStorage 读回语言并写回 <html>：React 若放弃水合、在客户端重新渲染整个根节点，
+  // 无闪脚本写在 <html> 上的属性会丢失，所以这里不读那些属性，而是以保存的设置为准。
   useEffect(() => {
-    const applied = document.documentElement.dataset.lang;
-    if (applied === "zh" || applied === "en") {
-      set(applied);
-      return;
-    }
     let saved: string | null = null;
     try {
       saved = window.localStorage.getItem(LANG_KEY);
     } catch {
       /* 隐私模式 / 禁用存储时忽略 */
     }
-    if (saved === "en" || saved === "zh") {
-      set(saved);
-      document.documentElement.dataset.lang = saved;
-      document.documentElement.lang = saved === "zh" ? "zh-CN" : "en";
-    }
+    const l: Lang = saved === "zh" ? "zh" : "en";
+    set(l);
+    document.documentElement.dataset.lang = l;
+    document.documentElement.lang = l === "zh" ? "zh-CN" : "en";
   }, []);
 
   const setLang = useCallback((l: Lang) => {
