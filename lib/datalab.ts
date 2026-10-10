@@ -135,8 +135,8 @@ export const structures: Structure[] = [
       { zh: "分布式锁、幂等占位（配合 NX + TTL）", en: "distributed locks and idempotency claims (SET with NX and a TTL)" },
     ],
     ship: {
-      zh: "这个系统里适合 Redis 的三处，用 String 就都够了：运费报价存成 JSON 字符串、幂等 key、余额投影。一个 String 就能覆盖不少日常场景。",
-      en: "All three places Redis fits in this system need only Strings: the rate quote stored as a JSON string, the idempotency key, and the balance projection. One type covers a lot of ordinary work.",
+      zh: "我们系统里三处 Redis 用法全是 String：运费报价存成 JSON 字符串、幂等 key、余额投影。一个 String 就能覆盖不少日常场景。",
+      en: "All three Redis uses in our system are Strings: the rate quote stored as a JSON string, the idempotency key, and the balance projection. One type covers a lot of ordinary work.",
     },
     encoding: {
       zh: "三种编码：`int`（值是整数时直接按整数存，最省内存）、`embstr`（≤ 44 字节的短串，和对象头分配在同一块内存里）、`raw`（更长的串，单独分配）。选哪种由 Redis 自己决定。",

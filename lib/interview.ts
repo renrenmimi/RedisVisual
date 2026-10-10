@@ -64,8 +64,8 @@ export const iv = {
       en: "Say what Redis is and why it is fast in one or two sentences. This is the area interviewers probe first.",
     },
     system: {
-      zh: "WeShipItNow 里适合 Redis 的三处：每一处都要能讲出“解决了什么问题”，也要分清哪一处是你亲手做的。",
-      en: "Three places Redis fits in WeShipItNow. For each one, be able to say which problem it solves, and which ones you built yourself.",
+      zh: "WeShipItNow 里的三处真实用法：每一处都要能讲出“解决了什么问题”。",
+      en: "The three real usages in WeShipItNow. For each one, be able to say which problem it solved.",
     },
     advanced: {
       zh: "失效、穿透 / 击穿 / 雪崩、选型，以及那个 40% 该怎么诚实地讲。",
@@ -290,33 +290,30 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "The part I built was a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
-        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. The same system has two " +
-        "more places where Redis fits, and I can explain both: an [[idempotency:idempotency]] key on label purchase using " +
-        "[[setnx:SET NX]], so a retry or a double click cannot charge the customer twice or create two labels, and an " +
-        "account balance [[projection:projection]], where the [[ledger:ledger]] in the database stays the source of truth " +
-        "and Redis holds the pre-computed balance so reads are fast. So one read cache, one concurrency guard, and one read " +
-        "model.",
+        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
+        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. Second, an " +
+        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double click cannot " +
+        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]]: the " +
+        "[[ledger:ledger]] in the database stays the source of truth, and Redis holds the pre-computed balance so reads are " +
+        "fast. So one read cache, one concurrency guard, and one read model.",
       en:
-        "The part I built was a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
-        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. The same system has two " +
-        "more places where Redis fits, and I can explain both: an [[idempotency:idempotency]] key on label purchase using " +
-        "[[setnx:SET NX]], so a retry or a double click cannot charge the customer twice or create two labels, and an " +
-        "account balance [[projection:projection]], where the [[ledger:ledger]] in the database stays the source of truth " +
-        "and Redis holds the pre-computed balance so reads are fast. So one read cache, one concurrency guard, and one read " +
-        "model.",
+        "In three places. First, a [[cacheaside:cache-aside]] cache for shipping rate quotes with a short [[ttl:TTL]], so " +
+        "repeated lookups for the same package do not call the [[carrier:carrier]] APIs again. Second, an " +
+        "[[idempotency:idempotency]] key on label purchase using [[setnx:SET NX]], so a retry or a double click cannot " +
+        "charge the customer twice or create two labels. Third, an account balance [[projection:projection]]: the " +
+        "[[ledger:ledger]] in the database stays the source of truth, and Redis holds the pre-computed balance so reads are " +
+        "fast. So one read cache, one concurrency guard, and one read model.",
     },
     note: {
       zh:
         "这是最该背熟的一段，因为后面大半追问都是从这里分叉出去的。用“三处”的结构讲，每处一句：什么模式 + 解决了什么问题，" +
         "最后用“一个读缓存、一个并发保护、一个读模型”收口，面试官一听就知道你分得清三者的本质区别，而不是笼统一句“我用 Redis 做缓存”。" +
-        "诚实提醒：只讲你真正写过的那部分。示范回答按“只做了报价缓存”来写；三处都做过，才把后两处也说成你做的。如果某一处只是方案设计、没有落地，就直说“这块是设计，最后没上线”——" +
+        "诚实提醒：只讲你真正写过的那部分。如果某一处只是方案设计、没有落地，就直说“这块是设计，最后没上线”——" +
         "面试官几乎一定会挑其中一处往下追三四层。",
       en:
         "This is the answer to rehearse first, because most follow-up questions branch off it. Give the pattern and the " +
         "problem it solved for each place, then close with the one-line summary, so the interviewer hears three different " +
-        "jobs instead of one vague cache. Be honest about scope: describe only the parts you built. The model answer assumes " +
-        "you built only the rate cache; claim the other two only if you built them too. If one of the three " +
+        "jobs instead of one vague cache. Be honest about scope: describe only the parts you built, and if one of the three " +
         "was a design you proposed rather than shipped, say so in the same sentence. The interviewer will pick one and go " +
         "three levels deeper, so only list the ones you can defend.",
     },
@@ -393,17 +390,17 @@ export const questions: QA[] = [
     },
     answer: {
       zh:
-        "It depends on the usage, because each one degrades differently. For the rate cache, which I built, we skip Redis " +
-        "and call the [[carrier:carrier]] APIs directly: slower, but still correct and available. A balance projection is " +
-        "recomputed from the [[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a " +
-        "lost key could let a duplicate charge through, so the design backs it with a unique constraint in the database and " +
-        "the order status, and correctness never depends on a volatile key surviving.",
+        "It depends on the usage, because each one degrades differently. For the rate cache we skip Redis and call the " +
+        "[[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance we recompute from the " +
+        "[[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a lost key could let a " +
+        "duplicate charge through. So it is backed by a unique constraint in the database and by the order status, and " +
+        "correctness never depends on a volatile key surviving.",
       en:
-        "It depends on the usage, because each one degrades differently. For the rate cache, which I built, we skip Redis " +
-        "and call the [[carrier:carrier]] APIs directly: slower, but still correct and available. A balance projection is " +
-        "recomputed from the [[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a " +
-        "lost key could let a duplicate charge through, so the design backs it with a unique constraint in the database and " +
-        "the order status, and correctness never depends on a volatile key surviving.",
+        "It depends on the usage, because each one degrades differently. For the rate cache we skip Redis and call the " +
+        "[[carrier:carrier]] APIs directly: slower, but still correct and available. For the balance we recompute from the " +
+        "[[ledger:ledger]], which is the source of truth. Idempotency is the sensitive one, because a lost key could let a " +
+        "duplicate charge through. So it is backed by a unique constraint in the database and by the order status, and " +
+        "correctness never depends on a volatile key surviving.",
     },
     note: {
       zh:
@@ -1007,10 +1004,10 @@ export const summary = {
     },
     {
       zh:
-        "WeShipItNow 里适合 Redis 的三处记牢：运费 rate cache（读缓存，简历上写的那一处）、买标签 [[idempotency:幂等]]（并发保护）、余额 [[projection:投影]]（读模型）。",
+        "WeShipItNow 三处用法记牢：运费 rate cache（读缓存）、买标签 [[idempotency:幂等]]（并发保护）、余额 [[projection:投影]]（读模型）。",
       en:
-        "Remember the three places Redis fits in WeShipItNow: rate cache (a read cache, the one on the resume), label " +
-        "[[idempotency:idempotency]] (a concurrency guard), and balance [[projection:projection]] (a read model).",
+        "Remember the three WeShipItNow usages: rate cache (a read cache), label [[idempotency:idempotency]] (a concurrency " +
+        "guard), and balance [[projection:projection]] (a read model).",
     },
     {
       zh:

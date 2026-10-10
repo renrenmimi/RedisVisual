@@ -59,18 +59,19 @@ browser tests from 2 to 23.
   connections, and a log-scale latency ladder ([#17]).
 - Stop 2: Hash fields can expire since Redis 7.4, the List-as-queue pattern,
   the current ZRANGE forms and the ZSet diagram ([#18]).
-- Stop 3: the three places are presented as places Redis fits rather than all
-  as the reader's own work, and the carrier latencies as an order of
-  magnitude ([#19]).
+- Stop 3: the carrier latencies are given as an order of magnitude ([#19]).
 - Stop 4: the lock key and `redis-cli --bigkeys` ([#20]).
 - Stop 5: Sentinel failover, RDB defaults, Redis 7's multi-part AOF, Lua
   rollback and fencing tokens ([#21]).
 - Stop 6: `docker stop` keeps the data, and a warning before the demo empties
   the database ([#22]).
-- Stop 7: the model answers claim only the rate cache as built and no longer
-  describe an unmeasured 40%; I/O multiplexing; register ([#23]).
+- Stop 7: the model answers no longer describe an unmeasured 40%; I/O
+  multiplexing; register ([#23]).
 - Stop 8: the presets and the outage are described the way the engine
   measures them ([#24]).
+- Stops 2, 3 and 7 again say that WeShipItNow uses Redis in all three places.
+  [#18], [#19] and [#23] had limited the claim to the rate cache; the owner has
+  since confirmed that all three were built ([#27]).
 
 ### Not changed
 
@@ -100,3 +101,4 @@ browser tests from 2 to 23.
 [#22]: https://github.com/renrenmimi/RedisVisual/pull/22
 [#23]: https://github.com/renrenmimi/RedisVisual/pull/23
 [#24]: https://github.com/renrenmimi/RedisVisual/pull/24
+[#27]: https://github.com/renrenmimi/RedisVisual/pull/27

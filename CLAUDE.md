@@ -61,6 +61,8 @@ title/next 文案派生；新增/调整站点要同步改这几处。
 - **内容诚实原则**（贯穿 scenarios / interview 两站）：这是为真实面试准备的，凡是
   项目里没真正做过的用法（如只做了 rate cache 就别把 idempotency 也说成做过）、
   没测过的数字（简历那个 40%），都要提醒“别过度包装”。
+  项目主人已确认（2026-10-09）：WeShipItNow 的 rate cache、idempotency、balance projection
+  三处都真正做过，站内如实写成做过；上面括号里的例子只是举例。
 
 ## 技术栈与环境
 
