@@ -15,19 +15,19 @@ export type Scene = {
 export const scenes: Scene[] = [
   {
     title: {
-      zh: "你其实已经懂一半了",
+      zh: "你已经懂了一半",
       en: "You already know half of this",
     },
     text: {
       zh:
         "查过字典、用过手机通讯录、写过一次 { 名字: 内容 } 吗？给一个名字，拿到对应的内容——这就是 [[keyvalue:键值 (key → value)]]。" +
         "[[redis:Redis]] 本质上就是一个超大的、放在[[memory:内存]]里、能被很多程序同时通过网络读写的字典。" +
-        "今天不需要任何 Redis 基础；正文里带虚线下划线的词，点击可以看到该术语的通俗解释。",
+        "今天不需要任何 Redis 基础；正文里带虚线下划线和小问号的词，点击可以看到该术语的通俗解释。",
       en:
         "Have you looked a word up in a dictionary, opened the contacts app on your phone, or written { name: value } in code? " +
         "You give a name and you get its content back. That is a [[keyvalue:key → value]] pair. " +
         "[[redis:Redis]] is one very large dictionary that lives in [[memory:memory]], and many programs can read and write it over the network at the same time. " +
-        "You need no Redis experience to start. Any word with a dotted underline is clickable and opens a short explanation.",
+        "You need no Redis experience to start. Any word with a dashed underline and a small question mark is clickable and opens a short explanation.",
     },
   },
   {
@@ -90,12 +90,12 @@ export const scenes: Scene[] = [
     text: {
       zh:
         "查一条 SQL 即使命中缓存，也要走 解析 → 优化器 → 索引 → 事务/锁 → 返回 一长串关卡；" +
-        "Redis 执行 GET 只有 解析 → 查哈希表 → 返回 两三步。再加上它[[singlethread:一次只执行一条命令]]：单条命令天生不用加锁，" +
-        "和 Node.js 的事件循环是同一种思路。代价是一条耗时很长的命令会让排在它后面的所有命令一起等，所以我们只缓存“小而聚合好”的数据。",
+        "Redis 执行 GET 只有 解析 → 查哈希表 → 返回 两三步。再加上它[[singlethread:一次只执行一条命令]]：单条命令天生不用加锁；" +
+        "这一个线程靠 I/O 多路复用同时照看所有连接，思路和 Node.js 的事件循环相同。代价是一条耗时很长的命令会让排在它后面的所有命令一起等，所以我们只缓存“小而聚合好”的数据。",
       en:
         "Even when a SQL query finds its rows in memory, it still runs through parsing, the optimizer, an index lookup, transaction and lock handling, and finally the response. " +
         "Redis running GET has two or three steps: parse, look up the hash table, return. On top of that, Redis executes [[singlethread:one command at a time]], " +
-        "so a single command never needs a lock. It is the same idea as the Node.js event loop. " +
+        "so a single command never needs a lock, and that one thread watches every connection at once through I/O multiplexing. It is the same idea as the Node.js event loop. " +
         "The cost is that one slow command makes every command behind it wait, which is why you only cache small, already-aggregated values.",
     },
   },
@@ -126,12 +126,12 @@ export const scenes: Scene[] = [
     text: {
       zh:
         "关键心智模型：Redis 通常不该是唯一的数据来源，它是 App 和慢速系统之间的“快车道”。" +
-        "数据在内存里、进程停了就没了？它有可选的持久化（RDB 快照 / AOF 日志）；但对“丢了能重算”的[[cache:缓存]]数据，甚至可以不开。" +
-        "什么时候使用 Redis：缓存、计数、session、排行榜、限流、[[idempotency:幂等]]——又快又临时的活。",
+        "数据在内存里，进程停了会不会就没了？Redis 默认会定期做 RDB 快照，还可以开启 AOF 日志；对“丢了能重算”的[[cache:缓存]]数据，也可以把持久化关掉。" +
+        "什么时候使用 Redis：缓存、计数、session、排行榜、限流、[[idempotency:幂等]]——这些都是要求快、又不需要长期保存的工作。",
       en:
         "The key idea: Redis should normally not be the only place your data exists. It sits between your application and a slower system. " +
-        "Data in memory is gone when the process stops, so Redis offers optional persistence: RDB snapshots and an AOF log. " +
-        "For [[cache:cache]] data that can be computed again, you can leave persistence off. " +
+        "Data held only in memory would be gone when the process stops, so Redis persists it: by default it takes periodic RDB snapshots, and an AOF log can be added. " +
+        "For [[cache:cache]] data that can be computed again, you can turn persistence off. " +
         "Reach for Redis for caching, counters, sessions, leaderboards, rate limiting, and [[idempotency:idempotency]] — work that has to be fast and does not have to last.",
     },
   },
@@ -144,7 +144,7 @@ export const scenes: Scene[] = [
     text: {
       zh:
         "记住这一句，你就能跟人聊 Redis 了：它是一个放在内存里的[[keyvalue:键值]]存储，给高频、临时、可[[ttl:过期]]的数据当加速层，" +
-        "[[sourceoftruth:真相来源]]仍然交给数据库。下一站，先把 value 能装的几种数据结构一种种拆开看透——这也是面试最爱深挖的一块。",
+        "[[sourceoftruth:真相来源]]仍然交给数据库。下一站，先把 value 能装的几种数据结构一种种拆开看透——这也是面试中最常被追问的部分。",
       en:
         "Remember one sentence and you can discuss Redis with anyone. It is a [[keyvalue:key-value]] store in memory, used as a speed layer for frequent, temporary data that can [[ttl:expire]], " +
         "while the [[sourceoftruth:source of truth]] stays in the database. " +
@@ -208,8 +208,8 @@ export const stage = {
   ladHdd: { zh: "机械硬盘", en: "Spinning disk" },
   ladHddV: { zh: "~10 毫秒 · 慢约 10 万倍", en: "~10 ms · about 100,000x slower" },
   s3cap: {
-    zh: "越靠上越快。Redis 位于最快的一层。",
-    en: "Higher on the list is faster. Redis sits on the fastest tier.",
+    zh: "越靠上越快。Redis 位于最快的一层。条的长度按对数刻度画，长出的每一截都代表慢了几个数量级。",
+    en: "Higher on the list is faster. Redis sits on the fastest tier. The bars use a log scale, so each extra length stands for orders of magnitude more time.",
   },
 
   // 幕 4：命令路径
@@ -252,10 +252,10 @@ export const stage = {
   appNode: { zh: "你的 App", en: "Your app" },
   fastLane: { zh: "Redis · 快车道", en: "Redis · fast lane" },
   fastLaneSub: { zh: "缓存 / 计数 / session / 限流 / 幂等", en: "cache / counters / session / rate limit / idempotency" },
-  fastBadge: { zh: "⚡ 快", en: "⚡ fast" },
+  fastBadge: { zh: "快", en: "fast" },
   dbNode: { zh: "数据库 · 真相来源", en: "Database · source of truth" },
   dbNodeSub: { zh: "长期、可靠、可查", en: "durable, reliable, queryable" },
-  truthBadge: { zh: "🗄️ 真相来源", en: "🗄️ truth" },
+  truthBadge: { zh: "真相来源", en: "source of truth" },
   s6cap: {
     zh: "Redis 不可用时，App 还能回落到数据库——它是加速层，不是唯一来源。",
     en: "If Redis is unavailable, the application falls back to the database. It is a speed layer, not the only source.",
