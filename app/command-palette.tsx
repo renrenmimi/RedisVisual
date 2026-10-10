@@ -29,6 +29,8 @@ export default function CommandPalette() {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  // Where focus was before the palette opened, so closing can hand it back.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   // Global ⌘K / Ctrl+K toggle + Esc to close.
   useEffect(() => {
@@ -44,9 +46,15 @@ export default function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [setCmdkOpen]);
 
-  // Reset + focus when opened.
+  // Reset + focus when opened; give focus back to where it was when closed.
   useEffect(() => {
-    if (!cmdkOpen) return;
+    if (!cmdkOpen) {
+      const back = returnFocusRef.current;
+      returnFocusRef.current = null;
+      if (back && document.contains(back)) back.focus();
+      return;
+    }
+    returnFocusRef.current = document.activeElement as HTMLElement | null;
     setQuery("");
     setActive(0);
     const id = requestAnimationFrame(() => inputRef.current?.focus());
@@ -97,6 +105,9 @@ export default function CommandPalette() {
     } else if (e.key === "Escape") {
       e.preventDefault();
       setCmdkOpen(false);
+    } else if (e.key === "Tab") {
+      // The input is the dialog's only focusable element: keep focus inside the dialog.
+      e.preventDefault();
     }
   };
 
@@ -119,6 +130,11 @@ export default function CommandPalette() {
           ref={inputRef}
           className="cmdk-input"
           type="text"
+          role="combobox"
+          aria-expanded={results.length > 0}
+          aria-controls={results.length > 0 ? "cmdk-list" : undefined}
+          aria-autocomplete="list"
+          aria-activedescendant={results[active] ? `cmdk-opt-${active}` : undefined}
           value={query}
           placeholder={t(ui.cmdk.placeholder, lang)}
           aria-label={t(ui.cmdk.placeholder, lang)}
@@ -131,10 +147,11 @@ export default function CommandPalette() {
         {results.length === 0 ? (
           <div className="cmdk-empty">{t(ui.cmdk.empty, lang)}</div>
         ) : (
-          <ul className="cmdk-list" role="listbox" ref={listRef}>
+          <ul className="cmdk-list" id="cmdk-list" role="listbox" ref={listRef}>
             {results.map((d, i) => (
               <li
                 key={d.href}
+                id={`cmdk-opt-${i}`}
                 role="option"
                 aria-selected={i === active}
                 className={`cmdk-item${i === active ? " active" : ""}`}
