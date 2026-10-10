@@ -92,7 +92,10 @@ export default function SimulatorPage() {
 
   const cfgRef = useRef<SimConfig>(config);
   cfgRef.current = config;
-  const pendingFaultRef = useRef<FaultKind | null>(null);
+  // Faults wait here for the next tick, one per tick, in the order they were pressed.
+  const pendingFaultsRef = useRef<FaultKind[]>([]);
+  // A one-click scenario's delayed fault, so Reset or leaving the page can cancel it.
+  const presetTimerRef = useRef<number | null>(null);
   const logRef = useRef<LogItem[]>([]);
   const logSeqRef = useRef(0);
 
@@ -102,18 +105,26 @@ export default function SimulatorPage() {
     setLog(next);
   }, []);
 
+  const cancelPreset = useCallback(() => {
+    if (presetTimerRef.current !== null) window.clearTimeout(presetTimerRef.current);
+    presetTimerRef.current = null;
+  }, []);
+  useEffect(() => cancelPreset, [cancelPreset]);
+
   const reset = useCallback(() => {
+    cancelPreset();
+    pendingFaultsRef.current = [];
     stateRef.current = createState(cfgRef.current, DEFAULT_SEED);
     logRef.current = [];
     setLog([]);
     setHistory([]);
     setMetrics(EMPTY_METRICS);
     setGrid(emptyGrid());
-  }, []);
+  }, [cancelPreset]);
 
   const trigger = useCallback(
     (f: FaultKind) => {
-      pendingFaultRef.current = f;
+      pendingFaultsRef.current.push(f);
       if (!running) setRunning(true);
     },
     [running],
@@ -125,8 +136,7 @@ export default function SimulatorPage() {
     const id = setInterval(() => {
       const state = stateRef.current;
       if (!state) return;
-      const fault = pendingFaultRef.current;
-      pendingFaultRef.current = null;
+      const fault = pendingFaultsRef.current.shift() ?? null;
 
       const out = tick(state, cfgRef.current, fault);
 
@@ -149,16 +159,30 @@ export default function SimulatorPage() {
     [],
   );
 
+  // A scenario's fault goes in shortly after its controls change, so the curves first
+  // settle on the new settings. Pressing another scenario or Reset cancels it.
+  const queuePreset = useCallback(
+    (f: FaultKind) => {
+      cancelPreset();
+      presetTimerRef.current = window.setTimeout(() => {
+        presetTimerRef.current = null;
+        pendingFaultsRef.current.push(f);
+      }, 700);
+    },
+    [cancelPreset],
+  );
+
   // One-click scenarios set the controls and (for faults) queue an injection.
   const runPreset = useCallback((id: string) => {
+    cancelPreset();
     if (id === "breakdown") {
       setConfig((c) => ({ ...c, hot: 70, singleFlight: false }));
       setRunning(true);
-      window.setTimeout(() => (pendingFaultRef.current = "breakdown"), 700);
+      queuePreset("breakdown");
     } else if (id === "avalanche") {
       setConfig((c) => ({ ...c, jitter: false, capacity: 180 }));
       setRunning(true);
-      window.setTimeout(() => (pendingFaultRef.current = "avalanche"), 700);
+      queuePreset("avalanche");
     } else if (id === "eviction") {
       setConfig((c) => ({ ...c, capacity: 40, hot: 25, ttl: 12 }));
       setRunning(true);
@@ -166,7 +190,7 @@ export default function SimulatorPage() {
       setConfig((c) => ({ ...c, ttl: 1, capacity: 180, hot: 20 }));
       setRunning(true);
     }
-  }, []);
+  }, [queuePreset, cancelPreset]);
 
   return (
     <main className="page">
@@ -195,7 +219,7 @@ export default function SimulatorPage() {
           <Slider
             label={t(sm.qpsLabel, lang)}
             value={config.qps}
-            display={`${config.qps.toLocaleString()}`}
+            display={config.qps.toLocaleString("en-US")}
             range={RANGES.qps}
             onChange={(v) => set({ qps: v })}
           />
@@ -273,14 +297,14 @@ export default function SimulatorPage() {
             <Tile label={t(sm.mP99, lang)} value={`${Math.round(metrics.p99)}ms`} tone={latTone(metrics.p99)} />
             <Tile
               label={t(sm.mDb, lang)}
-              value={`${metrics.dbQps.toLocaleString()}${t(sm.mDbUnit, lang)}`}
+              value={`${metrics.dbQps.toLocaleString("en-US")}${t(sm.mDbUnit, lang)}`}
               tone={metrics.dbQps > SIM.dbCapacity * (1000 / SIM.tickMs) ? "red" : "ok"}
             />
             <Tile label={t(sm.mCache, lang)} value={`${metrics.size} / ${config.capacity}`} tone="neutral" />
           </div>
 
-          <Chart title={t(sm.chartHit, lang)} data={history} pick={(p) => p.hit} max={100} tone="teal" unit="%" invert />
-          <Chart title={t(sm.chartLat, lang)} data={history} pick={(p) => p.p99} max={250} tone="accent" unit="ms" />
+          <Chart title={t(sm.chartHit, lang)} data={history} field="hit" max={100} tone="teal" unit="%" invert />
+          <Chart title={t(sm.chartLat, lang)} data={history} field="p99" max={250} tone="accent" unit="ms" />
 
           <div className="sim8-cache">
             <div className="sim8-cache-head">
@@ -456,7 +480,7 @@ function FaultBtn({
 function Chart({
   title,
   data,
-  pick,
+  field,
   max,
   tone,
   unit,
@@ -464,7 +488,7 @@ function Chart({
 }: {
   title: string;
   data: Point[];
-  pick: (p: Point) => number;
+  field: keyof Point;
   max: number;
   tone: "teal" | "accent";
   unit: string;
@@ -472,19 +496,19 @@ function Chart({
 }) {
   const W = 100;
   const H = 40;
-  const last = data.length ? pick(data[data.length - 1]) : 0;
+  const last = data.length ? data[data.length - 1][field] : 0;
   const points = useMemo(() => {
     if (data.length < 2) return "";
     const n = SIM.historyLen;
     return data
       .map((p, i) => {
         const x = (i / (n - 1)) * W;
-        const v = Math.max(0, Math.min(max, pick(p)));
+        const v = Math.max(0, Math.min(max, p[field]));
         const y = H - (v / max) * H;
         return `${x.toFixed(2)},${y.toFixed(2)}`;
       })
       .join(" ");
-  }, [data, max, pick]);
+  }, [data, max, field]);
 
   const level = invert
     ? last >= max * 0.9
