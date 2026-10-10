@@ -12,15 +12,15 @@ export const glossary: Record<string, { word: L; def: L }> = {
   redis: {
     word: { zh: "Redis", en: "Redis" },
     def: {
-      zh: "一个主要把数据放在内存里的键值数据存储（data store）。名字来自 REmote DIctionary Server——可以想成一个能被网络上很多程序同时读写的超大字典。常用来做缓存、计数、去重、排行榜等“又快又临时”的活。",
+      zh: "一个主要把数据放在内存里的键值数据存储（data store）。名字来自 REmote DIctionary Server——可以想成一个能被网络上很多程序同时读写的超大字典。常用来做缓存、计数、去重、排行榜这类要求快、又不需要长期保存的工作。",
       en: "A data store that keeps its data mostly in memory (RAM). The name stands for REmote DIctionary Server: one large dictionary that many programs can read and write over the network. It is normally used for caching, counters, deduplication, and leaderboards — work that has to be fast and does not have to last.",
     },
   },
   memory: {
     word: { zh: "内存 (RAM)", en: "memory (RAM)" },
     def: {
-      zh: "电脑里读写最快的临时存储，断电就清空。Redis 把数据放这里，所以取数据非常快；代价是容量有限、且默认不像硬盘那样长期保存。",
-      en: "The computer's fastest working storage. It is erased when the power is lost. Redis keeps its data here, which is why reads are fast. The cost is that memory is much smaller than disk, and nothing survives a restart unless persistence is turned on.",
+      zh: "电脑里读写最快的临时存储，断电就清空。Redis 把数据放这里，所以取数据非常快；代价是容量比硬盘小得多，而且还没写到硬盘上的数据会随进程一起丢失。Redis 默认会定期把数据快照到硬盘（RDB），还可以开启 AOF 日志，缩小可能丢失的范围。",
+      en: "The computer's fastest working storage. It is erased when the power is lost. Redis keeps its data here, which is why reads are fast. The cost is that memory is much smaller than disk, and anything not yet saved to disk is lost when the process stops. Redis saves RDB snapshots to disk by default, and AOF can be turned on to lose less.",
     },
   },
   keyvalue: {
@@ -138,8 +138,8 @@ export const glossary: Record<string, { word: L; def: L }> = {
   singlethread: {
     word: { zh: "单线程", en: "single-threaded" },
     def: {
-      zh: "Redis 一次只执行一条命令，按收到的顺序排队执行。好处是单条命令天生不用加锁；代价是一条很慢的命令会让排在它后面的所有请求一起等。Redis 6 之后网络读写可以用额外的线程，但命令仍然是一条一条执行的。思路和 Node.js 的事件循环相同。",
-      en: "Redis executes commands one at a time, in the order it receives them. Because nothing runs in parallel, a single command needs no locks to stay correct. The cost is that one slow command makes every command behind it wait. Redis 6 and later can use extra threads for network I/O, but commands are still executed one at a time. It is the same idea as the Node.js event loop.",
+      zh: "Redis 一次只执行一条命令，按收到的顺序排队执行。好处是单条命令天生不用加锁；代价是一条很慢的命令会让排在它后面的所有请求一起等。一个线程之所以能同时照看成千上万个连接，靠的是 I/O 多路复用：事件循环通过 epoll（Linux）或 kqueue（macOS）同时监听所有连接，哪个连接的数据准备好了就处理哪个，不会停下来等某一个慢客户端。思路和 Node.js 的事件循环相同。Redis 6 之后网络读写可以用额外的线程，但命令仍然是一条一条执行的。",
+      en: "Redis executes commands one at a time, in the order it receives them. Because nothing runs in parallel, a single command needs no locks to stay correct. The cost is that one slow command makes every command behind it wait. One thread can still serve thousands of connections because of I/O multiplexing: the event loop asks the kernel, through epoll on Linux or kqueue on macOS, which connections are ready and handles only those, so it never sits waiting on one slow client. It is the same idea as the Node.js event loop. Redis 6 and later can use extra threads for network I/O, but commands are still executed one at a time.",
     },
   },
   bff: {
@@ -173,8 +173,8 @@ export const glossary: Record<string, { word: L; def: L }> = {
   atomic: {
     word: { zh: "原子操作 (atomic)", en: "atomic" },
     def: {
-      zh: "一个操作要么整体完成、要么完全不发生，中间不会被别的请求插进来。Redis 一次只执行一条命令，所以 INCR、SET NX 这类单条命令天生就是原子的。注意：MULTI/EXEC 只保证这一批命令中间不被别人插入，并不能回滚——某条命令执行失败，其它命令照样生效。",
-      en: "An operation either happens completely or does not happen at all, and no other request can slip in halfway through. Redis executes one command at a time, so a single command such as INCR or SET NX is atomic on its own. Note that MULTI/EXEC only guarantees that no other client's command runs in between; it cannot roll back. If one command inside the block fails, the others still take effect.",
+      zh: "在 Redis 里，“原子”指一个操作执行期间不会有别的命令插进来，其它客户端看到的要么是它执行之前的状态，要么是执行之后的状态。Redis 一次只执行一条命令，所以 INCR、SET NX 这类单条命令天生就是原子的。注意这不等于“出错就全部撤销”：MULTI/EXEC 和 Lua 脚本都不回滚，中途某条命令出错，之前已经生效的写入会保留。",
+      en: "In Redis, atomic means that no other command runs while the operation is in progress, so other clients see the state either before it or after it. Redis executes one command at a time, so a single command such as INCR or SET NX is atomic on its own. This is not the same as all-or-nothing: neither MULTI/EXEC nor a Lua script rolls back, and if one command fails halfway, the writes made before it stay in place.",
     },
   },
   encoding: {
@@ -187,8 +187,8 @@ export const glossary: Record<string, { word: L; def: L }> = {
   stream: {
     word: { zh: "Stream 流", en: "Stream" },
     def: {
-      zh: "Redis 5.0 起的一种数据类型：只追加的日志 + 消费者组 + 消息确认(ack)。比用 List 拼的队列可靠得多——消费者崩了消息不会丢，能重投。真要做可靠消息队列就用它。",
-      en: "A data type added in Redis 5.0: an append-only log, consumer groups, and acknowledgements. It is much more reliable than a queue built from a List, because a message that a consumer never acknowledges is kept and can be delivered again. Use it when you need a message queue you can trust.",
+      zh: "Redis 5.0 起的一种数据类型：只追加的日志 + 消费者组 + 消息确认（ack）。比用 List 拼的队列可靠得多：消费者读走消息后崩溃，没有确认的消息会留在待处理列表里，可以用 XAUTOCLAIM 交给别的消费者重新处理。消息在 Redis 宕机后能否保留，仍取决于持久化配置。需要可靠的消息队列时，应当选用它。",
+      en: "A data type added in Redis 5.0: an append-only log, consumer groups, and acknowledgements. It is much more reliable than a queue built from a List: if a consumer crashes after reading a message, the unacknowledged message stays in the pending list, and another consumer can claim it with XAUTOCLAIM. Whether messages survive a Redis crash still depends on persistence. Use it when you need a reliable message queue.",
     },
   },
 };
