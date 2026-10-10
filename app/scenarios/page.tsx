@@ -1,6 +1,6 @@
 "use client";
 
-// 第 2 站「我们为什么用 Redis」。
+// 第 3 站「我们为什么用 Redis」。
 // 结构：顶部系统背景条 + 三个场景 tab（点击切换）+ 单步推进的动画走查 + 面试口径卡。
 // 文案全部来自 lib/scenarios.ts；这里只负责把每一步渲染成会动的画面。
 // 每步的舞台用 key 重挂载，所以流动 / 入场动画会随推进重播一次。
@@ -13,7 +13,7 @@ import { RichText } from "@/lib/glossary";
 import { readingMs } from "@/lib/reading";
 import "./scenarios.css";
 
-// carrier 报价延迟（场景 A 反复用到）
+// carrier 报价延迟（场景 A 反复用到）。只表示量级，不是实测值，图上也这样标注。
 const CARRIERS: { nm: string; lat: string; slow?: boolean }[] = [
   { nm: "USPS", lat: "~300ms" },
   { nm: "FedEx", lat: "~800ms" },
@@ -328,7 +328,7 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
         </div>
         <div className="sc2-fan">
           <span className="sc2-fan-note">
-            {zh ? "每次未命中都要问这 4 家，等最慢的 ↓" : "every miss asks all four and waits for the slowest ↓"}
+            {zh ? "每次未命中都要问这 4 家，等最慢的（延迟为示意量级）↓" : "every miss asks all four and waits for the slowest (illustrative latencies) ↓"}
           </span>
           <Carriers mode="calling" />
         </div>
@@ -433,7 +433,7 @@ function RateStage({ phase, zh }: { phase: string; zh: boolean }) {
         </div>
         <div className="sc2-latcompare">
           <span className="sc2-lat slow struck">
-            {zh ? "首次(未命中) ~1200ms" : "first (miss) ~1200ms"}
+            {zh ? "首次（未命中）~1200ms" : "first (miss) ~1200ms"}
           </span>
           <span className="sc2-fan-note">→</span>
           <span className="sc2-lat fast">{zh ? "命中 ~1ms" : "hit ~1ms"}</span>
@@ -538,7 +538,7 @@ function IdemStage({ phase, zh }: { phase: string; zh: boolean }) {
           <div className="sc2-clicks">
             <div className="sc2-buybtn">{zh ? "购买标签" : "Buy label"}</div>
             <span className="sc2-tap">
-              {zh ? "👆 用户点了两下 / 自动重试" : "👆 double-click / auto-retry"}
+              {zh ? "用户点了两下 / 自动重试" : "double-click / auto-retry"}
             </span>
           </div>
           <Lane
@@ -694,7 +694,7 @@ function LedgerRows({
 }
 
 function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
-  const balLabel = zh ? "当前余额 (Redis 投影)" : "current balance (Redis projection)";
+  const balLabel = zh ? "当前余额（Redis 投影）" : "current balance (Redis projection)";
 
   if (phase === "read") {
     return (
@@ -702,7 +702,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
         <div className="sc2-cwrap">
           <div className="sc2-ledger sc2-off">
             <div className="sc2-ledger-head">
-              📒 {zh ? "账本 (MySQL)" : "Ledger (MySQL)"}
+              {zh ? "账本（MySQL）" : "Ledger (MySQL)"}
             </div>
             <LedgerRows zh={zh} />
           </div>
@@ -732,7 +732,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
         <div className="sc2-cwrap">
           <div className="sc2-ledger truth">
             <div className="sc2-ledger-head">
-              📒 {zh ? "账本 (MySQL)" : "Ledger (MySQL)"}
+              {zh ? "账本（MySQL）" : "Ledger (MySQL)"}
               <span className="sc2-tag-mini">{zh ? "真相" : "truth"}</span>
             </div>
             <LedgerRows zh={zh} summing />
@@ -759,7 +759,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
         <div className="sc2-cwrap">
           <div className="sc2-ledger truth">
             <div className="sc2-ledger-head">
-              📒 {zh ? "账本 (MySQL)" : "Ledger (MySQL)"}
+              {zh ? "账本（MySQL）" : "Ledger (MySQL)"}
               <span className="sc2-tag-mini">append</span>
             </div>
             <LedgerRows zh={zh} appended />
@@ -788,7 +788,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
       <div className="sc2-cwrap">
         <div className="sc2-ledger truth">
           <div className="sc2-ledger-head">
-            📒 {zh ? "账本" : "Ledger"}
+            {zh ? "账本" : "Ledger"}
             <span className="sc2-tag-mini">{zh ? "真相 · append-only" : "truth · append-only"}</span>
           </div>
           <LedgerRows zh={zh} />
@@ -800,7 +800,7 @@ function BalanceStage({ phase, zh }: { phase: string; zh: boolean }) {
           <small>{zh ? "Redis 不可用" : "Redis unavailable"}</small>
         </div>
         <div className="sc2-bal miss">
-          <span className="sc2-bal-label">{zh ? "读模型 (可丢弃)" : "read model (disposable)"}</span>
+          <span className="sc2-bal-label">{zh ? "读模型（可丢弃）" : "read model (disposable)"}</span>
           <span className="sc2-bal-val">✗</span>
         </div>
         <div className="sc2-vlink">

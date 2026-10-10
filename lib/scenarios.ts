@@ -1,7 +1,7 @@
-// 第 2 站「我们为什么用 Redis」的全部双语文案数据。
+// 第 3 站“我们为什么用 Redis”的全部双语文案数据。
 // 主题：WeShipItNow —— 一个多承运商运费比价 / 买标签平台，Redis 出现在三个地方。
 // 每个场景（scenario）是一段可单步推进的动画走查：若干 step（每步一句标题 + 一段讲解 + 一句舞台字幕），
-// 外加一张「面试口径」卡（怎么说 / 别过度包装）。
+// 外加一张“面试口径”卡（怎么说 / 别过度包装）。
 // 画面（动画 JSX）在 app/scenarios/page.tsx 里按 scenario.id + step.phase 对应，做到数据 / 页面分离。
 
 import type { L } from "@/lib/i18n";
@@ -35,8 +35,8 @@ export type Scenario = {
 export const meta = {
   title: { zh: "第 3 站 · 我们为什么用 Redis", en: "Stop 3 · Why we use Redis" },
   subtitle: {
-    zh: "拿一个真实系统 WeShipItNow，把 Redis 的三处用法讲透——顺带教你面试怎么答。",
-    en: "One real system, WeShipItNow, and the three places it uses Redis — plus how to describe them in an interview.",
+    zh: "拿一个真实系统 WeShipItNow，把 Redis 适合的三处用法讲透——顺带教你面试怎么答。",
+    en: "One real system, WeShipItNow, and three places Redis fits in it — plus how to describe them in an interview.",
   },
   ivGood: { zh: "面试可以这样说", en: "In an interview, you can say" },
   ivHonest: { zh: "但要诚实 · 别过度包装", en: "But stay honest · don't oversell" },
@@ -56,18 +56,18 @@ export const intro = {
     en: "WeShipItNow · multi-carrier rate shopping and label platform",
   },
   title: {
-    zh: "一个真实系统里，Redis 到底用在哪三处",
-    en: "The three places Redis is actually used in one real system",
+    zh: "以 WeShipItNow 为例：Redis 适合用在哪三处",
+    en: "WeShipItNow as the example: three places Redis fits",
   },
   text: {
     zh:
       "WeShipItNow 让用户输入发货/收货邮编、包裹重量尺寸和发货日期，然后同时向 USPS、FedEx、UPS、Amazon 问[[carrier:承运商]]报价、比价，再买运费标签、追踪包裹。" +
-      "[[redis:Redis]] 在这个系统里出现在三个地方——每一处都能回答同一个问题：为什么是 Redis，而不是别的。" +
+      "这个系统里有三个地方适合用 [[redis:Redis]]：报价缓存是简历上写的那一处；幂等和余额投影同样适合用 Redis，面试时只把你亲手做过的说成做过。每一处都要回答同一个问题：为什么是 Redis，而不是别的。" +
       "下面三个场景，点 tab 切换，每个都能一步步看动画。",
     en:
       "WeShipItNow takes an origin ZIP, a destination ZIP, the package weight and dimensions, and a ship date. " +
       "It then asks USPS, FedEx, UPS, and Amazon for [[carrier:carrier]] quotes at the same time, compares them, and lets the user buy a label and track the parcel. " +
-      "[[redis:Redis]] is used in three places here, and each one answers the same question: why Redis, and not something else? " +
+      "Three places in this system suit [[redis:Redis]]. The rate cache is the one on the resume; idempotency and the balance projection suit Redis just as well, and in an interview you claim only the ones you built yourself. Each one answers the same question: why Redis, and not something else? " +
       "Switch tabs between the three scenarios below. Each one plays step by step.",
   },
 };
@@ -87,12 +87,12 @@ export const scenarios: Scenario[] = [
         title: { zh: "先看清楚：慢的到底是谁", en: "First, find what is actually slow" },
         text: {
           zh:
-            "一次报价要同时问 4 家 [[carrier:承运商]] 的 [[api:API]]：USPS 约 300ms、FedEx 约 800ms、UPS 偶尔超 1 秒、Amazon 也不快。" +
-            "[[bff:BFF]] 得等最慢的那个回来才能比价，所以一次报价天然就是「秒级」。" +
+            "一次报价要同时问 4 家 [[carrier:承运商]] 的 [[api:API]]，每家通常要几百毫秒，慢的时候超过 1 秒（下面图中的数字只表示量级，不是实测值）。" +
+            "[[bff:BFF]] 得等最慢的那个回来才能比价，所以一次报价天然就是“秒级”。" +
             "更关键的是同一个包裹会被反复查——用户刷新、点返回、同事查同一条线路，短时间内报价根本不变。" +
-            "「算一次很贵、又反复要」，这正是 [[cache:缓存]] 的教科书场景。",
+            "“算一次很贵、又反复要”，这正是 [[cache:缓存]] 的教科书场景。",
           en:
-            "One quote calls four [[carrier:carrier]] [[api:APIs]] at the same time: USPS around 300ms, FedEx around 800ms, UPS sometimes over a second, and Amazon is no faster. " +
+            "One quote calls four [[carrier:carrier]] [[api:APIs]] at the same time. Each usually takes a few hundred milliseconds and sometimes more than a second (the numbers in the diagram below show the order of magnitude; they are not measurements). " +
             "The [[bff:BFF]] cannot compare prices until the slowest one answers, so a single quote takes roughly a second. " +
             "The same package is also queried again and again: the user refreshes, goes back a page, or a colleague checks the same route. " +
             "The rate does not change over such a short window. A value that is expensive to compute and requested repeatedly is the textbook case for a [[cache:cache]].",
@@ -105,9 +105,9 @@ export const scenarios: Scenario[] = [
         title: { zh: "第一次查询：缓存里空空如也", en: "First query: the cache is empty" },
         text: {
           zh:
-            "前端经 Apollo Client 把报价请求发给 GraphQL [[bff:BFF]]，BFF 先问 [[redis:Redis]]：「这个包裹的报价你有吗？」" +
+            "前端经 Apollo Client 把报价请求发给 GraphQL [[bff:BFF]]，BFF 先问 [[redis:Redis]]：“这个包裹的报价你有吗？”" +
             "第一次当然[[cachemiss:未命中]]。于是 BFF 才并发去调 4 家 carrier 的 [[api:API]]，等最慢的回来，聚合成一份可比较的报价。" +
-            "这一趟，就是那要命的一秒多。先读缓存、未命中再回源——这套顺序就叫[[cacheaside:旁路缓存 (cache-aside)]]。",
+            "这一趟要花一秒多。先读缓存、未命中再回源——这套顺序就叫[[cacheaside:旁路缓存 (cache-aside)]]。",
           en:
             "The frontend sends the quote request through Apollo Client to the GraphQL [[bff:BFF]]. " +
             "The BFF asks [[redis:Redis]] first: is there a rate stored for this package? " +
@@ -145,7 +145,7 @@ export const scenarios: Scenario[] = [
         text: {
           zh:
             "同一个包裹再被查一次，BFF 问 Redis 就直接[[cachehit:命中]]了：一次内存读取，[[latency:延迟]]从一秒多掉到毫秒级，" +
-            "4 家 carrier 一个都不用惊动。这就是缓存真正省下的东西——不是「更快的 API」，而是「根本不调 API」。",
+            "4 家 carrier 一个都不用惊动。这就是缓存真正省下的东西——不是“更快的 API”，而是“根本不调 API”。",
           en:
             "The same package is queried again. The BFF asks Redis and gets a [[cachehit:hit]]: one read from memory, and [[latency:latency]] drops from over a second to about a millisecond. " +
             "None of the four carriers is called at all. That is what the cache really saves. " +
@@ -177,7 +177,7 @@ export const scenarios: Scenario[] = [
         text: {
           zh:
             "面试常被追问。Apollo Client 缓存在浏览器端，只服务当前这个用户、少发重复的 GraphQL 请求；" +
-            "Redis 在服务端，被所有用户、所有实例共享，少调重复的 carrier API。别说成「两者都降低了 carrier API 延迟」——只有服务端的 Redis 拦得住 carrier 调用。" +
+            "Redis 在服务端，被所有用户、所有实例共享，少调重复的 carrier API。别说成“两者都降低了 carrier API 延迟”——只有服务端的 Redis 拦得住 carrier 调用。" +
             "还有降级：Redis 不可用时，请求要能绕过它直连 carrier，慢一点但仍然能用，Redis 不能是单点；而且真正买标签时要重新校验价格，不能盲信旧报价。",
           en:
             "This is a common follow-up question. The Apollo Client cache lives in the browser. It serves only the current user and cuts repeated GraphQL requests. " +
@@ -206,7 +206,7 @@ export const scenarios: Scenario[] = [
           en: "Don't treat the Apollo Client cache and the Redis cache as the same thing. Only the server-side cache stops repeated carrier calls.",
         },
         {
-          zh: "别吹「零延迟」；缓存里的报价最多可能旧一个 TTL，买标签前仍要重新校验价格。它只是加速读，不是权威价。",
+          zh: "别吹“零延迟”；缓存里的报价最多可能旧一个 TTL，买标签前仍要重新校验价格。它只是加速读，不是权威价。",
           en: "Don't claim zero latency. A cached quote can be up to one TTL out of date, so you still re-check the price before buying a label. The cache speeds up reads; it is not the authoritative price.",
         },
       ],
@@ -225,9 +225,9 @@ export const scenarios: Scenario[] = [
         title: { zh: "问题：重复提交导致重复下单", en: "The problem: one double-click, two labels" },
         text: {
           zh:
-            "「购买标签」这个按钮，用户可能连续点击两次；或者前端网络超时后自动重试。" +
+            "“购买标签”这个按钮，用户可能连续点击两次；或者前端网络超时后自动重试。" +
             "两个几乎同时到达的请求，如果都照常执行，就会重复建标签、重复扣款、甚至重复给用户发通知。" +
-            "只要是「花钱」「产生副作用」的写操作，就必须防重复。",
+            "只要是“花钱”“产生副作用”的写操作，就必须防重复。",
           en:
             "A user can click the \"Buy label\" button twice, or the frontend can retry automatically after a network timeout. " +
             "If two requests arrive almost together and both run normally, the system creates two labels, charges the card twice, and may even send two notifications. " +
@@ -242,8 +242,8 @@ export const scenarios: Scenario[] = [
         text: {
           zh:
             "用请求里唯一的 requestId 当 key：SET idempotency:purchase-label:{requestId} processing NX EX 60。" +
-            "[[setnx:NX]] 的意思是「只有 key 不存在时才写成功」。" +
-            "Redis 在单线程上逐条执行命令，所以这一句里的「检查」和「写入」中间插不进另一个请求：两个并发请求里恰好有一个拿到 OK，另一个拿到 nil。" +
+            "[[setnx:NX]] 的意思是“只有 key 不存在时才写成功”。" +
+            "Redis 在单线程上逐条执行命令，所以这一句里的“检查”和“写入”中间插不进另一个请求：两个并发请求里恰好有一个拿到 OK，另一个拿到 nil。" +
             "EX 60 给这个 key 一个过期时间，万一请求中途失败，也不会把同一笔购买永远挡在门外。",
           en:
             "Use the unique requestId from the request as the key: SET idempotency:purchase-label:{requestId} processing NX EX 60. " +
@@ -261,7 +261,7 @@ export const scenarios: Scenario[] = [
         text: {
           zh:
             "抢到 key 的请求继续往下：建标签、扣一次款、把结果写好。拿到 nil 的那个请求不再重复执行，" +
-            "而是直接返回上一次的结果；如果结果还没写好，就返回「处理中，请稍候」。对用户来说，点一下和点两下，结果完全一样——这就是[[idempotency:幂等]]。",
+            "而是直接返回上一次的结果；如果结果还没写好，就返回“处理中，请稍候”。对用户来说，点一下和点两下，结果完全一样——这就是[[idempotency:幂等]]。",
           en:
             "The request that set the key goes ahead: it creates the label, charges once, and stores the result. " +
             "The request that got nil does not run the purchase again. It returns the stored result of the first request, or a \"still processing\" response if that result is not ready yet. " +
@@ -303,7 +303,7 @@ export const scenarios: Scenario[] = [
       ],
       honest: [
         {
-          zh: "如果你的真实项目只做了报价缓存，就别把幂等也说成「我用 Redis 做过」——只说你了解这个模式。",
+          zh: "如果你的真实项目只做了报价缓存，就别把幂等也说成“我用 Redis 做过”——只说你了解这个模式。",
           en: "If your real project only built the rate cache, don't say you \"built idempotency with Redis\". Say you understand the pattern.",
         },
         {
@@ -327,7 +327,7 @@ export const scenarios: Scenario[] = [
         text: {
           zh:
             "用户账户余额天天要看。真正的[[sourceoftruth:真相来源]]是 [[mysql:MySQL]] 里的[[ledger:账本]]——只追加、不修改。" +
-            "但每次读都把账本从头加一遍太慢，所以把算好的「当前余额」作为一份[[projection:投影]]（读模型）放进 Redis，读的时候直接拿这一个数。",
+            "但每次读都把账本从头加一遍太慢，所以把算好的“当前余额”作为一份[[projection:投影]]（读模型）放进 Redis，读的时候直接拿这一个数。",
           en:
             "A user's account balance is read constantly. The [[sourceoftruth:source of truth]] is the append-only [[ledger:ledger]] in [[mysql:MySQL]]: rows are added, never changed. " +
             "Adding up the whole ledger on every read is slow, so the computed current balance is stored in Redis as a [[projection:projection]], also called a read model. " +
@@ -405,7 +405,7 @@ export const scenarios: Scenario[] = [
           en: "Say it directly: with money, Redis is never the final record. You have to be able to rebuild the balance from the ledger.",
         },
         {
-          zh: "别把它说成「用 Redis 存余额」——它只是一份可丢弃的加速副本；而且如果你只做了报价缓存，就说你了解这个模式，别说成你上线过。",
+          zh: "别把它说成“用 Redis 存余额”——它只是一份可丢弃的加速副本；而且如果你只做了报价缓存，就说你了解这个模式，别说成你上线过。",
           en: "Don't say you \"store balances in Redis\". It is a derived copy that can be deleted and computed again. And if the rate cache is the only piece you built, say you understand this pattern rather than claiming you shipped it.",
         },
       ],
