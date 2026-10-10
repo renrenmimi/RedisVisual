@@ -27,12 +27,12 @@ export const STOPS: SideStop[] = [
 ];
 
 // Which stop is active for a given path ("/code/x" still counts as /code).
+// -1 for a path that is not a stop (the 404 page), so nothing is marked current.
 export function activeStopIndex(path: string): number {
   if (path === "/") return 0;
-  const i = STOPS.findIndex(
+  return STOPS.findIndex(
     (s) => s.href !== "/" && (path === s.href || path.startsWith(s.href + "/")),
   );
-  return i === -1 ? 0 : i;
 }
 
 export default function Sidebar() {
@@ -131,14 +131,29 @@ export default function Sidebar() {
 
         <div className="side-status">
           <div className="eyebrow">{t(ui.side.status, lang)}</div>
-          <div className="side-status-label">{t(ui.side.progress, lang)}</div>
+          <div className="side-status-label">
+            {t(ui.side.progress, lang)}
+            {activeIndex >= 0 && (
+              <span className="side-status-pos">
+                {" · "}
+                {activeIndex + 1} / {STOPS.length}
+              </span>
+            )}
+          </div>
           <div
             className="progress"
             role="progressbar"
-            aria-label={t(ui.side.progress, lang)}
+            aria-label={t(ui.side.position, lang)}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress}
+            aria-valuetext={
+              activeIndex >= 0
+                ? lang === "zh"
+                  ? `第 ${activeIndex + 1} 站，共 ${STOPS.length} 站`
+                  : `Stop ${activeIndex + 1} of ${STOPS.length}`
+                : undefined
+            }
           >
             <div className="progress-fill" style={{ width: `${progress}%` }} />
           </div>

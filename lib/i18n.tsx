@@ -97,6 +97,7 @@ export const ui = {
     progress: { zh: "八站学习闭环", en: "An 8-stop learning path" },
     stops: { zh: "八站导航", en: "Stops" },
     rail: { zh: "课程导航", en: "Course navigation" },
+    position: { zh: "当前位置", en: "Where you are" },
   },
   toolbar: {
     hideNav: { zh: "隐藏导航栏", en: "Hide the navigation rail" },
@@ -119,6 +120,16 @@ export const ui = {
     group: { zh: "语言 / Language", en: "Language / 语言" },
     toEn: { zh: "切换到英文", en: "Switch to English" },
     toZh: { zh: "切换到中文", en: "Switch to Chinese" },
+  },
+
+  notFound: {
+    crumb: { zh: "找不到页面", en: "Page not found" },
+    title: { zh: "找不到这个页面", en: "This page does not exist" },
+    body: {
+      zh: "这个地址不是课程里的任何一站。可以从第 1 站开始，或用侧栏和搜索（⌘K / Ctrl+K）找到想看的那一站。",
+      en: "This address is not one of the course's stops. Start from Stop 1, or use the sidebar or search (⌘K / Ctrl+K) to find the stop you want.",
+    },
+    home: { zh: "去第 1 站：什么是 Redis →", en: "Go to Stop 1: What is Redis →" },
   },
 
   common: {

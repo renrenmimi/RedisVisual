@@ -52,13 +52,13 @@ export default function CodeChapter() {
   const leftItems: Cmd[] = step.cmds ?? [];
 
   return (
-    <div className="page">
+    <main className="page">
       <header className="header">
         <div>
           <h1 className="page-title">{t(clui.title, lang)}</h1>
           <p className="subtitle">{t(clui.subtitle, lang)}</p>
         </div>
-        <div className="progress" aria-label={t(clui.ariaProgress, lang)}>
+        <div className="progress" role="group" aria-label={t(clui.ariaProgress, lang)}>
           {steps.map((s, i) => (
             <button
               key={i}
@@ -172,7 +172,7 @@ export default function CodeChapter() {
           {t(clui.kbdNext, lang)} · <kbd>←</kbd> {t(clui.kbdPrev, lang)}
         </span>
       </div>
-    </div>
+    </main>
   );
 }
 

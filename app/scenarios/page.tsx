@@ -83,6 +83,7 @@ export default function ScenariosPage() {
         </div>
         <div
           className="progress"
+          role="group"
           aria-label={t({ zh: "进度", en: "Progress" }, lang)}
         >
           {steps.map((s, i) => (

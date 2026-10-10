@@ -104,10 +104,12 @@ export default function PitfallsPage() {
         {pit.id === "consistency" && (
           <div
             className="pf6-switch"
-            role="tablist"
+            role="group"
             aria-label={t({ zh: "切换视图", en: "switch view" }, lang)}
           >
             <button
+              type="button"
+              aria-pressed={!fix}
               className={`pf6-switch-b ${!fix ? "on" : ""}`}
               onClick={() => {
                 setFix(false);
@@ -117,6 +119,8 @@ export default function PitfallsPage() {
               {t(meta.problemTab, lang)}
             </button>
             <button
+              type="button"
+              aria-pressed={fix}
               className={`pf6-switch-b ${fix ? "on" : ""}`}
               onClick={() => {
                 setFix(true);
